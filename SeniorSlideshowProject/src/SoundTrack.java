@@ -57,7 +57,7 @@ import java.net.URL;
  * @version @(#)Juke.java	1.19 00/01/31
  * @author Brian Lichtenwalter  
  */
-public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEventListener
+public class SoundTrack extends JPanel implements Runnable//, LineListener, MetaEventListener
 {
 	// Rick Note:  it appears that LineListener is for clips and MetaEventListener is for MIDI files
     final int bufSize = 16384;
@@ -123,7 +123,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
         	ex.printStackTrace(); 
         	return; 
         }
-        sequencer.addMetaEventListener(this);
+        //sequencer.addMetaEventListener(this);
         (credits = new Credits()).start();
     }
 
@@ -304,7 +304,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
                                               format.getFrameSize()));
 
                 Clip clip = (Clip) AudioSystem.getLine(info);
-                clip.addLineListener(this);
+//                clip.addLineListener(this);
                 clip.open(stream);
                 currentSound = clip;
                 seekSlider.setMaximum((int) stream.getFrameLength());

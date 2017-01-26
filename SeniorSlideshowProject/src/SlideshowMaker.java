@@ -66,8 +66,8 @@ public class SlideshowMaker extends JFrame {
 		
 		JPanel PhotoPanel = new JPanel();
 		
-//		JPanel AudioPanel = new SoundTrack("/");
-		JPanel AudioPanel = new JPanel();
+		JPanel AudioPanel = new SoundTrack("/");
+//		JPanel AudioPanel = new JPanel();
 		GroupLayout gl_MainPanel = new GroupLayout(MainPanel);
 		gl_MainPanel.setHorizontalGroup(
 			gl_MainPanel.createParallelGroup(Alignment.LEADING)
