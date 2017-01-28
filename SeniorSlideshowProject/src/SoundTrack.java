@@ -89,7 +89,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     public SoundTrack(String dirName) 
     {
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(5,5,5,5));
+//        setBorder(new EmptyBorder(5,5,5,5));
 
         if (dirName != null) 
         {
@@ -99,7 +99,12 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
             jukeTable = new JukeTable(), controls = new JukeControls());
         splitPane.setContinuousLayout(true);
-        add(splitPane);
+      //Provide minimum sizes for the two components in the split pane
+        Dimension minimumSize = new Dimension(155, 150);
+        jukeTable.setMinimumSize(minimumSize);
+//        controls.setMinimumSize(minimumSize);
+        
+        add(splitPane, BorderLayout.CENTER);
     }
 
 
@@ -620,24 +625,13 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         public JukeControls() 
         {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-            JPanel p1 = new JPanel();
-            p1.setLayout(new BoxLayout(p1, BoxLayout.Y_AXIS));
-            p1.setBorder(new EmptyBorder(10,0,5,0));
-            JPanel p2 = new JPanel();
-            startB = addButton("Start", p2, sounds.size() != 0);
-            pauseB = addButton("Pause", p2, false);
-            p1.add(p2);
-            JPanel p3 = new JPanel();
-            prevB = addButton("<<", p3, false);
-            nextB = addButton(">>", p3, false);
-            p1.add(p3);
-            add(p1);
+//            setSize(700,150);
+            
     
             JPanel p4 = new JPanel(new BorderLayout());
-            EmptyBorder eb = new EmptyBorder(5,20,10,20);
-            BevelBorder bb = new BevelBorder(BevelBorder.LOWERED);
-            p4.setBorder(new CompoundBorder(eb,bb));
+//            EmptyBorder eb = new EmptyBorder(5,20,10,20);
+//            BevelBorder bb = new BevelBorder(BevelBorder.LOWERED);
+//            p4.setBorder(new CompoundBorder(eb,bb));
             p4.add(playbackMonitor);
             seekSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
             seekSlider.setEnabled(false);
@@ -647,7 +641,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
             JPanel p5 = new JPanel();
             p5.setLayout(new BoxLayout(p5, BoxLayout.X_AXIS));
-            p5.setBorder(new EmptyBorder(5,5,10,5));
+//            p5.setBorder(new EmptyBorder(5,5,10,5));
 //            panSlider = new JSlider(-100, 100, 0);
 //            panSlider.addChangeListener(this);
 //            TitledBorder tb = new TitledBorder(new EtchedBorder());
@@ -661,6 +655,21 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 //            gainSlider.setBorder(tb);
 //            p5.add(gainSlider);
             add(p5);
+            
+            JPanel p1 = new JPanel();
+            p1.setLayout(new BoxLayout(p1, BoxLayout.Y_AXIS));
+//            p1.setBorder(new EmptyBorder(10,0,5,0));
+            JPanel p2 = new JPanel();
+            prevB = addButton("<<", p2, false);
+            startB = addButton("Start", p2, sounds.size() != 0);
+            pauseB = addButton("Pause", p2, false);
+            nextB = addButton(">>", p2, false);
+            p1.add(p2);
+//            JPanel p3 = new JPanel();
+//            prevB = addButton("<<", p3, false);
+//            nextB = addButton(">>", p3, false);
+//            p1.add(p3);
+            add(p1);
         }
 
         private JButton addButton(String name, JPanel panel, boolean state) 
@@ -955,7 +964,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
         public JukeTable() {
             setLayout(new BorderLayout());
-            setPreferredSize(new Dimension(260,300));
+            setPreferredSize(new Dimension(155,300)); // width and height
 
             final String[] names = { "#", "Name" };
     
@@ -999,7 +1008,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             JPanel p1 = new JPanel();
             JMenuBar menuBar = new JMenuBar();
             menuBar.setBorder(new BevelBorder(BevelBorder.RAISED));
-            JMenu menu = (JMenu) menuBar.add(new JMenu("Add"));
+            JMenu menu = (JMenu) menuBar.add(new JMenu("+"));
             String items[] = { "File or Directory of Files", "URL" };
             for (int i = 0; i < items.length; i++) {
                 JMenuItem item = menu.add(new JMenuItem(items[i]));
@@ -1009,7 +1018,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
             menuBar = new JMenuBar();
             menuBar.setBorder(new BevelBorder(BevelBorder.RAISED));
-            menu = (JMenu) menuBar.add(new JMenu("Remove"));
+            menu = (JMenu) menuBar.add(new JMenu("-"));
             JMenuItem item = menu.add(new JMenuItem("Selected"));
             item.addActionListener(this);
             item = menu.add(new JMenuItem("All"));
@@ -1212,8 +1221,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         f.getContentPane().add("Center", juke);
         f.pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int w = 750;
-        int h = 340;
+        int w = 750; // canvas width
+        int h = 240; // canvas height
         f.setLocation(screenSize.width/2 - w/2, screenSize.height/2 - h/2);
         f.setSize(w, h);
         f.setVisible(true);
