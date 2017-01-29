@@ -1,7 +1,8 @@
 package Slides;
 import java.util.*;
+import java.io.Serializable;
 
-public class SlideShowStateMachine{
+public class SlideShowStateMachine implements Serializable {
 	
 	/* This is the state machine for the program.
 	 * All audio and image file locations, their sequence,
@@ -9,6 +10,7 @@ public class SlideShowStateMachine{
 	 */
 	
 	private static SlideShowStateMachine singleton = new SlideShowStateMachine();
+	private static final long serialVersionUID = 1L;
 	
 	private ArrayList<AudioState> audioList;
 	private ArrayList<SlideState> slideList;
