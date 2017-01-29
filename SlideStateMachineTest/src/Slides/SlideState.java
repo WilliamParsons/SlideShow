@@ -1,7 +1,12 @@
 package Slides;
-public class SlideState{
+
+import java.io.Serializable;
+
+public class SlideState implements Serializable {
 	
 	public enum Transition{ LEFT, RIGHT, UP, DOWN, CROSSFADE };
+	
+	private static final long serialVersionUID = 1L;
 	
 	private Transition transitionType;
 	private String filename;
