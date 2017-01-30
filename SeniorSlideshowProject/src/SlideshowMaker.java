@@ -23,6 +23,7 @@ import java.awt.Choice;
 import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import java.awt.Color;
+import javax.swing.JRadioButton;
 
 public class SlideshowMaker extends JFrame {
 
@@ -66,7 +67,8 @@ public class SlideshowMaker extends JFrame {
 		
 		JPanel PhotoPanel = new JPanel();
 		
-		JPanel AudioPanel = new JPanel();
+		SoundTrack soundTrack = new SoundTrack((String) null);
+		soundTrack.setBorder(new EmptyBorder(0, 0, 0, 0));
 		GroupLayout gl_MainPanel = new GroupLayout(MainPanel);
 		gl_MainPanel.setHorizontalGroup(
 			gl_MainPanel.createParallelGroup(Alignment.LEADING)
@@ -75,74 +77,29 @@ public class SlideshowMaker extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(ListScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_MainPanel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(PhotoPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
-						.addComponent(TransitionPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
-						.addComponent(LayoutPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
-						.addComponent(AudioPanel, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE))
+					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
+						.addComponent(PhotoPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
+						.addComponent(TransitionPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
+						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_MainPanel.setVerticalGroup(
-			gl_MainPanel.createParallelGroup(Alignment.LEADING)
-				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
-				.addGroup(Alignment.TRAILING, gl_MainPanel.createSequentialGroup()
-					.addGroup(gl_MainPanel.createParallelGroup(Alignment.TRAILING)
+			gl_MainPanel.createParallelGroup(Alignment.TRAILING)
+				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
+				.addGroup(gl_MainPanel.createSequentialGroup()
+					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_MainPanel.createSequentialGroup()
 							.addComponent(LayoutPanel, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(TransitionPanel, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
+							.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(AudioPanel, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
-						.addComponent(ListScroll, GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE))
+							.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
+						.addComponent(ListScroll, GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
 					.addContainerGap())
 		);
-		
-		JLabel lblNewLabel = new JLabel("Audio Selection");
-		
-		JList list_1 = new JList();
-		
-		JButton Play = new JButton("Play");
-		
-		JButton Pause = new JButton("Pause");
-		
-		JButton Add = new JButton("Add");
-		GroupLayout gl_AudioPanel = new GroupLayout(AudioPanel);
-		gl_AudioPanel.setHorizontalGroup(
-			gl_AudioPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_AudioPanel.createSequentialGroup()
-					.addGroup(gl_AudioPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_AudioPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblNewLabel))
-						.addGroup(gl_AudioPanel.createSequentialGroup()
-							.addGap(105)
-							.addGroup(gl_AudioPanel.createParallelGroup(Alignment.LEADING, false)
-								.addGroup(gl_AudioPanel.createSequentialGroup()
-									.addComponent(Pause)
-									.addGap(306)
-									.addComponent(Play)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(Add))
-								.addComponent(list_1, GroupLayout.PREFERRED_SIZE, 787, GroupLayout.PREFERRED_SIZE))))
-					.addContainerGap(83, Short.MAX_VALUE))
-		);
-		gl_AudioPanel.setVerticalGroup(
-			gl_AudioPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_AudioPanel.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel)
-					.addGap(18)
-					.addComponent(list_1, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(gl_AudioPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(Pause)
-						.addComponent(Add)
-						.addComponent(Play))
-					.addContainerGap(19, Short.MAX_VALUE))
-		);
-		AudioPanel.setLayout(gl_AudioPanel);
 		
 		JLabel lblPhotoPreview = new JLabel("Photo Preview");
 		
