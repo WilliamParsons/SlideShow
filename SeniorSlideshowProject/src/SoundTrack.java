@@ -95,9 +95,10 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
         {
             loadJuke(dirName); 
         }
-
+        JukeControls controls = new JukeControls();
+        jukeTable = new JukeTable();
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
-            jukeTable = new JukeTable(), controls = new JukeControls());
+            jukeTable, controls);
         splitPane.setContinuousLayout(true);
       //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(155, 150);
