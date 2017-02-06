@@ -26,6 +26,8 @@ import java.awt.Color;
 import javax.swing.JRadioButton;
 import javax.swing.JApplet;
 import javax.swing.BoxLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class SlideshowMaker extends JFrame {
 
@@ -79,27 +81,25 @@ public class SlideshowMaker extends JFrame {
 					.addComponent(ListScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(PhotoPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
-						.addComponent(TransitionPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
-						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
-						.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE))
+						.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
+						.addComponent(PhotoPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(TransitionPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_MainPanel.setVerticalGroup(
 			gl_MainPanel.createParallelGroup(Alignment.TRAILING)
-				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
+				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
 				.addGroup(gl_MainPanel.createSequentialGroup()
-					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_MainPanel.createSequentialGroup()
-							.addComponent(LayoutPanel, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(TransitionPanel, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(soundTrack, GroupLayout.PREFERRED_SIZE, 238, GroupLayout.PREFERRED_SIZE))
-						.addComponent(ListScroll, GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
+					.addComponent(LayoutPanel, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(TransitionPanel, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
 					.addContainerGap())
+				.addComponent(ListScroll, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
 		);
 		soundTrack.setLayout(new BoxLayout(soundTrack, BoxLayout.X_AXIS));
 		

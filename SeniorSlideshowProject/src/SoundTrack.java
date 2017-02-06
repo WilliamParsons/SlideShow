@@ -50,6 +50,7 @@ import java.net.URL;
 
 
 
+
 /**
  * A JukeBox for sampled and midi sound files.  Features duration progress, 
  * seek slider, pan and volume controls.
@@ -90,7 +91,6 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
     {
         setLayout(new BorderLayout());
 //        setBorder(new EmptyBorder(5,5,5,5));
-
         if (dirName != null) 
         {
             loadJuke(dirName); 
@@ -271,11 +271,11 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
         loading.interrupt();
 
         // user pressed stop or changed tabs while loading
-        if (sequencer == null) 
-        {
-            currentSound = null;
-            return false;
-        } 
+//        if (sequencer == null) 
+//        {
+//            currentSound = null;
+//            return false;
+//        } 
 
         if (currentSound instanceof AudioInputStream) 
         {
@@ -377,7 +377,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
             {
                 try 
                 { 
-                	thread.sleep(99); 
+                	Thread.sleep(99); 
                 } 
                 catch (Exception e) 
                 {
@@ -393,7 +393,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
             clip.start();
             try 
             { 
-            	thread.sleep(99); 
+            	Thread.sleep(99); 
             } 
             catch (Exception e) 
             { }
@@ -401,7 +401,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
             {
                 try 
                 { 
-                	thread.sleep(99); 
+                	Thread.sleep(99); 
                 } 
                 catch (Exception e) 
                 {
@@ -503,7 +503,12 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
     {
         thread = new Thread(this);
         thread.setName("Juke");
-        thread.start();
+        try{
+        	thread.start();
+        }catch (Exception e) {
+        	e.printStackTrace();
+        	System.exit(0);
+        }
     }
 
 
@@ -534,7 +539,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
                 // take a little break between sounds
                 try 
                 { 
-                	thread.sleep(222); 
+                	Thread.sleep(222); 
                 } 
                 catch (Exception e) 
                 {
@@ -920,7 +925,13 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
         {
             pbThread = new Thread(this);
             pbThread.setName("PlaybackMonitor");
-            pbThread.start();
+            
+            try{
+            	pbThread.start();
+            }catch (Exception e) {
+            	e.printStackTrace();
+            	System.exit(0);
+            }
         }
         
         public void stop() 
@@ -938,7 +949,7 @@ public class SoundTrack extends JPanel implements Runnable, LineListener, MetaEv
             {
                 try 
                 {
-                    pbThread.sleep(99);
+                    Thread.sleep(99);
                 } 
                 catch (Exception e) 
                 { 
