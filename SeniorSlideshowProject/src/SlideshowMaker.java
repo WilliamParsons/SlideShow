@@ -24,6 +24,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import java.awt.Color;
 import javax.swing.JRadioButton;
+import javax.swing.JApplet;
+import javax.swing.BoxLayout;
 
 public class SlideshowMaker extends JFrame {
 
@@ -67,8 +69,7 @@ public class SlideshowMaker extends JFrame {
 		
 		JPanel PhotoPanel = new JPanel();
 		
-		SoundTrack soundTrack = new SoundTrack("SoundFiles");//(String) null
-		soundTrack.setBorder(new EmptyBorder(0, 0, 0, 0));
+		SoundTrack soundTrack = new SoundTrack((String) null);
 		GroupLayout gl_MainPanel = new GroupLayout(MainPanel);
 		gl_MainPanel.setHorizontalGroup(
 			gl_MainPanel.createParallelGroup(Alignment.LEADING)
@@ -78,10 +79,10 @@ public class SlideshowMaker extends JFrame {
 					.addComponent(ListScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
 						.addComponent(PhotoPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
 						.addComponent(TransitionPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
-						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE))
+						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE)
+						.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 997, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		gl_MainPanel.setVerticalGroup(
@@ -96,10 +97,11 @@ public class SlideshowMaker extends JFrame {
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
+							.addComponent(soundTrack, GroupLayout.PREFERRED_SIZE, 238, GroupLayout.PREFERRED_SIZE))
 						.addComponent(ListScroll, GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
 					.addContainerGap())
 		);
+		soundTrack.setLayout(new BoxLayout(soundTrack, BoxLayout.X_AXIS));
 		
 		JLabel lblPhotoPreview = new JLabel("Photo Preview");
 		
