@@ -1,4 +1,6 @@
 import Slides.*;
+import FileManager.FileManager;
+
 import Slides.SlideState.Transition;
 
 public class Test{
@@ -8,6 +10,11 @@ public class Test{
 	public static void main(String []args)
 	{
 		SetUp();
+		FileManager mgr = new FileManager();
+		mgr.writeFile(stateMachine, "test.ssp");
+		stateMachine = null;
+		stateMachine = mgr.readFile("test.ssp");
+		
 		System.out.println("*****************************");
 		System.out.println("***Testing_Slide_Iteration***");
 		System.out.println("*****************************");

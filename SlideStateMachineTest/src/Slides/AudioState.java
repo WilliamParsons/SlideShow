@@ -1,5 +1,10 @@
 package Slides;
-public class AudioState{
+
+import java.io.Serializable;
+
+public class AudioState implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private String filename;
 	private double audioTime;
