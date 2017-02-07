@@ -24,12 +24,19 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import java.awt.Color;
 import javax.swing.JRadioButton;
+<<<<<<< HEAD
+import javax.swing.JApplet;
+import javax.swing.BoxLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+=======
 import javax.swing.SwingConstants;
 import javax.swing.AbstractListModel;
 import java.awt.Font;
 import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+>>>>>>> master
 
 public class SlideshowMaker extends JFrame {
 
@@ -74,7 +81,6 @@ public class SlideshowMaker extends JFrame {
 		JPanel TransitionPanel = new JPanel();
 		
 		SoundTrack soundTrack = new SoundTrack((String) null);
-		soundTrack.setBorder(new EmptyBorder(0, 0, 0, 0));
 		GroupLayout gl_MainPanel = new GroupLayout(MainPanel);
 		gl_MainPanel.setHorizontalGroup(
 			gl_MainPanel.createParallelGroup(Alignment.LEADING)
@@ -83,16 +89,35 @@ public class SlideshowMaker extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(ListScroll, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
+<<<<<<< HEAD
+					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
+						.addComponent(PhotoPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(TransitionPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+=======
 					.addGroup(gl_MainPanel.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_MainPanel.createSequentialGroup()
 							.addComponent(TransitionPanel, GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.UNRELATED)
 							.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
 						.addComponent(LayoutPanel, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE))
+>>>>>>> master
 					.addContainerGap())
 		);
 		gl_MainPanel.setVerticalGroup(
 			gl_MainPanel.createParallelGroup(Alignment.TRAILING)
+<<<<<<< HEAD
+				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+				.addGroup(gl_MainPanel.createSequentialGroup()
+					.addComponent(LayoutPanel, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(TransitionPanel, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+=======
 				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
 				.addGroup(gl_MainPanel.createSequentialGroup()
 					.addGroup(gl_MainPanel.createParallelGroup(Alignment.LEADING)
@@ -105,8 +130,11 @@ public class SlideshowMaker extends JFrame {
 									.addGap(2))
 								.addComponent(soundTrack, GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)))
 						.addComponent(ListScroll, GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE))
+>>>>>>> master
 					.addContainerGap())
+				.addComponent(ListScroll, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
 		);
+		soundTrack.setLayout(new BoxLayout(soundTrack, BoxLayout.X_AXIS));
 		
 		JButton Beginning = new JButton("Beginning");
 		
