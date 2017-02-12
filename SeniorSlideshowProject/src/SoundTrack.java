@@ -271,11 +271,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         loading.interrupt();
 
         // user pressed stop or changed tabs while loading
-        if (sequencer == null) 
-        {
-            currentSound = null;
-            return false;
-        } 
+//        if (sequencer == null) 
+//        {
+//            currentSound = null;
+//            return false;
+//        } 
 
         if (currentSound instanceof AudioInputStream) 
         {
@@ -377,7 +377,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             {
                 try 
                 { 
-                	thread.sleep(99); 
+                	Thread.sleep(99); 
                 } 
                 catch (Exception e) 
                 {
@@ -393,7 +393,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             clip.start();
             try 
             { 
-            	thread.sleep(99); 
+            	Thread.sleep(99); 
             } 
             catch (Exception e) 
             { }
@@ -401,7 +401,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             {
                 try 
                 { 
-                	thread.sleep(99); 
+                	Thread.sleep(99); 
                 } 
                 catch (Exception e) 
                 {
@@ -534,7 +534,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 // take a little break between sounds
                 try 
                 { 
-                	thread.sleep(222); 
+                	Thread.sleep(222); 
                 } 
                 catch (Exception e) 
                 {
@@ -938,7 +938,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             {
                 try 
                 {
-                    pbThread.sleep(99);
+                    Thread.sleep(99);
                 } 
                 catch (Exception e) 
                 { 
