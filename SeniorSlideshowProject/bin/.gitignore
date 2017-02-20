@@ -1,20 +1,10 @@
-<<<<<<< HEAD
-*.class
-=======
+/#SlideshowMaker.java#
+/ImageFiles/
 /SlideshowMaker$1.class
+/SlideshowMaker$2.class
+/SlideshowMaker$3.class
 /SlideshowMaker.class
-/Juke$Credits.class
-/Juke$JukeControls.class
-/Juke$JukeTable.class
-/Juke$Loading.class
-/Juke$PlaybackMonitor.class
-/Juke.class
 /SoundFiles/
-/Snippet.class
-/snippet/
-/ControlContext.class
-/Juke$1.class
-/Juke$JukeTable$1.class
 /SoundTrack$1.class
 /SoundTrack$Credits.class
 /SoundTrack$JukeControls.class
@@ -23,5 +13,3 @@
 /SoundTrack$Loading.class
 /SoundTrack$PlaybackMonitor.class
 /SoundTrack.class
-/ImageFiles/
->>>>>>> refs/remotes/origin/bryce_branch_desktop
