@@ -1,33 +1,55 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JList;
-import javax.swing.JScrollBar;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
-import javax.swing.JSpinner;
-import javax.swing.JEditorPane;
 import javax.swing.JSlider;
-import java.awt.Canvas;
-import javax.swing.JLayeredPane;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
 import javax.swing.JButton;
-import java.awt.Choice;
-import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
-import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.JRadioButton;
+import javax.swing.SwingConstants;
+import javax.imageio.ImageIO;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.swing.JMenuBar;
+import javax.swing.border.BevelBorder;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.border.EtchedBorder;
 
 public class SlideshowMaker extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	private JPanel MainPanel;
-	private JTextField LayoutOfThe;
+	private JPanel LayoutPanel;
+	private JSlider layoutSlider;
+	private JButton addImageBtn;
+	private JButton removeImageBtn;
+	private JPanel TransitionPanel;
+	private SoundTrack soundTrack;
+	private JLabel lblImagepreview;
+	private File imageFile;
+	private ImageIcon previewImage;
+	private JPanel AudioPanel;
+	private JMenu mnFile;
+	private JMenuItem mntmOpen;
+	private JMenuItem mntmSave;
+	private JRadioButton rdbtnNoTrans;
+	private JRadioButton rdbtnSwipeUp;
+	private JRadioButton rdbtnSwipeDown;
+	private JRadioButton rdbtnSwipeLeft;
+	private JRadioButton rdbtnSwipeRight;
+	private JRadioButton rdbtnCrossfade;
+	private JPanel EditPanel;
+	private JLabel lblSlidesRight;
+	private JLabel lblNextImage;
+	private JLabel lblPrimaryImage;
+	private JLabel lblPreviousImage;
+	private JLabel lblSlidesLeft;
 
 	/**
 	 * Launch the application.
@@ -37,6 +59,7 @@ public class SlideshowMaker extends JFrame {
 			public void run() {
 				try {
 					SlideshowMaker frame = new SlideshowMaker();
+					frame.setMinimumSize(new Dimension(800, 600));
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,221 +74,215 @@ public class SlideshowMaker extends JFrame {
 	public SlideshowMaker() {
 		setTitle("Slideshow Maker");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1175, 718);
+		setBounds(100, 100, 800, 600);
+		
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+		
+		mntmOpen = new JMenuItem("Open");
+		mnFile.add(mntmOpen);
+		
+		mntmSave = new JMenuItem("Save");
+		mnFile.add(mntmSave);
 		MainPanel = new JPanel();
+		MainPanel.addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				resizePanels();
+			}
+		});
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		MainPanel.setBounds(5, 5, 790, 590);
 		setContentPane(MainPanel);
 		
-		JList DirectoryList = new JList();
+		LayoutPanel = new JPanel();
+		LayoutPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		LayoutPanel.setBounds(10, 11, 764, 140);
 		
-		JScrollBar ListScroll = new JScrollBar();
+		TransitionPanel = new JPanel();
+		TransitionPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		TransitionPanel.setBounds(10, 162, 764, 238);
+
+		MainPanel.setLayout(null);
+		MainPanel.add(LayoutPanel);
+		LayoutPanel.setLayout(null);
 		
-		JPanel LayoutPanel = new JPanel();
+		addImageBtn = new JButton("+");
+		addImageBtn.setBounds(659, 110, 45, 20);
+		LayoutPanel.add(addImageBtn);
 		
-		JPanel TransitionPanel = new JPanel();
+		removeImageBtn = new JButton("-");
+		removeImageBtn.setBounds(704, 110, 45, 20);
+		LayoutPanel.add(removeImageBtn);
 		
-		JPanel PhotoPanel = new JPanel();
+		layoutSlider = new JSlider();
+		layoutSlider.setBounds(15, 110, 642, 20);
+		layoutSlider.setValue(0);
+		LayoutPanel.add(layoutSlider);
 		
-		JPanel AudioPanel = new JPanel();
-		GroupLayout gl_MainPanel = new GroupLayout(MainPanel);
-		gl_MainPanel.setHorizontalGroup(
-			gl_MainPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_MainPanel.createSequentialGroup()
-					.addComponent(DirectoryList, GroupLayout.PREFERRED_SIZE, 135, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(ListScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_MainPanel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(PhotoPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
-						.addComponent(TransitionPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
-						.addComponent(LayoutPanel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE)
-						.addComponent(AudioPanel, GroupLayout.DEFAULT_SIZE, 975, Short.MAX_VALUE))
-					.addContainerGap())
-		);
-		gl_MainPanel.setVerticalGroup(
-			gl_MainPanel.createParallelGroup(Alignment.LEADING)
-				.addComponent(DirectoryList, GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
-				.addGroup(Alignment.TRAILING, gl_MainPanel.createSequentialGroup()
-					.addGroup(gl_MainPanel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_MainPanel.createSequentialGroup()
-							.addComponent(LayoutPanel, GroupLayout.PREFERRED_SIZE, 240, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(TransitionPanel, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(PhotoPanel, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(AudioPanel, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
-						.addComponent(ListScroll, GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE))
-					.addContainerGap())
-		);
+		lblSlidesRight = new JLabel("");
+		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSlidesRight.setBounds(487, 37, 40, 30);
+		ImageIcon iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));
+		Image slidesRight = iconRight.getImage().getScaledInstance(lblSlidesRight.getWidth(), lblSlidesRight.getHeight(), Image.SCALE_SMOOTH);
+		lblSlidesRight.setIcon(new ImageIcon(slidesRight, iconRight.getDescription()));
+		LayoutPanel.add(lblSlidesRight);
 		
-		JLabel lblNewLabel = new JLabel("Audio Selection");
+		lblNextImage = new JLabel("Next Image");
+		lblNextImage.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNextImage.setBounds(397, 22, 80, 60);
+		LayoutPanel.add(lblNextImage);
 		
-		JList list_1 = new JList();
+		lblPrimaryImage = new JLabel("Primary Image");
+		lblPrimaryImage.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPrimaryImage.setBounds(267, 7, 120, 90);
+		LayoutPanel.add(lblPrimaryImage);
 		
-		JButton Play = new JButton("Play");
+		lblPreviousImage = new JLabel("Previous Image");
+		lblPreviousImage.setHorizontalAlignment(SwingConstants.CENTER);
+		lblPreviousImage.setBounds(177, 22, 80, 60);
+		LayoutPanel.add(lblPreviousImage);
 		
-		JButton Pause = new JButton("Pause");
+		lblSlidesLeft = new JLabel("");
+		lblSlidesLeft.setHorizontalAlignment(SwingConstants.CENTER);
+		lblSlidesLeft.setBounds(127, 37, 40, 30);
+		ImageIcon iconLeft = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesLeft.jpg"));
+		Image slidesLeft = iconLeft.getImage().getScaledInstance(lblSlidesLeft.getWidth(), lblSlidesLeft.getHeight(), Image.SCALE_SMOOTH);
+		lblSlidesLeft.setIcon(new ImageIcon(slidesLeft, iconLeft.getDescription()));
+		LayoutPanel.add(lblSlidesLeft);
 		
-		JButton Add = new JButton("Add");
-		GroupLayout gl_AudioPanel = new GroupLayout(AudioPanel);
-		gl_AudioPanel.setHorizontalGroup(
-			gl_AudioPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_AudioPanel.createSequentialGroup()
-					.addGroup(gl_AudioPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_AudioPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblNewLabel))
-						.addGroup(gl_AudioPanel.createSequentialGroup()
-							.addGap(105)
-							.addGroup(gl_AudioPanel.createParallelGroup(Alignment.LEADING, false)
-								.addGroup(gl_AudioPanel.createSequentialGroup()
-									.addComponent(Pause)
-									.addGap(306)
-									.addComponent(Play)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(Add))
-								.addComponent(list_1, GroupLayout.PREFERRED_SIZE, 787, GroupLayout.PREFERRED_SIZE))))
-					.addContainerGap(83, Short.MAX_VALUE))
-		);
-		gl_AudioPanel.setVerticalGroup(
-			gl_AudioPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_AudioPanel.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblNewLabel)
-					.addGap(18)
-					.addComponent(list_1, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(gl_AudioPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(Pause)
-						.addComponent(Add)
-						.addComponent(Play))
-					.addContainerGap(19, Short.MAX_VALUE))
-		);
-		AudioPanel.setLayout(gl_AudioPanel);
+		AudioPanel = new JPanel();
+		AudioPanel.setBounds(10, 411, 764, 119);
+		MainPanel.add(AudioPanel);
+		AudioPanel.setLayout(null);
 		
-		JLabel lblPhotoPreview = new JLabel("Photo Preview");
+		soundTrack = new SoundTrack((String) null);
+		soundTrack.setBounds(0, 0, 764, 110);
+		AudioPanel.add(soundTrack);
+		MainPanel.add(TransitionPanel);
 		
-		JLabel lblThePhotoPreview = new JLabel("The photo preview for the selected pictures.");
-		GroupLayout gl_PhotoPanel = new GroupLayout(PhotoPanel);
-		gl_PhotoPanel.setHorizontalGroup(
-			gl_PhotoPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_PhotoPanel.createSequentialGroup()
-					.addGroup(gl_PhotoPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_PhotoPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblPhotoPreview))
-						.addGroup(gl_PhotoPanel.createSequentialGroup()
-							.addGap(369)
-							.addComponent(lblThePhotoPreview)))
-					.addContainerGap(392, Short.MAX_VALUE))
-		);
-		gl_PhotoPanel.setVerticalGroup(
-			gl_PhotoPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_PhotoPanel.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblPhotoPreview)
-					.addGap(38)
-					.addComponent(lblThePhotoPreview)
-					.addContainerGap(67, Short.MAX_VALUE))
-		);
-		PhotoPanel.setLayout(gl_PhotoPanel);
+		TransitionPanel.setLayout(null);
 		
-		JButton Beginning = new JButton("Beginning");
+		EditPanel = new JPanel();
+		EditPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
+		EditPanel.setBounds(542, 9, 124, 212);
+		TransitionPanel.add(EditPanel);
+		EditPanel.setLayout(null);
 		
-		JButton Previous = new JButton("Previous");
+		JButton PreviewTransition = new JButton(">");
+		PreviewTransition.setBounds(35, 166, 45, 23);
+		EditPanel.add(PreviewTransition);
 		
-		JButton SelectTransition = new JButton("Select Transition");
+		rdbtnNoTrans = new JRadioButton("None");
+		rdbtnNoTrans.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnNoTrans.setBounds(10, 9, 105, 23);
+		EditPanel.add(rdbtnNoTrans);
 		
-		JButton Next = new JButton("Next");
+		rdbtnSwipeUp = new JRadioButton("Swipe Up");
+		rdbtnSwipeUp.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnSwipeUp.setBounds(10, 35, 105, 23);
+		EditPanel.add(rdbtnSwipeUp);
 		
-		JButton End = new JButton("End");
+		rdbtnSwipeDown = new JRadioButton("Swipe Down");
+		rdbtnSwipeDown.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnSwipeDown.setBounds(10, 61, 105, 23);
+		EditPanel.add(rdbtnSwipeDown);
 		
-		JList TransitionList = new JList();
-		TransitionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		rdbtnSwipeLeft = new JRadioButton("Swipe Left");
+		rdbtnSwipeLeft.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnSwipeLeft.setBounds(10, 87, 105, 23);
+		EditPanel.add(rdbtnSwipeLeft);
 		
-		JLabel lblTransitionSelection = new JLabel("Transition Selection");
-		GroupLayout gl_TransitionPanel = new GroupLayout(TransitionPanel);
-		gl_TransitionPanel.setHorizontalGroup(
-			gl_TransitionPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_TransitionPanel.createSequentialGroup()
-					.addContainerGap(94, Short.MAX_VALUE)
-					.addGroup(gl_TransitionPanel.createParallelGroup(Alignment.LEADING, false)
-						.addGroup(gl_TransitionPanel.createSequentialGroup()
-							.addComponent(Beginning)
-							.addGap(50)
-							.addComponent(Previous)
-							.addGap(144)
-							.addComponent(SelectTransition)
-							.addGap(134)
-							.addComponent(Next)
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(End))
-						.addComponent(TransitionList, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 819, GroupLayout.PREFERRED_SIZE))
-					.addGap(62))
-				.addGroup(gl_TransitionPanel.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblTransitionSelection)
-					.addContainerGap(872, Short.MAX_VALUE))
-		);
-		gl_TransitionPanel.setVerticalGroup(
-			gl_TransitionPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_TransitionPanel.createSequentialGroup()
-					.addGap(6)
-					.addComponent(lblTransitionSelection)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(TransitionList, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(gl_TransitionPanel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_TransitionPanel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(Beginning)
-							.addComponent(Previous))
-						.addGroup(gl_TransitionPanel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(End)
-							.addComponent(Next)
-							.addComponent(SelectTransition)))
-					.addContainerGap())
-		);
-		TransitionPanel.setLayout(gl_TransitionPanel);
+		rdbtnSwipeRight = new JRadioButton("Swipe Right");
+		rdbtnSwipeRight.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnSwipeRight.setBounds(10, 113, 105, 23);
+		EditPanel.add(rdbtnSwipeRight);
 		
-		JSlider LayoutSlider = new JSlider();
-		LayoutSlider.setValue(0);
-		
-		LayoutOfThe = new JTextField();
-		LayoutOfThe.setText("Layout of the Pictures");
-		LayoutOfThe.setColumns(10);
-		
-		JLabel lblSlideshowPreview = new JLabel("Slideshow Preview");
-		lblSlideshowPreview.setForeground(Color.BLACK);
-		lblSlideshowPreview.setBackground(Color.LIGHT_GRAY);
-		GroupLayout gl_LayoutPanel = new GroupLayout(LayoutPanel);
-		gl_LayoutPanel.setHorizontalGroup(
-			gl_LayoutPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_LayoutPanel.createSequentialGroup()
-					.addGroup(gl_LayoutPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_LayoutPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(LayoutSlider, GroupLayout.DEFAULT_SIZE, 955, Short.MAX_VALUE))
-						.addGroup(gl_LayoutPanel.createSequentialGroup()
-							.addGap(414)
-							.addComponent(LayoutOfThe, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_LayoutPanel.createSequentialGroup()
-							.addContainerGap()
-							.addComponent(lblSlideshowPreview)))
-					.addContainerGap())
-		);
-		gl_LayoutPanel.setVerticalGroup(
-			gl_LayoutPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_LayoutPanel.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblSlideshowPreview)
-					.addGap(75)
-					.addComponent(LayoutOfThe, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 83, Short.MAX_VALUE)
-					.addComponent(LayoutSlider, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap())
-		);
-		LayoutPanel.setLayout(gl_LayoutPanel);
-		MainPanel.setLayout(gl_MainPanel);
+		rdbtnCrossfade = new JRadioButton("Crossfade");
+		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
+		rdbtnCrossfade.setBounds(10, 136, 105, 23);
+		EditPanel.add(rdbtnCrossfade);
+		lblImagepreview = new JLabel("");
+		lblImagepreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
+		TransitionPanel.add(lblImagepreview);
+		imageFile = new File(SlideshowMaker.class.getResource("/ImageFiles/Test1.jpg").getPath());
+		resizePanels();
 	}
+	
+	private void resizePanels(){
+		resizeMainPanel();
+		resizeLayoutPanel();
+		resizeAudioPanel();
+		resizeTransitionPanel();
+	}
+	
+	private void resizeMainPanel(){
+	    int panelWidth = this.getWidth()-35;
+	    int panelHeight = this.getHeight()-35;
+	    MainPanel.setBounds(5, 5, panelWidth, panelHeight);
+	}
+	
+	private void resizeLayoutPanel(){
+	    int mainPanelWidth = MainPanel.getWidth();
+	    int panelWidth = LayoutPanel.getWidth();
+	    int panelHeight = LayoutPanel.getHeight();
+	    double heightRatio = (double)panelHeight/(double)panelWidth;
+	    panelWidth = mainPanelWidth - 10;
+	    panelHeight = (int)(panelWidth*heightRatio);
+	    LayoutPanel.setBounds(10, 26, panelWidth, panelHeight);
+	    removeImageBtn.setBounds(panelWidth-60, panelHeight-30, 45, 20);
+	    addImageBtn.setBounds(panelWidth-110, panelHeight-30, 45, 20);
+	    layoutSlider.setBounds(15, panelHeight-30, panelWidth-160, 20);
+	}
+	
+	private void resizeTransitionPanel(){
+		int mainPanelWidth = MainPanel.getWidth();
+	    int oldHeight = TransitionPanel.getHeight();
+	    int panelY = LayoutPanel.getY() + LayoutPanel.getHeight() + 11;
+	    int panelWidth = mainPanelWidth - 10;
+	    int panelHeight = MainPanel.getHeight() - AudioPanel.getHeight() - LayoutPanel.getHeight() - 60;
+	    double labelHeightRatio = (double)panelHeight/(double)oldHeight;
+	    int labelHeight = (int)(lblImagepreview.getHeight()*labelHeightRatio);
+	    int labelWidth = (int)(labelHeight * 1.333);
+	    TransitionPanel.setBounds(10, panelY, panelWidth, panelHeight);
+    	lblImagepreview.setBounds((panelWidth/2)-(labelWidth/2), (TransitionPanel.getHeight()/2)-(labelHeight/2), labelWidth, labelHeight);
+		resizePreviewImage();
+    	EditPanel.setBounds(lblImagepreview.getX() + lblImagepreview.getWidth() + 10, lblImagepreview.getY() + lblImagepreview.getHeight() - 200, 118, 200);
+	}
+	
+	private void resizeAudioPanel(){
+		int mainPanelWidth = MainPanel.getWidth();
+		int panelWidth = mainPanelWidth - 10;
+	    AudioPanel.setBounds(10, MainPanel.getHeight()-129, panelWidth, 119);
+	    soundTrack.setBounds(0, 0, panelWidth, 110);
+	}
+	
+	private void resizePreviewImage(){
+		BufferedImage bufferedImg = null;
+		try {
+		    bufferedImg = ImageIO.read(imageFile);
+		    Image scaledImg;
+		    int imageHeight = bufferedImg.getHeight();
+		    int imageWidth = bufferedImg.getWidth();
+		    double heightRatio = (double)imageHeight/(double)imageWidth;
+		    int scaledHeight = lblImagepreview.getHeight();
+		    int scaledWidth = lblImagepreview.getWidth();
+		    if((scaledWidth*heightRatio) > scaledHeight){
+		    	scaledImg = bufferedImg.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+		    }
+		    else {
+		    	scaledImg = bufferedImg.getScaledInstance(scaledWidth, (int)(scaledWidth*heightRatio), Image.SCALE_SMOOTH);
+		    }
+		    previewImage = new ImageIcon(scaledImg);
+		    
+		    lblImagepreview.setIcon(previewImage);
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}		
+	}
+	
 }
