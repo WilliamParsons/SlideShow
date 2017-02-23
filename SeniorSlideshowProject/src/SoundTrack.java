@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.net.URL;
 
@@ -64,11 +65,16 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     PlaybackMonitor playbackMonitor = new PlaybackMonitor();
 
     Vector sounds = new Vector();
+    //public ArrayList<AudioState> audioList = new ArrayList<AudioState>();;
+    SlideShowStateMachine audioState = new SlideShowStateMachine();
+    
     Thread thread;
     Sequencer sequencer;
     boolean midiEOM, audioEOM;
     Synthesizer synthesizer;
     MidiChannel channels[]; 
+    
+    AudioState currentAudio;
     Object currentSound;
     String currentName;
     double duration;
@@ -201,6 +207,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             s.endsWith(".aif") || s.endsWith(".aiff"))
         {
             sounds.add(file);
+           //loadSound(file);
         }
     }
 
@@ -245,6 +252,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             try 
             {
                 currentSound = AudioSystem.getAudioInputStream((File) object);
+                
             } 
             catch(Exception e1) 
             {
@@ -281,6 +289,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         {
            try 
            {
+        	   	currentAudio = new AudioState((AudioInputStream)currentSound, currentName);
+        	   	audioState.addAudio(currentAudio);
                 AudioInputStream stream = (AudioInputStream) currentSound;
                 AudioFormat format = stream.getFormat();
 

@@ -24,6 +24,8 @@ import javax.swing.border.EtchedBorder;
 public class SlideshowMaker extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	
+	private SlideShowStateMachine stateMachine;
 	private JPanel MainPanel;
 	private JPanel LayoutPanel;
 	private JSlider layoutSlider;
