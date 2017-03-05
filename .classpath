@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="Documentation/JavaAudioDemo1/src"/>
+	<classpathentry kind="src" path="Documentation/JavaSound/src"/>
+	<classpathentry kind="src" path="SeniorSlideshowProject/src"/>
+	<classpathentry kind="src" path="SlideStateMachineTest/src"/>
+	<classpathentry kind="lib" path="SeniorSlideshowProject/lib/jgoodies-common-javadoc.jar"/>
+	<classpathentry kind="lib" path="SeniorSlideshowProject/lib/jgoodies-common-sources.jar"/>
+	<classpathentry kind="lib" path="SeniorSlideshowProject/lib/jgoodies-common.jar"/>
+	<classpathentry kind="lib" path="SeniorSlideshowProject/lib/jgoodies-forms-javadoc.jar"/>
+	<classpathentry kind="lib" path="SeniorSlideshowProject/lib/jgoodies-forms-sources.jar"/>
+	<classpathentry kind="lib" path="SeniorSlideshowProject/lib/jgoodies-forms.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="Documentation/JavaAudioDemo1/bin"/>
+</classpath>

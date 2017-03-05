@@ -120,7 +120,7 @@ public class SlideshowMaker extends JFrame {
 		LayoutPanel.add(removeImageBtn);
 		
 		layoutSlider = new JSlider();
-		layoutSlider.setBounds(15, 110, 642, 20);
+		layoutSlider.setBounds(10, 108, 642, 20);
 		layoutSlider.setValue(0);
 		LayoutPanel.add(layoutSlider);
 		
