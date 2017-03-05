@@ -6,15 +6,16 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JSlider;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import java.awt.Dimension;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
-import javax.imageio.ImageIO;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Vector;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JMenuBar;
@@ -22,10 +23,17 @@ import javax.swing.border.BevelBorder;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.border.EtchedBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 
 public class SlideshowMaker extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private static final int FILES_AND_DIRECTORIES = 2;
 	private JPanel MainPanel;
 	private JPanel LayoutPanel;
 	private JSlider layoutSlider;
@@ -33,7 +41,7 @@ public class SlideshowMaker extends JFrame {
 	private JButton removeImageBtn;
 	private JPanel TransitionPanel;
 	private SoundTrack soundTrack;
-	private JLabel lblImagepreview;
+	private JLabel lblImagePreview;
 	private File imageFile;
 	private ImageIcon previewImage;
 	private JPanel AudioPanel;
@@ -52,7 +60,10 @@ public class SlideshowMaker extends JFrame {
 	private JLabel lblPrimaryImage;
 	private JLabel lblPreviousImage;
 	private JLabel lblSlidesLeft;
-
+	private SlideShowStateMachine slideStateMachine;
+	private SlideState previousSlide;
+	private SlideState currentSlide;
+	private SlideState nextSlide;
 	/**
 	 * Launch the application.
 	 */
@@ -78,7 +89,8 @@ public class SlideshowMaker extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		
-		
+		slideStateMachine = SlideShowStateMachine.getInstance();
+				
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -114,19 +126,85 @@ public class SlideshowMaker extends JFrame {
 		LayoutPanel.setLayout(null);
 		
 		addImageBtn = new JButton("+");
+		addImageBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileTypeFilter(".jpg", "image file"));
+				fc.setFileSelectionMode(FILES_AND_DIRECTORIES);
+				int result = fc.showDialog(null, "Add Image");
+				if (result == JFileChooser.APPROVE_OPTION){
+					String selectedFilePath = fc.getSelectedFile().getPath();
+					if (selectedFilePath.contains(".jpg")){
+						ImageIcon icon = new ImageIcon(selectedFilePath);
+						SlideState mySlide = new SlideState(icon);
+						slideStateMachine.addSlide(mySlide);
+					}
+					else{
+						makeListOfImages imageVector = new makeListOfImages();
+						Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
+						for (int i = 0; i < imageFileVector.size(); i++){
+							String filePath = (String) imageFileVector.elementAt(i);
+							ImageIcon icon = new ImageIcon(filePath);
+							SlideState mySlide = new SlideState(icon);
+							slideStateMachine.addSlide(mySlide);
+						}
+					}
+				}
+			int slideSize = slideStateMachine.getSlideShowSize();
+			layoutSlider.setMaximum(slideSize - 1);
+			layoutSlider.setEnabled(true);
+			}
+		});
+
 		addImageBtn.setBounds(659, 110, 45, 20);
 		LayoutPanel.add(addImageBtn);
-		AddImageListener imageListener = new AddImageListener();
-		addImageBtn.addActionListener(imageListener);
 		
 		removeImageBtn = new JButton("-");
+		removeImageBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int slideSize = slideStateMachine.getSlideShowSize();
+				layoutSlider.setMaximum(slideSize - 1);
+			}
+		});
 		removeImageBtn.setBounds(704, 110, 45, 20);
 		LayoutPanel.add(removeImageBtn);
 		
 		layoutSlider = new JSlider();
-		layoutSlider.setBounds(15, 110, 642, 20);
+		layoutSlider.setEnabled(false);
+		layoutSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				int currentIndex = layoutSlider.getValue();
+				previousSlide = slideStateMachine.getSlideAtIndex(currentIndex -1);
+				currentSlide = slideStateMachine.getSlideAtIndex(currentIndex);
+				nextSlide = slideStateMachine.getSlideAtIndex(currentIndex + 1);
+				
+				if(previousSlide != null) {
+					paintImage(lblPreviousImage, previousSlide.getIcon());
+				} else if (layoutSlider.isEnabled()){
+					lblPreviousImage.setIcon(null);
+				}
+				
+				if(currentSlide != null) {
+					paintImage(lblPrimaryImage, currentSlide.getIcon());
+					previewImage = currentSlide.getIcon();
+					paintImage(lblImagePreview, previewImage);
+				} else if (layoutSlider.isEnabled()){
+					lblPrimaryImage.setIcon(null);
+				}
+				
+				if(nextSlide != null) {
+					paintImage(lblNextImage, nextSlide.getIcon());
+				} else if (layoutSlider.isEnabled()){
+					lblNextImage.setIcon(null);
+				}	
+			}
+		});
+		layoutSlider.setBounds(15, 120, 642, 20);
 		layoutSlider.setValue(0);
-		LayoutPanel.add(layoutSlider);
+		layoutSlider.setMinimum(0);		
+		layoutSlider.setSnapToTicks(true);
+		LayoutPanel.add(layoutSlider);	
 		
 		lblSlidesRight = new JLabel("");
 		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
@@ -136,17 +214,17 @@ public class SlideshowMaker extends JFrame {
 		lblSlidesRight.setIcon(new ImageIcon(slidesRight, iconRight.getDescription()));
 		LayoutPanel.add(lblSlidesRight);
 		
-		lblNextImage = new JLabel("Next Image");
+		lblNextImage = new JLabel("");
 		lblNextImage.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNextImage.setBounds(397, 22, 80, 60);
 		LayoutPanel.add(lblNextImage);
 		
-		lblPrimaryImage = new JLabel("Primary Image");
+		lblPrimaryImage = new JLabel("");
 		lblPrimaryImage.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPrimaryImage.setBounds(267, 7, 120, 90);
 		LayoutPanel.add(lblPrimaryImage);
 		
-		lblPreviousImage = new JLabel("Previous Image");
+		lblPreviousImage = new JLabel("");
 		lblPreviousImage.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPreviousImage.setBounds(177, 22, 80, 60);
 		LayoutPanel.add(lblPreviousImage);
@@ -210,10 +288,11 @@ public class SlideshowMaker extends JFrame {
 		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
 		rdbtnCrossfade.setBounds(10, 136, 105, 23);
 		EditPanel.add(rdbtnCrossfade);
-		lblImagepreview = new JLabel("");
-		lblImagepreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
-		TransitionPanel.add(lblImagepreview);
+		lblImagePreview = new JLabel("");
+		lblImagePreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
+		TransitionPanel.add(lblImagePreview);
 		imageFile = new File(SlideshowMaker.class.getResource("/ImageFiles/Test1.jpg").getPath());
+		
 		resizePanels();
 	}
 	
@@ -250,12 +329,12 @@ public class SlideshowMaker extends JFrame {
 	    int panelWidth = mainPanelWidth - 10;
 	    int panelHeight = MainPanel.getHeight() - AudioPanel.getHeight() - LayoutPanel.getHeight() - 60;
 	    double labelHeightRatio = (double)panelHeight/(double)oldHeight;
-	    int labelHeight = (int)(lblImagepreview.getHeight()*labelHeightRatio);
+	    int labelHeight = (int)(lblImagePreview.getHeight()*labelHeightRatio);
 	    int labelWidth = (int)(labelHeight * 1.333);
 	    TransitionPanel.setBounds(10, panelY, panelWidth, panelHeight);
-    	lblImagepreview.setBounds((panelWidth/2)-(labelWidth/2), (TransitionPanel.getHeight()/2)-(labelHeight/2), labelWidth, labelHeight);
-		resizePreviewImage();
-    	EditPanel.setBounds(lblImagepreview.getX() + lblImagepreview.getWidth() + 10, lblImagepreview.getY() + lblImagepreview.getHeight() - 200, 118, 200);
+    	lblImagePreview.setBounds((panelWidth/2)-(labelWidth/2), (TransitionPanel.getHeight()/2)-(labelHeight/2), labelWidth, labelHeight);
+		paintImage(lblImagePreview, previewImage);
+    	EditPanel.setBounds(lblImagePreview.getX() + lblImagePreview.getWidth() + 10, lblImagePreview.getY() + lblImagePreview.getHeight() - 200, 118, 200);
 	}
 	
 	private void resizeAudioPanel(){
@@ -265,28 +344,30 @@ public class SlideshowMaker extends JFrame {
 	    soundTrack.setBounds(0, 0, panelWidth, 110);
 	}
 	
-	private void resizePreviewImage(){
-		BufferedImage bufferedImg = null;
-		try {
-		    bufferedImg = ImageIO.read(imageFile);
-		    Image scaledImg;
-		    int imageHeight = bufferedImg.getHeight();
-		    int imageWidth = bufferedImg.getWidth();
-		    double heightRatio = (double)imageHeight/(double)imageWidth;
-		    int scaledHeight = lblImagepreview.getHeight();
-		    int scaledWidth = lblImagepreview.getWidth();
-		    if((scaledWidth*heightRatio) > scaledHeight){
-		    	scaledImg = bufferedImg.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-		    }
-		    else {
-		    	scaledImg = bufferedImg.getScaledInstance(scaledWidth, (int)(scaledWidth*heightRatio), Image.SCALE_SMOOTH);
-		    }
-		    previewImage = new ImageIcon(scaledImg);
-		    
-		    lblImagepreview.setIcon(previewImage);
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}		
+	private void paintImage(JLabel label, ImageIcon icon){
+		if(slideStateMachine.getSlideShowSize() > 0) {
+			BufferedImage bufferedImg = new BufferedImage(
+				    icon.getIconWidth(),
+				    icon.getIconHeight(),
+				    BufferedImage.TYPE_INT_RGB);
+			Graphics g = bufferedImg.createGraphics();
+			icon.paintIcon(null, g, 0,0);
+			g.dispose();
+				
+			Image scaledImg;
+			int imageHeight = bufferedImg.getHeight();
+			int imageWidth = bufferedImg.getWidth();
+			double heightRatio = (double)imageHeight/(double)imageWidth;
+			int scaledHeight = label.getHeight();
+			int scaledWidth = label.getWidth();
+			if((scaledWidth*heightRatio) > scaledHeight){
+				scaledImg = bufferedImg.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+			}
+			else {
+				scaledImg = bufferedImg.getScaledInstance(scaledWidth, (int)(scaledWidth*heightRatio), Image.SCALE_SMOOTH);
+			}
+			icon = new ImageIcon(scaledImg);
+			label.setIcon(icon);
+		}
 	}
-	
 }
