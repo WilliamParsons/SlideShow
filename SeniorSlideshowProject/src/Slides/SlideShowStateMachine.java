@@ -107,29 +107,6 @@ public class SlideShowStateMachine implements Serializable {
 		}
 	}
 	
-	public void removeSlideWithFileName(String name)
-	{
-		for (int i = 0; i < slideList.size(); i++)
-		{
-			SlideState slide = slideList.get(i);
-			if(slide.getFileName().equals(name))
-			{
-				slideList.remove(slide);
-				
-				if(slideIndex - 1 >= 0)
-				{
-					slideIndex--;
-				}
-				else
-				{
-					slideIndex = 0;
-				}
-				setSlideTransitionTimes();
-				break;
-			}
-		}
-	}
-	
 	public void removeSlide(SlideState state)
 	{
 		if(slideList.remove(state))
