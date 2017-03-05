@@ -14,7 +14,6 @@ import javax.swing.SwingConstants;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.util.Vector;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -26,14 +25,12 @@ import javax.swing.border.EtchedBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
 public class SlideshowMaker extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private static final int FILES_AND_DIRECTORIES = 2;
 	private JPanel MainPanel;
 	private JPanel LayoutPanel;
 	private JSlider layoutSlider;
@@ -42,7 +39,6 @@ public class SlideshowMaker extends JFrame {
 	private JPanel TransitionPanel;
 	private SoundTrack soundTrack;
 	private JLabel lblImagePreview;
-	private File imageFile;
 	private ImageIcon previewImage;
 	private JPanel AudioPanel;
 	private JMenu mnFile;
@@ -64,6 +60,8 @@ public class SlideshowMaker extends JFrame {
 	private SlideState previousSlide;
 	private SlideState currentSlide;
 	private SlideState nextSlide;
+	private FileManager fMgr;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -90,6 +88,7 @@ public class SlideshowMaker extends JFrame {
 		setBounds(100, 100, 800, 600);
 		
 		slideStateMachine = SlideShowStateMachine.getInstance();
+		fMgr = new FileManager();
 				
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -98,9 +97,41 @@ public class SlideshowMaker extends JFrame {
 		menuBar.add(mnFile);
 		
 		mntmOpen = new JMenuItem("Open");
+		mntmOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				int result = fc.showOpenDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION){
+					String selectedFilePath = fc.getSelectedFile().getPath();
+					slideStateMachine = fMgr.readFile(selectedFilePath);
+					int slideSize = slideStateMachine.getSlideShowSize();
+					layoutSlider.setMaximum(slideSize - 1);
+					layoutSlider.setEnabled(true);
+				}	
+			}
+		});
 		mnFile.add(mntmOpen);
 		
 		mntmSave = new JMenuItem("Save");
+		mntmSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				int result = fc.showSaveDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION){
+					String selectedFilePath = fc.getSelectedFile().getPath();
+					if(selectedFilePath.endsWith(".ssp")) {
+					
+					} else {
+						selectedFilePath += ".ssp";
+					}
+					fMgr.writeFile(slideStateMachine, selectedFilePath);
+				}	
+			}
+		});
 		mnFile.add(mntmSave);
 		MainPanel = new JPanel();
 		MainPanel.addComponentListener(new ComponentAdapter() {
@@ -130,7 +161,7 @@ public class SlideshowMaker extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
 				fc.setFileFilter(new FileTypeFilter(".jpg", "image file"));
-				fc.setFileSelectionMode(FILES_AND_DIRECTORIES);
+				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				int result = fc.showDialog(null, "Add Image");
 				if (result == JFileChooser.APPROVE_OPTION){
 					String selectedFilePath = fc.getSelectedFile().getPath();
@@ -291,8 +322,6 @@ public class SlideshowMaker extends JFrame {
 		lblImagePreview = new JLabel("");
 		lblImagePreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
 		TransitionPanel.add(lblImagePreview);
-		imageFile = new File(SlideshowMaker.class.getResource("/ImageFiles/Test1.jpg").getPath());
-		
 		resizePanels();
 	}
 	
