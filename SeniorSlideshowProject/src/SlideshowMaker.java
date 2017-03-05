@@ -1,4 +1,6 @@
 import java.awt.EventQueue;
+import FileManager.*;
+import Slides.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -114,6 +116,8 @@ public class SlideshowMaker extends JFrame {
 		addImageBtn = new JButton("+");
 		addImageBtn.setBounds(659, 110, 45, 20);
 		LayoutPanel.add(addImageBtn);
+		AddImageListener imageListener = new AddImageListener();
+		addImageBtn.addActionListener(imageListener);
 		
 		removeImageBtn = new JButton("-");
 		removeImageBtn.setBounds(704, 110, 45, 20);
