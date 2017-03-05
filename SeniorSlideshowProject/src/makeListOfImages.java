@@ -11,8 +11,10 @@ public class makeListOfImages {
         File[] fList = directory.listFiles();
         for (File file : fList){
             if (file.isFile()){
-            	imageFileVector.add(file.getAbsolutePath());
-                System.out.println(file.getAbsolutePath());
+            	if (file.getAbsolutePath().contains(".jpg")){
+            		imageFileVector.add(file.getAbsolutePath());
+            		System.out.println(file.getAbsolutePath());
+            	}
             } else if (file.isDirectory()){
                 listFilesAndFilesSubDirectories(file.getAbsolutePath());
             }
