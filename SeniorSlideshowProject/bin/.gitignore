@@ -1,3 +1,14 @@
+<<<<<<< HEAD
 #*
 /#SoundTrack.java#
 /.gitignore
+=======
+/SoundTrack$1.class
+/SoundTrack$Credits.class
+/SoundTrack$JukeControls.class
+/SoundTrack$JukeTable$1.class
+/SoundTrack$JukeTable.class
+/SoundTrack$Loading.class
+/SoundTrack$PlaybackMonitor.class
+/SoundTrack.class
+>>>>>>> master
