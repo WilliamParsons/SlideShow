@@ -38,6 +38,10 @@ import java.text.AttributedCharacterIterator;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
+
+import Slides.SlideShowStateMachine;
+import Slides.AudioState;
+
 import javax.swing.event.*;
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
@@ -47,6 +51,8 @@ import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.net.URL;
 
 
@@ -66,7 +72,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     Vector sounds = new Vector();
     //public ArrayList<AudioState> audioList = new ArrayList<AudioState>();;
-    SlideShowStateMachine audioState = new SlideShowStateMachine();
+    SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
     
     Thread thread;
     Sequencer sequencer;
@@ -1055,26 +1061,50 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             int w = 500;
             int h = 130;
             JPanel panel = new JPanel(new BorderLayout());
+            JFileChooser fc = new JFileChooser();
+            fc.setFileSelectionMode(2); //FILES_AND_DIRECTORIES
+            panel.add(fc);
+//            SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
+            int result = fc.showDialog(null, "Add Audio");
+    		if (result == JFileChooser.APPROVE_OPTION){
+    			String selectedFilePath = fc.getSelectedFile().getPath();
+//    			if (selectedFilePath.contains(".jpg")){
+//    				ImageIcon icon = new ImageIcon(selectedFilePath);
+//    				SlideState mySlide = new SlideState(icon);
+//    				mySlideShow.addSlide(mySlide);
+//    			}
+//    			else{
+//    				makeListOfImages imageVector = new makeListOfImages();
+//    				Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
+//    				for (int i = 0; i < imageFileVector.size(); i++){
+//    					String filePath = (String) imageFileVector.elementAt(i);
+//    					ImageIcon icon = new ImageIcon(filePath);
+//    					SlideState mySlide = new SlideState(icon);
+//    					mySlideShow.addSlide(mySlide);
+//    				}
+//    			}
+    		}	
             JPanel p1 = new JPanel();
             if (titleName.endsWith("URL")) {
                 p1.add(new JLabel("URL :"));
                 textField = new JTextField("http://foo.bar.com/foo.wav");
                 textField.addActionListener(this);
-            } else {
-                p1.add(new JLabel("File or Dir :"));
-                String sep = String.valueOf(System.getProperty("file.separator").toCharArray()[0]);
-                String text = null;
-                try {
-                    text = System.getProperty("user.dir") + sep;
-                } catch (SecurityException ex) {
-                    reportStatus(ex.toString());
-//                    JavaSound.showInfoDialog();
-                    return;
-                }
-                textField = new JTextField(text);
-                textField.setPreferredSize(new Dimension(w-100, 30));
-                textField.addActionListener(this);
-            }
+            } 
+//            else {
+//                p1.add(new JLabel("File or Dir :"));
+//                String sep = String.valueOf(System.getProperty("file.separator").toCharArray()[0]);
+//                String text = null;
+//                try {
+//                    text = System.getProperty("user.dir") + sep;
+//                } catch (SecurityException ex) {
+//                    reportStatus(ex.toString());
+////                    JavaSound.showInfoDialog();
+//                    return;
+//                }
+//                textField = new JTextField(text);
+//                textField.setPreferredSize(new Dimension(w-100, 30));
+//                textField.addActionListener(this);
+//            }
             p1.add(textField);
             panel.add(p1);
             JPanel p2 = new JPanel();
@@ -1093,12 +1123,53 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
         public void actionPerformed(ActionEvent e) {
             Object object = e.getSource();
-            if (object instanceof JTextField) {
-                applyB.doClick();
-            } else if (object instanceof JMenuItem) {
+//            if (object instanceof JTextField) {
+//                applyB.doClick();
+//            } else 
+            if (object instanceof JMenuItem) {
                 JMenuItem mi = (JMenuItem) object;
                 if (mi.getText().startsWith("File")) {
-                    doFrame("Add File or Directory");
+//                    doFrame("Add File or Directory");
+                    JPanel panel = new JPanel(new BorderLayout());
+                    JFileChooser fc = new JFileChooser();
+                    fc.setFileSelectionMode(2); //FILES_AND_DIRECTORIES
+                    panel.add(fc);
+//                    SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
+                    int result = fc.showDialog(null, "Add Audio");
+            		if (result == JFileChooser.APPROVE_OPTION){
+            			String selectedFilePath = fc.getSelectedFile().getPath();
+//            			Pattern pattern = Pattern.compile("(\\.(?i)(au|rmf|mid|.wav))$");           			
+//            		    Matcher matcher = pattern.matcher(selectedFilePath);
+            			//if(matcher.lookingAt()){}
+            			if (selectedFilePath.endsWith(".au")||
+            					selectedFilePath.endsWith(".rmf")||
+            					selectedFilePath.endsWith(".mid")||
+            					selectedFilePath.endsWith(".wav")||
+            					selectedFilePath.endsWith(".aif")||
+            					selectedFilePath.endsWith(".aiff")) { 
+                            try {
+                                sounds.add(new File(selectedFilePath));
+                            } catch (Exception ex) { ex.printStackTrace(); };
+                        } else {
+                            loadJuke(selectedFilePath);
+                        }
+                        tableChanged();
+//            			if (selectedFilePath.contains(".jpg")){
+//            				ImageIcon icon = new ImageIcon(selectedFilePath);
+//            				SlideState mySlide = new SlideState(icon);
+//            				mySlideShow.addSlide(mySlide);
+//            			}
+//            			else{
+//            				makeListOfImages imageVector = new makeListOfImages();
+//            				Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
+//            				for (int i = 0; i < imageFileVector.size(); i++){
+//            					String filePath = (String) imageFileVector.elementAt(i);
+//            					ImageIcon icon = new ImageIcon(filePath);
+//            					SlideState mySlide = new SlideState(icon);
+//            					mySlideShow.addSlide(mySlide);
+//            				}
+//            			}
+            		}
                 } else if (mi.getText().equals("URL")) {
                     doFrame("Add URL");
                 } else if (mi.getText().equals("Selected")) {

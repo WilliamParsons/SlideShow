@@ -1,11 +1,9 @@
+<<<<<<< HEAD
 #*
+=======
+/bin/
+>>>>>>> master
+/AddAudioListener.class
 /SoundTrack$1.class
-/SoundTrack$Credits.class
-/SoundTrack$JukeControls.class
 /SoundTrack$JukeTable$1.class
-/SoundTrack$JukeTable.class
-/SoundTrack$Loading.class
-/SoundTrack$PlaybackMonitor.class
-/SoundTrack.class
-/ImageFiles/
-/SoundFiles/
+/Slides/

@@ -1,31 +1,40 @@
 package Slides;
 
+
 import java.io.Serializable;
+
+import javax.sound.sampled.AudioInputStream;
 
 public class AudioState implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	private String fileName;
+	private AudioInputStream audioFile;
+	private long audioTime;
 	
-	private String filename;
-	private double audioTime;
-	
-	public AudioState(String name)
+	public AudioState(AudioInputStream inputStream, String name)
 	{
-		filename = name;
+		fileName = name;
+		audioFile = inputStream;
+		audioTime = audioFile.getFrameLength();
 	}
 	
-	public AudioState(String name, double time)
-	{
-		filename = name;
-		audioTime = time;
+//	public AudioState(String name, double time)
+//	{
+//		audioFile = name;
+//		audioTime = time;
+//	}
+	
+	public String getFileName(){
+		return fileName;
 	}
 	
-	public String getFileName()
+	public Object getAudioFile()
 	{
-		return filename;
+		return audioFile;
 	}
 	
-	public double getAudioTime()
+	public long getAudioTime()
 	{
 		return audioTime;
 	}

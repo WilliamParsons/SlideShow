@@ -28,7 +28,7 @@ public class AudioState implements Serializable {
 		return fileName;
 	}
 	
-	public Object getaudioFile()
+	public Object getAudioFile()
 	{
 		return audioFile;
 	}
