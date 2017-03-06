@@ -185,6 +185,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     else 
                     {
                         addSound(leafFile);
+                        audioState.addAudio(new AudioState(leafFile));
                     }
                 }
             } 
@@ -1061,29 +1062,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             int w = 500;
             int h = 130;
             JPanel panel = new JPanel(new BorderLayout());
-            JFileChooser fc = new JFileChooser();
-            fc.setFileSelectionMode(2); //FILES_AND_DIRECTORIES
-            panel.add(fc);
-//            SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
-            int result = fc.showDialog(null, "Add Audio");
-    		if (result == JFileChooser.APPROVE_OPTION){
-    			String selectedFilePath = fc.getSelectedFile().getPath();
-//    			if (selectedFilePath.contains(".jpg")){
-//    				ImageIcon icon = new ImageIcon(selectedFilePath);
-//    				SlideState mySlide = new SlideState(icon);
-//    				mySlideShow.addSlide(mySlide);
-//    			}
-//    			else{
-//    				makeListOfImages imageVector = new makeListOfImages();
-//    				Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
-//    				for (int i = 0; i < imageFileVector.size(); i++){
-//    					String filePath = (String) imageFileVector.elementAt(i);
-//    					ImageIcon icon = new ImageIcon(filePath);
-//    					SlideState mySlide = new SlideState(icon);
-//    					mySlideShow.addSlide(mySlide);
-//    				}
-//    			}
-    		}	
             JPanel p1 = new JPanel();
             if (titleName.endsWith("URL")) {
                 p1.add(new JLabel("URL :"));
@@ -1123,9 +1101,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
         public void actionPerformed(ActionEvent e) {
             Object object = e.getSource();
-//            if (object instanceof JTextField) {
-//                applyB.doClick();
-//            } else 
+            if (object instanceof JTextField) {
+                applyB.doClick();
+            } else 
             if (object instanceof JMenuItem) {
                 JMenuItem mi = (JMenuItem) object;
                 if (mi.getText().startsWith("File")) {
@@ -1149,26 +1127,12 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             					selectedFilePath.endsWith(".aiff")) { 
                             try {
                                 sounds.add(new File(selectedFilePath));
+                                audioState.addAudio(new AudioState(new File(selectedFilePath)));
                             } catch (Exception ex) { ex.printStackTrace(); };
                         } else {
                             loadJuke(selectedFilePath);
                         }
                         tableChanged();
-//            			if (selectedFilePath.contains(".jpg")){
-//            				ImageIcon icon = new ImageIcon(selectedFilePath);
-//            				SlideState mySlide = new SlideState(icon);
-//            				mySlideShow.addSlide(mySlide);
-//            			}
-//            			else{
-//            				makeListOfImages imageVector = new makeListOfImages();
-//            				Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
-//            				for (int i = 0; i < imageFileVector.size(); i++){
-//            					String filePath = (String) imageFileVector.elementAt(i);
-//            					ImageIcon icon = new ImageIcon(filePath);
-//            					SlideState mySlide = new SlideState(icon);
-//            					mySlideShow.addSlide(mySlide);
-//            				}
-//            			}
             		}
                 } else if (mi.getText().equals("URL")) {
                     doFrame("Add URL");
