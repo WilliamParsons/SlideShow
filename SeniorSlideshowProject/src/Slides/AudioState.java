@@ -12,7 +12,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class AudioState implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private String fileName;
+	private String fileName; // the filename used to match the current playing audio.
 	private AudioInputStream audioFile;
 	private long audioTime;
 	
