@@ -1,21 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 #*
-=======
-/bin/
->>>>>>> master
-/AddAudioListener.class
-/SoundTrack$1.class
-/SoundTrack$JukeTable$1.class
-/Slides/
-=======
+*.class
 /bin/
 /Slides/
-/SlideshowMaker$2.class
-/SlideshowMaker$3.class
-/SlideshowMaker$4.class
-/SlideshowMaker$5.class
+/bin/
+/Slides/
 /FileManager/
-/SlideshowMaker$6.class
-/SlideshowMaker$7.class
->>>>>>> master
