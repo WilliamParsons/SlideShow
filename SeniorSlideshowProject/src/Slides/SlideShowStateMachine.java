@@ -71,6 +71,17 @@ public class SlideShowStateMachine implements Serializable {
 		}
 	}
 	
+	public SlideState getSlideAtIndex(int i) {
+		if (i >= 0 && i < slideList.size()) 
+		{
+			return slideList.get(i);
+		}
+		else 
+		{
+			return null;
+		}
+	}
+	
 	public SlideState getPreviousSlide()
 	{
 		if(slideIndex > 0)
@@ -121,6 +132,11 @@ public class SlideShowStateMachine implements Serializable {
 			}	
 			setSlideTransitionTimes();
 		}
+	}
+	
+	public int getSlideShowSize()
+	{
+		return slideList.size();
 	}
 	
 	public void addAudio(AudioState audio)
