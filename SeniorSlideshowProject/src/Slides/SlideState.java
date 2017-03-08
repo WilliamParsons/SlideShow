@@ -2,6 +2,8 @@ package Slides;
 
 import java.io.Serializable;
 
+import javax.swing.ImageIcon;
+
 public class SlideState implements Serializable {
 	
 	public enum Transition{ LEFT, RIGHT, UP, DOWN, CROSSFADE };
@@ -9,17 +11,17 @@ public class SlideState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Transition transitionType;
-	private String filename;
+	private ImageIcon icon;
 	private double transitionTime;
 	
-	public SlideState(String name)
+	public SlideState(ImageIcon icon)
 	{
-		filename = name;
+		this.icon = icon;
 	}
 	
-	public SlideState(String name, Transition type)
+	public SlideState(ImageIcon icon, Transition type)
 	{
-		filename = name;
+		this.icon = icon;
 		transitionType = type;
 	}
 	
@@ -33,9 +35,9 @@ public class SlideState implements Serializable {
 		transitionTime = time;
 	}
 	
-	public String getFileName()
+	public ImageIcon getIcon()
 	{
-		return filename;
+		return this.icon;
 	}
 	
 	public Transition getTransition()
