@@ -204,7 +204,8 @@ public class SlideshowMaker extends JFrame {
 		removeImageBtn = new JButton("-");
 		removeImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				int currentIndex = layoutSlider.getValue();
+				slideStateMachine.removeSlideAtIndex(currentIndex);
 				updateLayout();
 				
 			}
