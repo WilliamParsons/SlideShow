@@ -24,8 +24,13 @@ public class SlideshowPresenter extends JFrame {
 
 	private JPanel MainPanel;
 	private JButton btnPlayPause;
+	private JButton btnPrevious;
+	private JButton btnNext;
 	private JMenuItem mntmCreate;
 	private SlideShowStateMachine slideStateMachine;
+	private JMenu mnPresentModes;
+	private JMenuItem mntmAuto;
+	private JMenuItem mntmManual;
 
 	/**
 	 * Launch the application.
@@ -72,7 +77,30 @@ public class SlideshowPresenter extends JFrame {
 
 		JMenu mnModes = new JMenu("Modes\r\n");
 		menuBar.add(mnModes);
-
+		
+		mnPresentModes = new JMenu("Presentation Modes");
+		mnModes.add(mnPresentModes);
+		
+		mntmAuto = new JMenuItem("Automatic");
+		mnPresentModes.add(mntmAuto);
+		mntmAuto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnPrevious.setEnabled(false);
+				btnNext.setEnabled(false);
+				btnPlayPause.setEnabled(true);
+			}
+		});
+		
+		mntmManual = new JMenuItem("Manual");
+		mnPresentModes.add(mntmManual);
+		mntmManual.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnPlayPause.setEnabled(false);
+				btnPrevious.setEnabled(true);
+				btnNext.setEnabled(true);
+			}
+		});
+		
 		mntmCreate = new JMenuItem("Creatation");
 		mnModes.add(mntmCreate);
 		mntmCreate.addActionListener(new ActionListener() {
@@ -82,6 +110,14 @@ public class SlideshowPresenter extends JFrame {
 				setVisible(false);
 			}
 		});
+		
+		btnPrevious = new JButton("<<<<");
+		btnPrevious.setBounds(246, 527, 89, 23);
+		MainPanel.add(btnPrevious);
+		
+		btnNext = new JButton(">>>>");
+		btnNext.setBounds(444, 527, 89, 23);
+		MainPanel.add(btnNext);
 	}
 
 	private void resizeMainPanel() {
