@@ -33,6 +33,7 @@ import radioBtnListener.*;
 public class SlideshowMaker extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	
 	private JPanel MainPanel;
 	private JPanel LayoutPanel;
 	private JSlider layoutSlider;
