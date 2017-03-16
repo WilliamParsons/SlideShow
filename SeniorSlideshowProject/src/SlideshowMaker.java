@@ -113,10 +113,19 @@ public class SlideshowMaker extends JFrame {
 				int result = fc.showOpenDialog(null);
 				if (result == JFileChooser.APPROVE_OPTION){
 					String selectedFilePath = fc.getSelectedFile().getPath();
-					slideStateMachine = fMgr.readFile(selectedFilePath);
-					int slideSize = slideStateMachine.getSlideShowSize();
-					layoutSlider.setMaximum(slideSize - 1);
-					layoutSlider.setEnabled(true);
+					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);
+					slideStateMachine.clearSlideShow();
+					SlideState slide = tempState.getFirstSlide();
+					while(slide != null){
+						slideStateMachine.addSlide(slide);
+						slide = tempState.getNextSlide();
+					}
+					AudioState audio = tempState.getFirstAudio();
+					while(audio != null){
+						slideStateMachine.addAudio(audio);
+						audio = tempState.getNextAudio();
+					}
+					updateLayout();
 				}	
 			}
 		});
@@ -203,10 +212,8 @@ public class SlideshowMaker extends JFrame {
 							slideStateMachine.addSlide(mySlide);
 						}
 					}
-				}
-				int slideSize = slideStateMachine.getSlideShowSize();
-				layoutSlider.setMaximum(slideSize - 1);
-				layoutSlider.setEnabled(true);
+				}				
+				updateLayout();
 			}
 		});
 		addImageBtn.setBounds(659, 110, 45, 20);
@@ -215,44 +222,22 @@ public class SlideshowMaker extends JFrame {
 		removeImageBtn = new JButton("-");
 		removeImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				int slideSize = slideStateMachine.getSlideShowSize();
-				layoutSlider.setMaximum(slideSize - 1);
+				int currentIndex = layoutSlider.getValue();
+				slideStateMachine.removeSlideAtIndex(currentIndex);
+				updateLayout();
+				
 			}
 		});
 		removeImageBtn.setBounds(704, 110, 45, 20);
 		LayoutPanel.add(removeImageBtn);
 
 		layoutSlider = new JSlider();
-		layoutSlider.setEnabled(false);
 		layoutSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent arg0) {
-				int currentIndex = layoutSlider.getValue();
-				previousSlide = slideStateMachine.getSlideAtIndex(currentIndex -1);
-				currentSlide = slideStateMachine.getSlideAtIndex(currentIndex);
-				nextSlide = slideStateMachine.getSlideAtIndex(currentIndex + 1);
-
-				if(previousSlide != null) {
-					paintImage(lblPreviousImage, previousSlide.getIcon());
-				} else if (layoutSlider.isEnabled()){
-					lblPreviousImage.setIcon(null);
-				}
-
-				if(currentSlide != null) {
-					paintImage(lblPrimaryImage, currentSlide.getIcon());
-					previewImage = currentSlide.getIcon();
-					paintImage(lblImagePreview, previewImage);
-				} else if (layoutSlider.isEnabled()){
-					lblPrimaryImage.setIcon(null);
-				}
-
-				if(nextSlide != null) {
-					paintImage(lblNextImage, nextSlide.getIcon());
-				} else if (layoutSlider.isEnabled()){
-					lblNextImage.setIcon(null);
-				}	
+				updateLayout();
 			}
 		});
+		layoutSlider.setEnabled(false);
 		layoutSlider.setBounds(15, 120, 642, 20);
 		layoutSlider.setValue(0);
 		layoutSlider.setMinimum(0);		
@@ -423,6 +408,43 @@ public class SlideshowMaker extends JFrame {
 		int panelWidth = mainPanelWidth - 10;
 		AudioPanel.setBounds(10, MainPanel.getHeight()-129, panelWidth, 119);
 		soundTrack.setBounds(0, 0, panelWidth, 110);
+	}
+	
+	private void updateLayout(){
+		int slideSize = slideStateMachine.getSlideShowSize();
+		if(slideSize > 0 && !layoutSlider.isEnabled()) {
+			layoutSlider.setEnabled(true);
+			layoutSlider.setMaximum(slideSize - 1);
+		}
+		else if (slideSize == 0) {
+			layoutSlider.setValue(0);
+			layoutSlider.setEnabled(false);			
+		}
+		
+		int currentIndex = layoutSlider.getValue();
+		previousSlide = slideStateMachine.getSlideAtIndex(currentIndex -1);
+		currentSlide = slideStateMachine.getSlideAtIndex(currentIndex);
+		nextSlide = slideStateMachine.getSlideAtIndex(currentIndex + 1);
+
+		if(previousSlide != null) {
+			paintImage(lblPreviousImage, previousSlide.getIcon());
+		} else if (layoutSlider.isEnabled()){
+			lblPreviousImage.setIcon(null);
+		}
+
+		if(currentSlide != null) {
+			paintImage(lblPrimaryImage, currentSlide.getIcon());
+			previewImage = currentSlide.getIcon();
+			paintImage(lblImagePreview, previewImage);
+		} else if (layoutSlider.isEnabled()){
+			lblPrimaryImage.setIcon(null);
+		}
+
+		if(nextSlide != null) {
+			paintImage(lblNextImage, nextSlide.getIcon());
+		} else if (layoutSlider.isEnabled()){
+			lblNextImage.setIcon(null);
+		}	
 	}
 
 	private void paintImage(JLabel label, ImageIcon icon){
