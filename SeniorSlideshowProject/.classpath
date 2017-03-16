@@ -8,6 +8,5 @@
 	<classpathentry kind="lib" path="lib/jgoodies-forms-sources.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-forms.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
