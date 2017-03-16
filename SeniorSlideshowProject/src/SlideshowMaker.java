@@ -47,6 +47,7 @@ public class SlideshowMaker extends JFrame {
 	private JMenu mnFile;
 	private JMenuItem mntmOpen;
 	private JMenuItem mntmSave;
+	private JMenuItem mntmPresent;
 	private JRadioButton rdbtnNoTrans;
 	private JRadioButton rdbtnSwipeUp;
 	private JRadioButton rdbtnSwipeDown;
@@ -65,6 +66,8 @@ public class SlideshowMaker extends JFrame {
 	private SlideState currentSlide;
 	private SlideState nextSlide;
 	private FileManager fMgr;
+	private JMenu mnModes;
+	private JMenuItem mntmNewMenuItem;
 
 	/**
 	 * Launch the application.
@@ -147,6 +150,21 @@ public class SlideshowMaker extends JFrame {
 			}
 		});
 		mnFile.add(mntmSave);
+		
+		mnModes = new JMenu("Modes");
+		menuBar.add(mnModes);
+		
+		mntmPresent = new JMenuItem("Presentation");
+		mnModes.add(mntmPresent);
+		mntmPresent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				SlideshowPresenter presenter = new SlideshowPresenter();
+				presenter.setVisible(true);
+				setVisible(false);
+			}
+		});
+
+		
 		MainPanel = new JPanel();
 		MainPanel.addComponentListener(new ComponentAdapter() {
 			@Override

@@ -1,0 +1,3 @@
+[submodule "SlideShow"]
+	path = SlideShow
+	url = https://github.com/WilliamParsons/SlideShow.git
