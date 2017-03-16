@@ -12,6 +12,8 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.imageio.ImageIO;
 import java.awt.Image;
+
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -22,6 +24,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.border.EtchedBorder;
+import radioBtnListener.*;
 
 public class SlideshowMaker extends JFrame {
 
@@ -210,6 +213,31 @@ public class SlideshowMaker extends JFrame {
 		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
 		rdbtnCrossfade.setBounds(10, 136, 105, 23);
 		EditPanel.add(rdbtnCrossfade);
+		
+		//group the radio buttons
+		ButtonGroup group = new ButtonGroup();
+		group.add(rdbtnNoTrans);
+		group.add(rdbtnSwipeUp);
+		group.add(rdbtnSwipeDown);
+		group.add(rdbtnSwipeLeft);
+		group.add(rdbtnSwipeRight);
+		group.add(rdbtnCrossfade);
+		
+		//register a listener for the radio buttons
+		NoTransitionListener noTransListener = new NoTransitionListener();
+		rdbtnNoTrans.addActionListener(noTransListener);
+		SwipeUpTransitionListener swipeUp = new SwipeUpTransitionListener();
+		noTransListener = new NoTransitionListener();
+		rdbtnSwipeUp.addActionListener(swipeUp);
+		SwipeDownTransitionListener swipeDown = new SwipeDownTransitionListener();
+		rdbtnSwipeDown.addActionListener(swipeDown);
+		SwipeLeftTransitionListener swipeLeft = new SwipeLeftTransitionListener();
+		rdbtnSwipeLeft.addActionListener(swipeLeft);
+		SwipeRightTransitionListener swipeRight = new SwipeRightTransitionListener();
+		rdbtnSwipeRight.addActionListener(swipeRight);
+		CrossFadeTransitionListener crossFade = new CrossFadeTransitionListener();
+		rdbtnCrossfade.addActionListener(crossFade);
+		
 		lblImagepreview = new JLabel("");
 		lblImagepreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
 		TransitionPanel.add(lblImagepreview);
