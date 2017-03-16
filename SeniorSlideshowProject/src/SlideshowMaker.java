@@ -1,4 +1,4 @@
-import java.awt.EventQueue;
+
 import FileManager.*;
 import Slides.*;
 import javax.swing.JFrame;
@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import java.awt.Dimension;
+import java.awt.EventQueue;
+
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import java.awt.Image;
@@ -289,6 +291,10 @@ public class SlideshowMaker extends JFrame {
 		EditPanel.setBounds(542, 9, 124, 212);
 		TransitionPanel.add(EditPanel);
 		EditPanel.setLayout(null);
+		
+		JPanel transitionImgPanel = new JPanel();
+		transitionImgPanel.setBounds(232, 9, 300, 224);
+		TransitionPanel.add(transitionImgPanel);
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.setBounds(35, 166, 45, 23);
@@ -356,6 +362,8 @@ public class SlideshowMaker extends JFrame {
 		lblImagepreview = new JLabel("");
 		lblImagepreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
 		TransitionPanel.add(lblImagepreview);
+		
+
 		resizePanels();
 	}
 
@@ -433,6 +441,4 @@ public class SlideshowMaker extends JFrame {
 			label.setIcon(icon);
 		}
 	}
-
-
 }
