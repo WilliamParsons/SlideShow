@@ -71,6 +71,17 @@ public class SlideShowStateMachine implements Serializable {
 		}
 	}
 	
+	public SlideState getSlideAtIndex(int i) {
+		if (i >= 0 && i < slideList.size()) 
+		{
+			return slideList.get(i);
+		}
+		else 
+		{
+			return null;
+		}
+	}
+	
 	public SlideState getPreviousSlide()
 	{
 		if(slideIndex > 0)
@@ -107,29 +118,6 @@ public class SlideShowStateMachine implements Serializable {
 		}
 	}
 	
-	public void removeSlideWithFileName(String name)
-	{
-		for (int i = 0; i < slideList.size(); i++)
-		{
-			SlideState slide = slideList.get(i);
-			if(slide.getFileName().equals(name))
-			{
-				slideList.remove(slide);
-				
-				if(slideIndex - 1 >= 0)
-				{
-					slideIndex--;
-				}
-				else
-				{
-					slideIndex = 0;
-				}
-				setSlideTransitionTimes();
-				break;
-			}
-		}
-	}
-	
 	public void removeSlide(SlideState state)
 	{
 		if(slideList.remove(state))
@@ -144,6 +132,11 @@ public class SlideShowStateMachine implements Serializable {
 			}	
 			setSlideTransitionTimes();
 		}
+	}
+	
+	public int getSlideShowSize()
+	{
+		return slideList.size();
 	}
 	
 	public void addAudio(AudioState audio)
