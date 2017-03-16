@@ -50,7 +50,12 @@ public class SlideShowStateMachine implements Serializable {
 	public SlideState getFirstSlide()
 	{
 		slideIndex = 0;
-		return slideList.get(slideIndex);
+		try {
+			return slideList.get(slideIndex);		
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+		
 	}
 	
 	public SlideState getCurrentSlide()
@@ -149,8 +154,13 @@ public class SlideShowStateMachine implements Serializable {
 	
 	public AudioState getFirstAudio()
 	{
-		audioIndex = 0;
-		return audioList.get(audioIndex);
+		audioIndex = 0;		
+		try {
+			return audioList.get(audioIndex);		
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+		
 	}
 	
 	public AudioState getCurrentAudio()
