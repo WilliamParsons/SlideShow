@@ -6,17 +6,16 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JSlider;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import java.awt.Dimension;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
-import javax.imageio.ImageIO;
 import java.awt.Image;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.util.Vector;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JMenuBar;
@@ -24,6 +23,11 @@ import javax.swing.border.BevelBorder;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.border.EtchedBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Graphics;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
 import radioBtnListener.*;
 
 public class SlideshowMaker extends JFrame {
@@ -36,8 +40,7 @@ public class SlideshowMaker extends JFrame {
 	private JButton removeImageBtn;
 	private JPanel TransitionPanel;
 	private SoundTrack soundTrack;
-	private JLabel lblImagepreview;
-	private File imageFile;
+	private JLabel lblImagePreview;
 	private ImageIcon previewImage;
 	private JPanel AudioPanel;
 	private JMenu mnFile;
@@ -55,6 +58,11 @@ public class SlideshowMaker extends JFrame {
 	private JLabel lblPrimaryImage;
 	private JLabel lblPreviousImage;
 	private JLabel lblSlidesLeft;
+	private SlideShowStateMachine slideStateMachine;
+ 	private SlideState previousSlide;
+ 	private SlideState currentSlide;
+ 	private SlideState nextSlide;
+ 	private FileManager fMgr;
 
 	/**
 	 * Launch the application.
