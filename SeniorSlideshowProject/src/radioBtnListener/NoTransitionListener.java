@@ -12,7 +12,6 @@ public class NoTransitionListener implements ActionListener{
 		SlideShowStateMachine slideShow = SlideShowStateMachine.getInstance();
 		SlideState currentSlide = slideShow.getCurrentSlide();
 		currentSlide.setTransitionType(SlideState.Transition.NONE);
-		System.out.println(currentSlide.getTransition());
 		
 	}
 

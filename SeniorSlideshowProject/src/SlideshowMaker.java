@@ -187,6 +187,7 @@ public class SlideshowMaker extends JFrame {
 		rdbtnNoTrans = new JRadioButton("None");
 		rdbtnNoTrans.setHorizontalAlignment(SwingConstants.LEFT);
 		rdbtnNoTrans.setBounds(10, 9, 105, 23);
+		rdbtnNoTrans.setSelected(true);
 		EditPanel.add(rdbtnNoTrans);
 		
 		rdbtnSwipeUp = new JRadioButton("Swipe Up");
