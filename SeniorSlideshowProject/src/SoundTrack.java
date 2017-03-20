@@ -1115,7 +1115,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 //                    SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
                     int result = fc.showDialog(null, "Add Audio");
             		if (result == JFileChooser.APPROVE_OPTION){
-            			String selectedFilePath = fc.getSelectedFile().getPath();
+            			String selectedFilePath = "C:\\Users\\J\\Documents\\GitHub\\SlideShow\\SeniorSlideshowProject\\src\\SoundFiles";	
+//fc.getSelectedFile().getPath();
 //            			Pattern pattern = Pattern.compile("(\\.(?i)(au|rmf|mid|.wav))$");           			
 //            		    Matcher matcher = pattern.matcher(selectedFilePath);
             			//if(matcher.lookingAt()){}
