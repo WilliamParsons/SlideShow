@@ -1,60 +1,71 @@
 package Slides;
 
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
+import javax.sound.midi.Sequence;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class AudioState implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 	private String fileName; // the filename used to match the current playing audio.
-	private AudioInputStream audioFile;
+	private Object audio;
 	private long audioTime;
-	
-	public AudioState(AudioInputStream inputStream, String name)
+
+	public AudioState(Object object)
 	{
-		fileName = name;
-		audioFile = inputStream;
-		audioTime = audioFile.getFrameLength();
-	}
-	
-	public AudioState(File object){
-		fileName = object.getName();
-		try {
-			audioFile = AudioSystem.getAudioInputStream(object);
-			audioTime = audioFile.getFrameLength();
-		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		audio = object;
+		if(audio instanceof File)
+		{
+			File file = (File)audio;
+			fileName = file.getName();
 		}
 	}
-	
+
 //	public AudioState(String name, double time)
 //	{
 //		audioFile = name;
 //		audioTime = time;
 //	}
-	
-	public String getFileName(){
+
+	public String getFileName()
+	{
 		return fileName;
 	}
-	
-	public Object getAudioFile()
+
+	public Object getAudio()
 	{
-		return audioFile;
+		return audio;
 	}
-	
-	public long getAudioTime()
+	public double getAudioTime()
 	{
-		return audioTime;
+		double seconds = 0.0;
+        if (audio instanceof Clip)
+        {
+            Clip clip = (Clip) audio;
+            seconds = clip.getFramePosition() / clip.getFormat().getFrameRate();
+        }
+        else if ( (audio instanceof Sequence) || (audio instanceof BufferedInputStream) )
+        {
+            try
+            {
+            	Sequence sequencer = (Sequence)audio;
+                seconds = sequencer.getMicrosecondLength() / 1000000.0;
+            }
+            catch (IllegalStateException e)
+            {
+                System.out.println("TEMP: IllegalStateException "+
+                    "on sequencer.getMicrosecondPosition(): " + e);
+            }
+        }
+        return seconds;
 	}
-	
+
 }
