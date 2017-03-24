@@ -123,7 +123,8 @@ public class SlideshowMaker extends JFrame {
 					AudioState audio = tempState.getFirstAudio();
 					while(audio != null){
 						slideStateMachine.addAudio(audio);
-						audio = tempState.getNextAudio();
+						slideStateMachine.getNextAudio();
+						audio = tempState.getCurrentAudio();
 					}
 					updateLayout();
 				}	

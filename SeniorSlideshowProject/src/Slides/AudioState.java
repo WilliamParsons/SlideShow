@@ -17,7 +17,7 @@ public class AudioState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String fileName; // the filename used to match the current playing audio.
 	private Object audio;
-	private long audioTime;
+	private double audioTime;
 
 	public AudioState(Object object)
 	{
@@ -26,6 +26,7 @@ public class AudioState implements Serializable {
 		{
 			File file = (File)audio;
 			fileName = file.getName();
+			// audioTime = getAudioTime();
 		}
 	}
 

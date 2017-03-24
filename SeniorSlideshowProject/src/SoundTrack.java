@@ -242,6 +242,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 catch (InvalidMidiDataException imde)
                 {
                 	System.out.println("Unsupported audio file.");
+                    audioStateMachine.getNextAudio();
                 	return false;
                 }
                 catch (Exception ex)
@@ -357,6 +358,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             catch (InvalidMidiDataException imde)
             {
             	System.out.println("Unsupported audio file.");
+                audioStateMachine.getNextAudio();
             	currentSound = null;
             	return false;
             }
@@ -539,7 +541,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
-            for (; num < audioStateMachine.getAudioListSize() && thread != null; num++)
+            for (num=0; num < audioStateMachine.getAudioListSize() && thread != null; num=audioStateMachine.getNextAudio())
             {
                 table.scrollRectToVisible(new Rectangle(0,(num+2)*(table.getRowHeight()+table.getRowMargin()),
                 		1,1));
@@ -558,7 +560,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 	break;
                 }
             }
-            num = 0;
+            // num = 0;
 
         }
         while (loopB.isSelected() && thread != null);
@@ -766,7 +768,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 }
                 paused = false;
                 num = table.getSelectedRow();
-                num = num == -1 ? 0 : num;
+                // num = num == -1 ? 0 : num;
                 start();
                 button.setText("Stop");
                 setComponentsEnabled(true);
@@ -1047,9 +1049,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             item.addActionListener(this);
             p1.add(menuBar);
 
-            loopB = addButton("loop", p1);
-            loopB.setBackground(Color.gray);
-            loopB.setSelected(true);
+            // loopB = addButton("loop", p1);
+            // loopB.setBackground(Color.gray);
+            // loopB.setSelected(false);
 
             add("South", p1);
         }
@@ -1139,6 +1141,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                             loadJuke(selectedFilePath);
                         }
                         tableChanged();
+                        startB.setEnabled(audioStateMachine.getAudioListSize() != 0);
             		}
                 } else if (mi.getText().equals("URL")) {
                     doFrame("Add URL");
@@ -1173,13 +1176,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     frame = null;
                     errStr = null;
                     playbackMonitor.repaint();
-                } else if (button.getText().equals("loop")) {
-                    loopB.setSelected(!loopB.isSelected());
-                    // audioStateMachine.setAudioLoopFlag();
-                    loopB.setBackground(loopB.isSelected() ? Color.gray : Color.lightGray);
-                }
-                startB.setEnabled(audioStateMachine.getAudioListSize() != 0);
+                } //else if (button.getText().equals("loop")) {
+//                     loopB.setSelected(!loopB.isSelected());
+//                     audioStateMachine.setAudioLoopFlag();
+// //                    nextB.setEnabled(ture);
+//                     loopB.setBackground(loopB.isSelected() ? Color.gray : Color.lightGray);
+//                 }
             }
+
         }
 
         public void tableChanged() {

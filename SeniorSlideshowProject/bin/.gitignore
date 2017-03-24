@@ -1,3 +1,4 @@
 /bin/
 .vscode/
-/#SoundTrack.java#
+*.class
+/Slides/
