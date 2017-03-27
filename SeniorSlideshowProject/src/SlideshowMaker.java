@@ -380,23 +380,7 @@ public class SlideshowMaker extends JFrame {
 		});
 		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
 		rdbtnCrossfade.setBounds(10, 136, 105, 23);
-		EditPanel.add(rdbtnCrossfade);
-		
-		//register a listener for the radio buttons
-		NoTransitionListener noTransListener = new NoTransitionListener();
-		rdbtnNoTrans.addActionListener(noTransListener);
-		SwipeUpTransitionListener swipeUp = new SwipeUpTransitionListener();
-		noTransListener = new NoTransitionListener();
-		rdbtnSwipeUp.addActionListener(swipeUp);
-		SwipeDownTransitionListener swipeDown = new SwipeDownTransitionListener();
-		rdbtnSwipeDown.addActionListener(swipeDown);
-		SwipeLeftTransitionListener swipeLeft = new SwipeLeftTransitionListener();
-		rdbtnSwipeLeft.addActionListener(swipeLeft);
-		SwipeRightTransitionListener swipeRight = new SwipeRightTransitionListener();
-		rdbtnSwipeRight.addActionListener(swipeRight);
-		CrossFadeTransitionListener crossFade = new CrossFadeTransitionListener();
-		rdbtnCrossfade.addActionListener(crossFade);
-		
+		EditPanel.add(rdbtnCrossfade);		
 
 		//transGroup the radio buttons
 		ButtonGroup transGroup = new ButtonGroup();
