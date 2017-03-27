@@ -541,7 +541,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
-            for (num=0; num < audioStateMachine.getAudioListSize() && thread != null; num=audioStateMachine.getNextAudio())
+            for (; num < audioStateMachine.getAudioListSize() && thread != null; num++)
             {
                 table.scrollRectToVisible(new Rectangle(0,(num+2)*(table.getRowHeight()+table.getRowMargin()),
                 		1,1));
@@ -549,6 +549,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 if( loadSound(audioStateMachine.getAudioAtIndex(num).getAudio()) == true )
                 {
                     playSound();
+                    if(nextB.isEnabled())
+                    {
+                    	continue;
+                    }
+                    audioStateMachine.getNextAudio();
                 }
                 // take a little break between sounds
                 try
