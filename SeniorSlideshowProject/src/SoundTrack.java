@@ -209,7 +209,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     private void addSound(File file)
     {
         String s = file.getName();
-        if (s.endsWith(".au") || s.endsWith(".rmf") ||
+        if (s.endsWith(".au") ||
             s.endsWith(".mid") || s.endsWith(".wav") ||
             s.endsWith(".aif") || s.endsWith(".aiff"))
         {
