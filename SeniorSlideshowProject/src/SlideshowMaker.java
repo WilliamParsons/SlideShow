@@ -381,21 +381,7 @@ public class SlideshowMaker extends JFrame {
 		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
 		rdbtnCrossfade.setBounds(10, 136, 105, 23);
 		EditPanel.add(rdbtnCrossfade);
-
-<<<<<<< HEAD
-		lblImagePreview = new JLabel("");
-		lblImagePreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
-		TransitionPanel.add(lblImagePreview);
-
-		//group the radio buttons
-		ButtonGroup group = new ButtonGroup();
-		group.add(rdbtnNoTrans);
-		group.add(rdbtnSwipeUp);
-		group.add(rdbtnSwipeDown);
-		group.add(rdbtnSwipeLeft);
-		group.add(rdbtnSwipeRight);
-		group.add(rdbtnCrossfade);
-
+		
 		//register a listener for the radio buttons
 		NoTransitionListener noTransListener = new NoTransitionListener();
 		rdbtnNoTrans.addActionListener(noTransListener);
@@ -410,13 +396,8 @@ public class SlideshowMaker extends JFrame {
 		rdbtnSwipeRight.addActionListener(swipeRight);
 		CrossFadeTransitionListener crossFade = new CrossFadeTransitionListener();
 		rdbtnCrossfade.addActionListener(crossFade);
-
-		lblImagepreview = new JLabel("");
-		lblImagepreview.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
-		TransitionPanel.add(lblImagepreview);
 		
 
-=======
 		//transGroup the radio buttons
 		ButtonGroup transGroup = new ButtonGroup();
 		transGroup.add(rdbtnNoTrans);
@@ -431,7 +412,6 @@ public class SlideshowMaker extends JFrame {
 		PreviewImagePanel.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
 		PreviewImagePanel.initializeImages();
 		TransitionPanel.add(PreviewImagePanel);
->>>>>>> refs/remotes/origin/master
 		resizePanels();
 	}
 
@@ -570,9 +550,7 @@ public class SlideshowMaker extends JFrame {
 			label.setIcon(icon);
 		}
 	}
-<<<<<<< HEAD
-=======
-
+	
 	private void resizePreviewImage(){
 		if(previewIcon != null) {
 			BufferedImage bufferedImg = new BufferedImage(
@@ -585,6 +563,5 @@ public class SlideshowMaker extends JFrame {
 			PreviewImagePanel.setImage(bufferedImg);
 		}
 	}
->>>>>>> refs/remotes/origin/master
 }
 
