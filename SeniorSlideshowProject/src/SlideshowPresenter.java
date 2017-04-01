@@ -51,7 +51,8 @@ public class SlideshowPresenter extends JFrame {
 	private SoundTrack soundTrack;
 	private SlideState tempState;
 	private ImagePanel PresentationImagePanel;
-	private boolean slidePlaying;
+	private boolean slidePlaying = true;
+	private boolean clicked = false;
 	private Timer showTimer;
 
 	/**
@@ -92,23 +93,27 @@ public class SlideshowPresenter extends JFrame {
 		soundTrack = new SoundTrack((String) null);
 		fMgr = new FileManager();
 
-		btnPlayPause = new JButton("Play/Pause");
+		btnPlayPause = new JButton("Play");
 		btnPlayPause.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e)
 			{
-				if(slidePlaying == false)
-				{	
-					soundTrack.pauseB.doClick();
-					btnPlayPause.setText("Play");
-					slidePlaying = true;
-				}
-				else
+				if(slidePlaying == true)
 				{
-					soundTrack.startB.doClick();
-					//double track = slideStateMachine.returnAudioTime();
-					//showTimer = new Timer((int)track, (ActionListener) btnPlayPause);
 					btnPlayPause.setText("Pause");
+					soundTrack.pauseB.doClick();
+					clicked = true;
 					slidePlaying = false;
+				}
+				else if(slidePlaying == false)
+				{	
+					btnPlayPause.setText("Play");
+					soundTrack.startB.doClick();
+					if(clicked == true)
+					{
+						soundTrack.pauseB.doClick();
+						clicked = false;
+					}
+					slidePlaying = true;
 				}
 			}
 		});
