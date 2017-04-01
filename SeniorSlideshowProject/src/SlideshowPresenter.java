@@ -48,6 +48,7 @@ public class SlideshowPresenter extends JFrame {
 	private JLabel lblMainSlide;
 	private SlideState currentSlide;
 	private FileManager fMgr;
+	private SoundTrack soundTrack;
 	private SlideState tempState;
 	private ImagePanel PresentationImagePanel;
 	private boolean slidePlaying;
@@ -86,10 +87,9 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(MainPanel);
 		MainPanel.setLayout(null);
-		
-		int currentIndex = 0;
 
 		slideStateMachine = SlideShowStateMachine.getInstance();
+		soundTrack = new SoundTrack((String) null);
 		fMgr = new FileManager();
 
 		btnPlayPause = new JButton("Play/Pause");
@@ -98,11 +98,12 @@ public class SlideshowPresenter extends JFrame {
 			{
 				if(slidePlaying == false)
 				{	
-					slidePlaying = true;
 					btnPlayPause.setText("Play");
+					slidePlaying = true;
 				}
 				else
 				{
+					soundTrack.startB.setSelected(true);
 					//double track = slideStateMachine.returnAudioTime();
 					//showTimer = new Timer((int)track, (ActionListener) btnPlayPause);
 					btnPlayPause.setText("Pause");
