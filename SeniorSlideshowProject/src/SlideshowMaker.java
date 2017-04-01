@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 import FileManager.*;
 import Slides.*;
+import Transitions.*;
 import pkgImageTransitions.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -307,7 +308,82 @@ public class SlideshowMaker extends JFrame {
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TO DO : Preview transitions
+				if (currentSlide != null)
+				{
+					if (currentSlide.getTransition() == SlideState.Transition.NONE)
+					{
+						//do nothing
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.DOWN)
+					{
+						SwipeDown swipeDownTransition = new SwipeDown();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeDownTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.UP)
+					{
+						SwipeUp swipeUpTransition = new SwipeUp();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeUpTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.LEFT)
+					{
+						SwipeLeft swipeLeftTransition = new SwipeLeft();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeLeftTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.RIGHT)
+					{
+						SwipeRight swipeRightTransition = new SwipeRight();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeRightTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.CROSSFADE)
+					{
+						CrossFade crossFadeTransition = new CrossFade();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						crossFadeTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 25);
+						updateLayout();
+					}
+					else
+					{
+						System.out.println("error with transition type");
+					}	
+				}
 			}
 		});
 		PreviewTransition.setBounds(35, 166, 45, 23);
