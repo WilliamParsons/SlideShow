@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
@@ -47,7 +48,10 @@ public class SlideshowPresenter extends JFrame {
 	private JLabel lblMainSlide;
 	private SlideState currentSlide;
 	private FileManager fMgr;
+	private SlideState tempState;
 	private ImagePanel PresentationImagePanel;
+	private boolean slidePlaying;
+	private Timer showTimer;
 
 	/**
 	 * Launch the application.
@@ -89,6 +93,23 @@ public class SlideshowPresenter extends JFrame {
 		fMgr = new FileManager();
 
 		btnPlayPause = new JButton("Play/Pause");
+		btnPlayPause.addActionListener(new ActionListener () {
+			public void actionPerformed(ActionEvent e)
+			{
+				if(slidePlaying == false)
+				{	
+					slidePlaying = true;
+					btnPlayPause.setText("Play");
+				}
+				else
+				{
+					//double track = slideStateMachine.returnAudioTime();
+					//showTimer = new Timer((int)track, (ActionListener) btnPlayPause);
+					btnPlayPause.setText("Pause");
+					slidePlaying = false;
+				}
+			}
+		});
 		btnPlayPause.setBounds(345, 530, 89, 23);
 		MainPanel.add(btnPlayPause);
 		btnPlayPause.setEnabled(true);
@@ -125,6 +146,8 @@ public class SlideshowPresenter extends JFrame {
 			}
 		});
 		mnFile.add(mntmOpen);
+		
+		tempState = slideStateMachine.getFirstSlide(); 
 
 		JMenu mnModes = new JMenu("Modes\r\n");
 		menuBar.add(mnModes);
@@ -165,8 +188,7 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious = new JButton("<<<<");
 		btnPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// currentSlide = slideStateMachine.getPreviousSlide();
-				// resizeImageIcon(lblMainSlide, currentSlide.getIcon());
+				
 			}
 		});
 		btnPrevious.setBounds(50, -30, 89, 23);
