@@ -208,12 +208,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     private void addSound(File file)
     {
         String s = file.getName();
-        if (s.endsWith(".au") || s.endsWith(".rmf") ||
+        if (s.endsWith(".au") ||// s.endsWith(".rmf") ||
             s.endsWith(".mid") || s.endsWith(".wav") ||
             s.endsWith(".aif") || s.endsWith(".aiff"))
         {
             audioStateMachine.addAudio(new AudioState(file));
-           //loadSound(file);
         }
     }
 
@@ -1046,9 +1045,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             item.addActionListener(this);
             p1.add(menuBar);
 
-            loopB = addButton("loop", p1);
-            loopB.setBackground(Color.gray);
-            loopB.setSelected(false);
+//            loopB = addButton("loop", p1);
+//            loopB.setBackground(Color.gray);
+//            loopB.setSelected(false);
 
             add("South", p1);
         }
@@ -1130,7 +1129,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             					selectedFilePath.endsWith(".aif")||
             					selectedFilePath.endsWith(".aiff")) {
                             try {
-                            	audioStateMachine.addAudio(new AudioState(new File(selectedFilePath)));
+                            	addSound(new File(selectedFilePath));
                             } catch (Exception ex) { ex.printStackTrace(); };
                         } else {
                             loadJuke(selectedFilePath);
