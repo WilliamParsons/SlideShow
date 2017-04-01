@@ -44,6 +44,7 @@ public class SlideshowMaker extends JFrame {
 	private SoundTrack soundTrack;
 	private JPanel AudioPanel;
 	private JMenu mnFile;
+	private JMenuItem mntmNew;
 	private JMenuItem mntmOpen;
 	private JMenuItem mntmSave;
 	private JMenuItem mntmPresent;
@@ -104,6 +105,16 @@ public class SlideshowMaker extends JFrame {
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		fMgr = new FileManager();
 
+		mntmNew = new JMenuItem("New");
+		mntmNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SlideShowStateMachine state = SlideShowStateMachine.getInstance();
+				state.clearSlideShow();
+				updateLayout();
+			}
+		});
+		mnFile.add(mntmNew);
+		
 		mntmOpen = new JMenuItem("Open");
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -123,8 +134,7 @@ public class SlideshowMaker extends JFrame {
 					AudioState audio = tempState.getFirstAudio();
 					while(audio != null){
 						slideStateMachine.addAudio(audio);
-						slideStateMachine.getNextAudio();
-						audio = tempState.getCurrentAudio();
+						audio = tempState.getNextAudio();
 					}
 					updateLayout();
 				}	
@@ -418,6 +428,14 @@ public class SlideshowMaker extends JFrame {
 		removeImageBtn.setBounds(panelWidth-60, panelHeight-30, 45, 20);
 		addImageBtn.setBounds(panelWidth-110, panelHeight-30, 45, 20);
 		layoutSlider.setBounds(15, panelHeight-30, panelWidth-160, 20);
+		lblPrimaryImage.setBounds((panelWidth-225)/2, panelHeight-125, 120, 90);
+		updateLayout();
+		lblNextImage.setBounds((panelWidth+30)/2, panelHeight-115, 80, 60);
+		updateLayout();
+		lblPreviousImage.setBounds((panelWidth-400)/2, panelHeight-115, 80, 60);
+		updateLayout();
+		lblSlidesRight.setBounds((panelWidth+210)/2, panelHeight-115, 40, 30);
+		lblSlidesLeft.setBounds((panelWidth-500)/2, panelHeight-115, 40, 30);
 	}
 
 	private void resizeTransitionPanel(){
