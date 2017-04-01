@@ -67,10 +67,6 @@ public class SlideshowPresenter extends JFrame {
 		btnPlayPause.setBounds(345, 527, 89, 23);
 		MainPanel.add(btnPlayPause);
 
-		JLabel lblPreview = new JLabel("Preview");
-		lblPreview.setBounds(10, 34, 764, 482);
-		MainPanel.add(lblPreview);
-
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 784, 21);
 		MainPanel.add(menuBar);
@@ -101,7 +97,7 @@ public class SlideshowPresenter extends JFrame {
 			}
 		});
 		
-		mntmCreate = new JMenuItem("Creatation");
+		mntmCreate = new JMenuItem("Creation");
 		mnModes.add(mntmCreate);
 		mntmCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -114,10 +110,12 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious = new JButton("<<<<");
 		btnPrevious.setBounds(246, 527, 89, 23);
 		MainPanel.add(btnPrevious);
+		btnPrevious.setEnabled(false);
 		
 		btnNext = new JButton(">>>>");
 		btnNext.setBounds(444, 527, 89, 23);
 		MainPanel.add(btnNext);
+		btnNext.setEnabled(false);
 	}
 
 	private void resizeMainPanel() {
