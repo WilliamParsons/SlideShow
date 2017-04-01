@@ -1,7 +1,6 @@
-
+import java.awt.EventQueue;
 import FileManager.*;
 import Slides.*;
-import Transitions.*;
 import pkgImageTransitions.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,13 +10,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import java.awt.Dimension;
-import java.awt.EventQueue;
-
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import java.awt.Image;
-import java.awt.RenderingHints;
-
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
@@ -60,7 +55,6 @@ public class SlideshowMaker extends JFrame {
 	private JRadioButton rdbtnSwipeRight;
 	private JRadioButton rdbtnCrossfade;
 	private JPanel EditPanel;
-	private JPanel transitionImgPanel;
 	private JLabel lblSlidesRight;
 	private JLabel lblNextImage;
 	private JLabel lblPrimaryImage;
@@ -309,95 +303,11 @@ public class SlideshowMaker extends JFrame {
 		EditPanel.setBounds(542, 9, 124, 212);
 		TransitionPanel.add(EditPanel);
 		EditPanel.setLayout(null);
-		
-//		transitionImgPanel = new JPanel();
-//		transitionImgPanel.setBounds(232, 9, 300, 224);
-//		TransitionPanel.add(transitionImgPanel);
-
-		PreviewImagePanel = new ImagePanel();
-		PreviewImagePanel.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
-		PreviewImagePanel.initializeImages();
-		TransitionPanel.add(PreviewImagePanel);
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (currentSlide != null)
-				{
-					if (currentSlide.getTransition() == SlideState.Transition.NONE)
-					{
-						//do nothing
-					}
-					else if (currentSlide.getTransition() == SlideState.Transition.DOWN)
-					{
-						SwipeDown swipeDownTransition = new SwipeDown();
-						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-						Graphics g = imageToTransition.createGraphics();
-						Image image = currentSlide.getIcon().getImage();
-						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
-						ImageIcon previewIcon = new ImageIcon(newImage);
-						previewIcon.paintIcon(null, g, 0, 0);
-						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
-						swipeDownTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
-						updateLayout();
-					}
-					else if (currentSlide.getTransition() == SlideState.Transition.UP)
-					{
-						SwipeUp swipeUpTransition = new SwipeUp();
-						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-						Graphics g = imageToTransition.createGraphics();
-						Image image = currentSlide.getIcon().getImage();
-						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
-						ImageIcon previewIcon = new ImageIcon(newImage);
-						previewIcon.paintIcon(null, g, 0, 0);
-						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
-						swipeUpTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
-						updateLayout();
-					}
-					else if (currentSlide.getTransition() == SlideState.Transition.LEFT)
-					{
-						SwipeLeft swipeLeftTransition = new SwipeLeft();
-						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-						Graphics g = imageToTransition.createGraphics();
-						Image image = currentSlide.getIcon().getImage();
-						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
-						ImageIcon previewIcon = new ImageIcon(newImage);
-						previewIcon.paintIcon(null, g, 0, 0);
-						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
-						swipeLeftTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
-						updateLayout();
-					}
-					else if (currentSlide.getTransition() == SlideState.Transition.RIGHT)
-					{
-						SwipeRight swipeRightTransition = new SwipeRight();
-						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-						Graphics g = imageToTransition.createGraphics();
-						Image image = currentSlide.getIcon().getImage();
-						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
-						ImageIcon previewIcon = new ImageIcon(newImage);
-						previewIcon.paintIcon(null, g, 0, 0);
-						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
-						swipeRightTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
-						updateLayout();
-					}
-					else if (currentSlide.getTransition() == SlideState.Transition.CROSSFADE)
-					{
-						CrossFade crossFadeTransition = new CrossFade();
-						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
-						Graphics g = imageToTransition.createGraphics();
-						Image image = currentSlide.getIcon().getImage();
-						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
-						ImageIcon previewIcon = new ImageIcon(newImage);
-						previewIcon.paintIcon(null, g, 0, 0);
-						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
-						crossFadeTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 25);
-						updateLayout();
-					}
-					else
-					{
-						System.out.println("error with transition type");
-					}	
-				}
+				//TO DO : Preview transitions
 			}
 		});
 		PreviewTransition.setBounds(35, 166, 45, 23);
@@ -475,7 +385,7 @@ public class SlideshowMaker extends JFrame {
 		});
 		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
 		rdbtnCrossfade.setBounds(10, 136, 105, 23);
-		EditPanel.add(rdbtnCrossfade);		
+		EditPanel.add(rdbtnCrossfade);
 
 		//transGroup the radio buttons
 		ButtonGroup transGroup = new ButtonGroup();
@@ -487,6 +397,10 @@ public class SlideshowMaker extends JFrame {
 		transGroup.add(rdbtnCrossfade);
 
 
+		PreviewImagePanel = new ImagePanel();
+		PreviewImagePanel.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
+		PreviewImagePanel.initializeImages();
+		TransitionPanel.add(PreviewImagePanel);
 		resizePanels();
 	}
 
@@ -514,6 +428,14 @@ public class SlideshowMaker extends JFrame {
 		removeImageBtn.setBounds(panelWidth-60, panelHeight-30, 45, 20);
 		addImageBtn.setBounds(panelWidth-110, panelHeight-30, 45, 20);
 		layoutSlider.setBounds(15, panelHeight-30, panelWidth-160, 20);
+		lblPrimaryImage.setBounds((panelWidth-225)/2, panelHeight-125, 120, 90);
+		updateLayout();
+		lblNextImage.setBounds((panelWidth+30)/2, panelHeight-115, 80, 60);
+		updateLayout();
+		lblPreviousImage.setBounds((panelWidth-400)/2, panelHeight-115, 80, 60);
+		updateLayout();
+		lblSlidesRight.setBounds((panelWidth+210)/2, panelHeight-115, 40, 30);
+		lblSlidesLeft.setBounds((panelWidth-500)/2, panelHeight-115, 40, 30);
 	}
 
 	private void resizeTransitionPanel(){
@@ -526,7 +448,6 @@ public class SlideshowMaker extends JFrame {
 		int labelHeight = (int)(PreviewImagePanel.getHeight()*labelHeightRatio);
 		int labelWidth = (int)(labelHeight * 1.333);
 		TransitionPanel.setBounds(10, panelY, panelWidth, panelHeight);
-		//transitionImgPanel.setBounds(5, 5, TransitionPanel.getWidth() / 2 , TransitionPanel.getHeight() /2);
 		PreviewImagePanel.setBounds((panelWidth/2)-(labelWidth/2), (TransitionPanel.getHeight()/2)-(labelHeight/2), labelWidth, labelHeight);
 		resizePreviewImage();
 		EditPanel.setBounds(PreviewImagePanel.getX() + PreviewImagePanel.getWidth() + 10, PreviewImagePanel.getY() + PreviewImagePanel.getHeight() - 200, 118, 200);
@@ -626,7 +547,7 @@ public class SlideshowMaker extends JFrame {
 			label.setIcon(icon);
 		}
 	}
-	
+
 	private void resizePreviewImage(){
 		if(previewIcon != null) {
 			BufferedImage bufferedImg = new BufferedImage(

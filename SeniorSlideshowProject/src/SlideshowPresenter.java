@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 
@@ -11,10 +13,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import FileManager.FileManager;
+import Slides.AudioState;
 import Slides.SlideShowStateMachine;
+import Slides.SlideState;
+import pkgImageTransitions.ImagePanel;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -23,14 +30,21 @@ import javax.swing.JMenuItem;
 public class SlideshowPresenter extends JFrame {
 
 	private JPanel MainPanel;
+	private ImagePanel MainSlide;
 	private JButton btnPlayPause;
 	private JButton btnPrevious;
 	private JButton btnNext;
 	private JMenuItem mntmCreate;
 	private SlideShowStateMachine slideStateMachine;
+	private JMenuBar menuBar;
+	private JMenu mnFile;
 	private JMenu mnPresentModes;
+	private JMenuItem mntmOpen;
 	private JMenuItem mntmAuto;
 	private JMenuItem mntmManual;
+	private JLabel lblMainSlide;
+	private SlideState currentSlide;
+	private FileManager fMgr;
 
 	/**
 	 * Launch the application.
@@ -57,26 +71,64 @@ public class SlideshowPresenter extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		MainPanel = new JPanel();
+		MainPanel.addComponentListener(new ComponentAdapter() {
+			public void componentResized(ComponentEvent e) {
+				resizeMainPanel();
+			}
+		});
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(MainPanel);
 		MainPanel.setLayout(null);
 		
+		int currentIndex = 0;
+
 		slideStateMachine = SlideShowStateMachine.getInstance();
+		fMgr = new FileManager();
 
 		btnPlayPause = new JButton("Play/Pause");
-		btnPlayPause.setBounds(345, 527, 89, 23);
+		btnPlayPause.setBounds(345, 530, 89, 23);
 		MainPanel.add(btnPlayPause);
+		btnPlayPause.setEnabled(true);
 
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 784, 21);
 		MainPanel.add(menuBar);
 
+		mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+
+		mntmOpen = new JMenuItem("Open File");
+		mntmOpen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				int result = fc.showOpenDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION){
+					String selectedFilePath = fc.getSelectedFile().getPath();
+					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);
+					slideStateMachine.clearSlideShow();
+					SlideState slide = tempState.getFirstSlide();
+					while(slide != null){
+						slideStateMachine.addSlide(slide);
+						slide = tempState.getNextSlide();
+					}
+					AudioState audio = tempState.getFirstAudio();
+					while(audio != null){
+						slideStateMachine.addAudio(audio);
+						audio = tempState.getNextAudio();
+					}
+				}	
+			}
+		});
+		mnFile.add(mntmOpen);
+
 		JMenu mnModes = new JMenu("Modes\r\n");
 		menuBar.add(mnModes);
-		
+
 		mnPresentModes = new JMenu("Presentation Modes");
 		mnModes.add(mnPresentModes);
-		
+
 		mntmAuto = new JMenuItem("Automatic");
 		mnPresentModes.add(mntmAuto);
 		mntmAuto.addActionListener(new ActionListener() {
@@ -86,7 +138,7 @@ public class SlideshowPresenter extends JFrame {
 				btnPlayPause.setEnabled(true);
 			}
 		});
-		
+
 		mntmManual = new JMenuItem("Manual");
 		mnPresentModes.add(mntmManual);
 		mntmManual.addActionListener(new ActionListener() {
@@ -96,7 +148,7 @@ public class SlideshowPresenter extends JFrame {
 				btnNext.setEnabled(true);
 			}
 		});
-		
+
 		mntmCreate = new JMenuItem("Creation");
 		mnModes.add(mntmCreate);
 		mntmCreate.addActionListener(new ActionListener() {
@@ -106,46 +158,77 @@ public class SlideshowPresenter extends JFrame {
 				setVisible(false);
 			}
 		});
-		
+
 		btnPrevious = new JButton("<<<<");
-		btnPrevious.setBounds(246, 527, 89, 23);
+		btnPrevious.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// currentSlide = slideStateMachine.getPreviousSlide();
+				// resizeImageIcon(lblMainSlide, currentSlide.getIcon());
+			}
+		});
+		btnPrevious.setBounds(50, -30, 89, 23);
 		MainPanel.add(btnPrevious);
 		btnPrevious.setEnabled(false);
-		
+
 		btnNext = new JButton(">>>>");
-		btnNext.setBounds(444, 527, 89, 23);
+		btnNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// currentSlide = slideStateMachine.getNextSlide();
+				// resizeImageIcon(lblMainSlide, currentSlide.getIcon());
+			}
+		});
+		btnNext.setBounds(445, 530, 89, 23);
 		MainPanel.add(btnNext);
 		btnNext.setEnabled(false);
+
+		JLabel lblMainSlide = new JLabel("");
+		lblMainSlide.setBounds(10, 32, 764, 484);
+		MainPanel.add(lblMainSlide);
+		resizeMainPanel();
+	}
+
+	private void updateManualImage() {
+		int slideShowSize = slideStateMachine.getSlideShowSize();
+		if (slideShowSize == 0) {
+			btnPlayPause.setEnabled(false);
+			btnPrevious.setEnabled(false);
+			btnNext.setEnabled(false);
+		}
+		
+		if (currentSlide != null) {
+			resizeImageIcon(lblMainSlide, currentSlide.getIcon());
+		}
 	}
 
 	private void resizeMainPanel() {
 		int panelWidth = this.getWidth() - 35;
 		int panelHeight = this.getHeight() - 35;
 		MainPanel.setBounds(5, 5, panelWidth, panelHeight);
-		btnPlayPause.setBounds(panelWidth-455, panelHeight-73, 89, 23);
+
+		btnPrevious.setBounds((panelWidth / 2) - 150, panelHeight - 40, 89, 23);
+		btnPlayPause.setBounds((panelWidth / 2) - 43, panelHeight - 40, 100, 23);
+		btnNext.setBounds((panelWidth / 2) + 75, panelHeight - 40, 89, 23);
 	}
-	
-	private void paintImage(JLabel label, ImageIcon icon){
-		if(slideStateMachine.getSlideShowSize() > 0) {
-			BufferedImage bufferedImg = new BufferedImage(
-				    icon.getIconWidth(),
-				    icon.getIconHeight(),
-				    BufferedImage.TYPE_INT_RGB);
+
+	private void resizeImageIcon(JLabel label, ImageIcon icon) {
+		if (slideStateMachine.getSlideShowSize() > 0) {
+			BufferedImage bufferedImg = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
+					BufferedImage.TYPE_INT_RGB);
 			Graphics g = bufferedImg.createGraphics();
-			icon.paintIcon(null, g, 0,0);
+			icon.paintIcon(null, g, 0, 0);
 			g.dispose();
-				
+
 			Image scaledImg;
 			int imageHeight = bufferedImg.getHeight();
 			int imageWidth = bufferedImg.getWidth();
-			double heightRatio = (double)imageHeight/(double)imageWidth;
+			double heightRatio = (double) imageHeight / (double) imageWidth;
 			int scaledHeight = label.getHeight();
 			int scaledWidth = label.getWidth();
-			if((scaledWidth*heightRatio) > scaledHeight){
+			if ((scaledWidth * heightRatio) > scaledHeight) {
 				scaledImg = bufferedImg.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-			}
-			else {
-				scaledImg = bufferedImg.getScaledInstance(scaledWidth, (int)(scaledWidth*heightRatio), Image.SCALE_SMOOTH);
+			} else {
+				scaledImg = bufferedImg.getScaledInstance(scaledWidth, (int) (scaledWidth * heightRatio),
+						Image.SCALE_SMOOTH);
 			}
 			icon = new ImageIcon(scaledImg);
 			label.setIcon(icon);
