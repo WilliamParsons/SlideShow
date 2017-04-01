@@ -136,6 +136,8 @@ public class SlideshowMaker extends JFrame {
 						slideStateMachine.addAudio(audio);
 						audio = tempState.getNextAudio();
 					}
+					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
+					soundTrack.jukeTable.tableChanged();
 					updateLayout();
 				}
 			}
@@ -459,7 +461,7 @@ public class SlideshowMaker extends JFrame {
 		AudioPanel.setBounds(10, MainPanel.getHeight()-129, panelWidth, 119);
 		soundTrack.setBounds(0, 0, panelWidth, 110);
 	}
-
+	
 	private void updateLayout(){
 		int slideSize = slideStateMachine.getSlideShowSize();
 		if(slideSize > 0 && !layoutSlider.isEnabled()) {
