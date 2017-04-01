@@ -296,8 +296,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         {
            try 
            {
-        	   	currentAudio = new AudioState((AudioInputStream)currentSound, currentName);
-        	   	audioState.addAudio(currentAudio);
+//        	   	currentAudio = new AudioState((AudioInputStream)currentSound, currentName);
+//        	   	audioState.addAudio(currentAudio);
                 AudioInputStream stream = (AudioInputStream) currentSound;
                 AudioFormat format = stream.getFormat();
 
