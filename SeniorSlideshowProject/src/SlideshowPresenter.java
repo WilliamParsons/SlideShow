@@ -90,9 +90,8 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.add(btnPlayPause);
 		btnPlayPause.setEnabled(true);
 
-		menuBar = new JMenuBar();
-		//menuBar.setBounds(0, 0, 800, 25);
-		setJMenuBar(menuBar);
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 784, 21);
 		MainPanel.add(menuBar);
 
 		mnFile = new JMenu("File");
@@ -184,9 +183,6 @@ public class SlideshowPresenter extends JFrame {
 
 		JLabel lblMainSlide = new JLabel("");
 		lblMainSlide.setBounds(10, 32, 764, 484);
-		ImageIcon testIcon = new ImageIcon("C:/Users/Emily/Documents/Project Pictures/Senior Project/A.jpg");
-		Image testImage = testIcon.getImage().getScaledInstance(lblMainSlide.getWidth(), lblMainSlide.getHeight(), Image.SCALE_SMOOTH);
-		lblMainSlide.setIcon(new ImageIcon(testImage, testIcon.getDescription()));
 		MainPanel.add(lblMainSlide);
 		resizeMainPanel();
 	}
