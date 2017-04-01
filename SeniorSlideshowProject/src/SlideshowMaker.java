@@ -114,7 +114,7 @@ public class SlideshowMaker extends JFrame {
 			}
 		});
 		mnFile.add(mntmNew);
-		
+
 		mntmOpen = new JMenuItem("Open");
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -137,7 +137,7 @@ public class SlideshowMaker extends JFrame {
 						audio = tempState.getNextAudio();
 					}
 					updateLayout();
-				}	
+				}
 			}
 		});
 		mnFile.add(mntmOpen);
@@ -157,7 +157,7 @@ public class SlideshowMaker extends JFrame {
 						selectedFilePath += ".ssp";
 					}
 					fMgr.writeFile(slideStateMachine, selectedFilePath);
-				}	
+				}
 			}
 		});
 		mnFile.add(mntmSave);
@@ -223,7 +223,7 @@ public class SlideshowMaker extends JFrame {
 							slideStateMachine.addSlide(mySlide);
 						}
 					}
-				}				
+				}
 				updateLayout();
 			}
 		});
@@ -251,9 +251,9 @@ public class SlideshowMaker extends JFrame {
 		layoutSlider.setEnabled(false);
 		layoutSlider.setBounds(15, 120, 642, 20);
 		layoutSlider.setValue(0);
-		layoutSlider.setMinimum(0);		
+		layoutSlider.setMinimum(0);
 		layoutSlider.setSnapToTicks(true);
-		LayoutPanel.add(layoutSlider);	
+		LayoutPanel.add(layoutSlider);
 
 		lblSlidesRight = new JLabel("");
 		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
@@ -319,7 +319,7 @@ public class SlideshowMaker extends JFrame {
 				if(currentSlide != null){
 					currentSlide.setTransitionType(SlideState.Transition.NONE);
 				}
-				
+
 			}
 		});
 		rdbtnNoTrans.setHorizontalAlignment(SwingConstants.LEFT);
@@ -468,7 +468,7 @@ public class SlideshowMaker extends JFrame {
 		}
 		else if (slideSize == 0) {
 			layoutSlider.setValue(0);
-			layoutSlider.setEnabled(false);			
+			layoutSlider.setEnabled(false);
 		}
 
 		int currentIndex = layoutSlider.getValue();
@@ -488,7 +488,7 @@ public class SlideshowMaker extends JFrame {
 			resizePreviewImage();
 			SlideState.Transition trans = currentSlide.getTransition();
 			switch(trans){
-			case NONE: 
+			case NONE:
 				rdbtnNoTrans.setSelected(true);
 				break;
 			case LEFT:
@@ -518,7 +518,7 @@ public class SlideshowMaker extends JFrame {
 			resizeImageIcon(lblNextImage, nextSlide.getIcon());
 		} else if (layoutSlider.isEnabled()){
 			lblNextImage.setIcon(null);
-		}	
+		}
 	}
 
 	private void resizeImageIcon(JLabel label, ImageIcon icon){
@@ -561,4 +561,3 @@ public class SlideshowMaker extends JFrame {
 		}
 	}
 }
-

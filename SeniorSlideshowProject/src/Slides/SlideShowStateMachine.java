@@ -175,7 +175,20 @@ public class SlideShowStateMachine implements Serializable {
 		return audioList.get(audioIndex);
 	}
 
-	public int getNextAudio()
+	public AudioState getNextAudio()
+	{
+		if(audioIndex + 1 < audioList.size())
+		{
+//			return audioIndex++;
+			return audioList.get(audioIndex);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	public int getNextAudioIndex()
 	{
 		if(audioIndex + 1 < audioList.size())
 		{
@@ -191,8 +204,8 @@ public class SlideShowStateMachine implements Serializable {
 			return audioIndex;
 		}
 	}
-
-	public int getPreviousAudio()
+	
+	public int getPreviousAudioIndex()
 	{
 		if(audioIndex > 0)
 		{
@@ -202,6 +215,20 @@ public class SlideShowStateMachine implements Serializable {
 		else
 		{
 			return audioIndex;
+		}
+
+	}
+	
+	public AudioState getPreviousAudio()
+	{
+		if(audioIndex > 0)
+		{
+//			return audioIndex--;
+			return audioList.get(audioIndex);
+		}
+		else
+		{
+			return null;
 		}
 
 	}
