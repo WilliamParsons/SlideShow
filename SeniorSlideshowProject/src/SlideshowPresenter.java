@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 import FileManager.FileManager;
@@ -37,6 +38,7 @@ public class SlideshowPresenter extends JFrame {
 	private JMenuItem mntmCreate;
 	private SlideShowStateMachine slideStateMachine;
 	private JMenuBar menuBar;
+	private JPanel PresentationPanel;
 	private JMenu mnFile;
 	private JMenu mnPresentModes;
 	private JMenuItem mntmOpen;
@@ -45,6 +47,7 @@ public class SlideshowPresenter extends JFrame {
 	private JLabel lblMainSlide;
 	private SlideState currentSlide;
 	private FileManager fMgr;
+	private ImagePanel PresentationImagePanel;
 
 	/**
 	 * Launch the application.
@@ -180,11 +183,12 @@ public class SlideshowPresenter extends JFrame {
 		btnNext.setBounds(445, 530, 89, 23);
 		MainPanel.add(btnNext);
 		btnNext.setEnabled(false);
-
-		JLabel lblMainSlide = new JLabel("");
-		lblMainSlide.setBounds(10, 32, 764, 484);
-		MainPanel.add(lblMainSlide);
 		resizeMainPanel();
+		
+		PresentationImagePanel = new ImagePanel();
+		PresentationImagePanel.setBounds(0, 0, MainPanel.getWidth(), MainPanel.getHeight() - 50);
+		PresentationImagePanel.initializeImages();
+		MainPanel.add(PresentationImagePanel);
 	}
 
 	private void updateManualImage() {
@@ -208,6 +212,7 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious.setBounds((panelWidth / 2) - 150, panelHeight - 40, 89, 23);
 		btnPlayPause.setBounds((panelWidth / 2) - 43, panelHeight - 40, 100, 23);
 		btnNext.setBounds((panelWidth / 2) + 75, panelHeight - 40, 89, 23);
+		
 	}
 
 	private void resizeImageIcon(JLabel label, ImageIcon icon) {
