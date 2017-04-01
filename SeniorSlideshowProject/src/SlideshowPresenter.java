@@ -49,11 +49,11 @@ public class SlideshowPresenter extends JFrame {
 	private SlideState currentSlide;
 	private FileManager fMgr;
 	private SoundTrack soundTrack;
-	private SlideState tempState;
 	private ImagePanel PresentationImagePanel;
 	private boolean slidePlaying = true;
 	private boolean clicked = false;
 	private Timer showTimer;
+
 
 	/**
 	 * Launch the application.
@@ -88,6 +88,8 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(MainPanel);
 		MainPanel.setLayout(null);
+		
+		int currentIndex = 0;
 
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		soundTrack = new SoundTrack((String) null);
@@ -153,8 +155,6 @@ public class SlideshowPresenter extends JFrame {
 			}
 		});
 		mnFile.add(mntmOpen);
-		
-		tempState = slideStateMachine.getFirstSlide(); 
 
 		JMenu mnModes = new JMenu("Modes\r\n");
 		menuBar.add(mnModes);
@@ -195,7 +195,8 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious = new JButton("<<<<");
 		btnPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				// currentSlide = slideStateMachine.getPreviousSlide();
+				// resizeImageIcon(lblMainSlide, currentSlide.getIcon());
 			}
 		});
 		btnPrevious.setBounds(50, -30, 89, 23);
