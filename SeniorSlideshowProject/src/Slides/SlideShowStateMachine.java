@@ -3,21 +3,22 @@ import java.util.*;
 import java.io.Serializable;
 
 public class SlideShowStateMachine implements Serializable {
-	
+
 	/* This is the state machine for the program.
 	 * All audio and image file locations, their sequence,
 	 * and the types of transitions will be stored here.
 	 */
-	
+
 	private static SlideShowStateMachine singleton = new SlideShowStateMachine();
 	private static final long serialVersionUID = 1L;
-	
+
 	private ArrayList<AudioState> audioList;
 	private ArrayList<SlideState> slideList;
 	private int audioIndex;
 	private int slideIndex;
 	private double showTime;
-	
+	private boolean audioLoopFlag;
+
 	private SlideShowStateMachine()
 	{
 		audioList = new ArrayList<AudioState>();
@@ -25,44 +26,45 @@ public class SlideShowStateMachine implements Serializable {
 		audioIndex = 0;
 		slideIndex = 0;
 		showTime = 0;
+		audioLoopFlag = false;
 	}
-	
+
 	public static SlideShowStateMachine getInstance()
 	{
 		return singleton;
 	}
-	
+
 	private void setSlideTransitionTimes()
 	{
 		double slideTime = showTime/slideList.size();
 		for (SlideState x : slideList)
-		{		
+		{
 			x.setTransitionTime(slideTime);
-		}		
+		}
 	}
-	
+
 	public void addSlide(SlideState slide)
 	{
 		slideList.add(slide);
 		setSlideTransitionTimes();
 	}
-	
+
 	public SlideState getFirstSlide()
 	{
 		slideIndex = 0;
 		try {
-			return slideList.get(slideIndex);		
+			return slideList.get(slideIndex);
 		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
-		
+
 	}
-	
+
 	public SlideState getCurrentSlide()
 	{
 			return slideList.get(slideIndex);
-	}		
-	
+	}
+
 	public SlideState getNextSlide()
 	{
 		if(slideIndex + 1 < slideList.size())
@@ -75,18 +77,18 @@ public class SlideShowStateMachine implements Serializable {
 			return null;
 		}
 	}
-	
+
 	public SlideState getSlideAtIndex(int i) {
-		if (i >= 0 && i < slideList.size()) 
+		if (i >= 0 && i < slideList.size())
 		{
 			return slideList.get(i);
 		}
-		else 
+		else
 		{
 			return null;
 		}
 	}
-	
+
 	public SlideState getPreviousSlide()
 	{
 		if(slideIndex > 0)
@@ -98,15 +100,15 @@ public class SlideShowStateMachine implements Serializable {
 		{
 			return null;
 		}
-		
+
 	}
-	
+
 	public void removeSlideAtIndex(int i)
 	{
-		try 
+		try
 		{
 			slideList.remove(i);
-			
+
 			if(slideIndex - 1 >= 0)
 			{
 				slideIndex--;
@@ -114,15 +116,15 @@ public class SlideShowStateMachine implements Serializable {
 			else
 			{
 				slideIndex = 0;
-			}			
+			}
 			setSlideTransitionTimes();
-		} 
+		}
 		catch(IndexOutOfBoundsException e)
 		{
 			System.out.println("Exception thrown : " + e);
 		}
 	}
-	
+
 	public void removeSlide(SlideState state)
 	{
 		if(slideList.remove(state))
@@ -134,74 +136,96 @@ public class SlideShowStateMachine implements Serializable {
 			else
 			{
 				slideIndex = 0;
-			}	
+			}
 			setSlideTransitionTimes();
 		}
 	}
-	
+
 	public int getSlideShowSize()
 	{
 		return slideList.size();
 	}
-	
+
+	public int getAudioListSize()
+	{
+		return audioList.size();
+	}
+
 	public void addAudio(AudioState audio)
 	{
-		showTime += audio.getAudioTime();		
+		showTime += audio.getAudioTime();
 		audioList.add(audio);
-		
+
 		setSlideTransitionTimes();
 	}
-	
+
 	public AudioState getFirstAudio()
 	{
-		audioIndex = 0;		
+		audioIndex = 0;
 		try {
-			return audioList.get(audioIndex);		
+			return audioList.get(audioIndex);
 		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
-		
+
 	}
-	
+
 	public AudioState getCurrentAudio()
 	{
 		return audioList.get(audioIndex);
 	}
-	
-	public AudioState getNextAudio()
+
+	public int getNextAudio()
 	{
 		if(audioIndex + 1 < audioList.size())
 		{
-			audioIndex++;
-			return audioList.get(audioIndex);
+			return audioIndex++;
+			// return audioList.get(audioIndex);
 		}
 		else
 		{
-			return null;
+			if(audioLoopFlag == true)
+			{
+				audioIndex = 0;
+			}
+			return audioIndex;
 		}
 	}
-	
-	public AudioState getPreviousAudio()
+
+	public int getPreviousAudio()
 	{
 		if(audioIndex > 0)
 		{
-			audioIndex--;
-			return audioList.get(audioIndex);
+			return audioIndex--;
+			// return audioList.get(audioIndex);
 		}
 		else
 		{
+			return audioIndex;
+		}
+
+	}
+
+	public AudioState getAudioAtIndex(int i)
+	{
+		try
+		{
+			return audioList.get(i);
+		}
+		catch(IndexOutOfBoundsException e)
+		{
+			System.out.println("Exception thrown : " + e);
 			return null;
 		}
-		
 	}
-	
+
 	public void removeAudioAtIndex(int i)
 	{
 		try
 		{
 			showTime -= audioList.get(i).getAudioTime();
 			audioList.remove(i);
-			
+
 			if(audioIndex - 1 >= 0)
 			{
 				audioIndex--;
@@ -211,13 +235,13 @@ public class SlideShowStateMachine implements Serializable {
 				audioIndex = 0;
 			}
 			setSlideTransitionTimes();
-		} 
+		}
 		catch(IndexOutOfBoundsException e)
 		{
 			System.out.println("Exception thrown : " + e);
 		}
 	}
-	
+
 	public void removeAudioWithFileName(String name)
 	{
 		for (int i = 0; i < audioList.size(); i++)
@@ -227,7 +251,7 @@ public class SlideShowStateMachine implements Serializable {
 			{
 				showTime -= audio.getAudioTime();
 				audioList.remove(audio);
-				
+
 				if(audioIndex - 1 >= 0)
 				{
 					audioIndex--;
@@ -240,14 +264,14 @@ public class SlideShowStateMachine implements Serializable {
 			}
 		}
 	}
-	
+
 	public void removeAudio(AudioState state)
 	{
 		if(audioList.contains(state))
 		{
-			showTime -= state.getAudioTime();			
+			showTime -= state.getAudioTime();
 			audioList.remove(state);
-			
+
 			if(audioIndex - 1 >= 0)
 			{
 				audioIndex--;
@@ -257,16 +281,33 @@ public class SlideShowStateMachine implements Serializable {
 				audioIndex = 0;
 			}
 			setSlideTransitionTimes();
-			
+
 		}
-		
+
 	}
-	
+
+	public int getAudioIndex(){
+		return audioIndex;
+	}
+
 	public void clearSlideShow()
 	{
 		audioList.clear();
 		slideList.clear();
 	}
-	
-	
+
+	public void removeSelectedAudios(Vector tmp) {
+		// TODO Auto-generated method stub
+		audioList.removeAll(tmp);
+	}
+
+	public void removeAllAudios() {
+		// TODO Auto-generated method stub
+		audioList.clear();
+	}
+
+	public void setAudioLoopFlag() {
+		// TODO Auto-generated method stub
+		audioLoopFlag = !audioLoopFlag;
+	}
 }

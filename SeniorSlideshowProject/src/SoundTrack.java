@@ -58,11 +58,11 @@ import java.net.URL;
 
 
 /**
- * A JukeBox for sampled and midi sound files.  Features duration progress, 
+ * A JukeBox for sampled and midi sound files.  Features duration progress,
  * seek slider, pan and volume controls.
  *
  * @version @(#)Juke.java	1.19 00/01/31
- * @author Brian Lichtenwalter  
+ * @author Brian Lichtenwalter
  */
 public class SoundTrack extends JPanel implements Runnable//, LineListener, MetaEventListener
 {
@@ -71,15 +71,15 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     PlaybackMonitor playbackMonitor = new PlaybackMonitor();
 
     Vector sounds = new Vector();
-    //public ArrayList<AudioState> audioList = new ArrayList<AudioState>();;
-    SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
-    
+    //public ArrayList<audioStateMachine> audioList = new ArrayList<audioStateMachine>();;
+    SlideShowStateMachine audioStateMachine;
+
     Thread thread;
     Sequencer sequencer;
     boolean midiEOM, audioEOM;
     Synthesizer synthesizer;
-    MidiChannel channels[]; 
-    
+    MidiChannel channels[];
+
     AudioState currentAudio;
     Object currentSound;
     String currentName;
@@ -98,187 +98,188 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     JukeControls controls;
 
 
-    public SoundTrack(String dirName) 
+    public SoundTrack(String dirName)
     {
+    	audioStateMachine = SlideShowStateMachine.getInstance();
         setLayout(new BorderLayout());
 //        setBorder(new EmptyBorder(5,5,5,5));
 
-        if (dirName != null) 
+        if (dirName != null)
         {
-            loadJuke(dirName); 
+            loadJuke(dirName);
         }
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
             jukeTable = new JukeTable(), controls = new JukeControls());
         splitPane.setContinuousLayout(true);
       //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(155, 150);
         jukeTable.setMinimumSize(minimumSize);
 //        controls.setMinimumSize(minimumSize);
-        
+
         add(splitPane, BorderLayout.CENTER);
     }
 
 
-    public void open() 
+    public void open()
     {
 
-        try 
+        try
         {
 
             sequencer = MidiSystem.getSequencer();
 
-			if (sequencer instanceof Synthesizer) 
+			if (sequencer instanceof Synthesizer)
 			{
 				synthesizer = (Synthesizer)sequencer;
 				channels = synthesizer.getChannels();
-			} 
+			}
 
         }
-        catch (Exception ex) 
-        { 
-        	ex.printStackTrace(); 
-        	return; 
+        catch (Exception ex)
+        {
+        	ex.printStackTrace();
+        	return;
         }
         //sequencer.addMetaEventListener(this);
         (credits = new Credits()).start();
     }
 
 
-    public void close() 
+    public void close()
     {
-        if (credits != null && credits.isAlive()) 
+        if (credits != null && credits.isAlive())
         {
             credits.interrupt();
         }
-        if (thread != null && startB != null) 
+        if (thread != null && startB != null)
         {
             startB.doClick(0);
         }
-        if (jukeTable != null && jukeTable.frame != null) 
+        if (jukeTable != null && jukeTable.frame != null)
         {
             jukeTable.frame.dispose();
             jukeTable.frame = null;
         }
-        if (sequencer != null) 
+        if (sequencer != null)
         {
             sequencer.close();
         }
     }
 
 
-    public void loadJuke(String name) 
+    public void loadJuke(String name)
     {
-        try 
+        try
         {
             File file = new File(name);
-            if (file != null && file.isDirectory()) 
+            if (file != null && file.isDirectory())
             {
                 String files[] = file.list();
-                for (int i = 0; i < files.length; i++) 
+                for (int i = 0; i < files.length; i++)
                 {
                     File leafFile = new File(file.getAbsolutePath(), files[i]);
-                    if (leafFile.isDirectory()) 
+                    if (leafFile.isDirectory())
                     {
                         loadJuke(leafFile.getAbsolutePath());
-                    } 
-                    else 
+                    }
+                    else
                     {
                         addSound(leafFile);
-                        audioState.addAudio(new AudioState(leafFile));
                     }
                 }
-            } 
-            else if (file != null && file.exists()) 
+            }
+            else if (file != null && file.exists())
             {
                 addSound(file);
             }
-        } 
-        catch (SecurityException ex) 
+        }
+        catch (SecurityException ex)
         {
             reportStatus(ex.toString());
 //            JavaSound.showInfoDialog();
-        } 
-        catch (Exception ex) 
+        }
+        catch (Exception ex)
         {
             reportStatus(ex.toString());
         }
     }
 
 
-    private void addSound(File file) 
+    private void addSound(File file)
     {
         String s = file.getName();
-        if (s.endsWith(".au") || s.endsWith(".rmf") ||
+        if (s.endsWith(".au") ||
             s.endsWith(".mid") || s.endsWith(".wav") ||
             s.endsWith(".aif") || s.endsWith(".aiff"))
         {
-            sounds.add(file);
-           //loadSound(file);
+            // sounds.add(file);
+            audioStateMachine.addAudio(new AudioState(file));
         }
     }
 
 
-    public boolean loadSound(Object object) 
+    public boolean loadSound(Object object)
     {
 
         duration = 0.0;
         (loading = new Loading()).start();
 
-        if (object instanceof URL) 
+        if (object instanceof URL)
         {
             currentName = ((URL) object).getFile();
             playbackMonitor.repaint();
-            try 
+            try
             {
                 currentSound = AudioSystem.getAudioInputStream((URL) object);
-            } 
-            catch(Exception e) 
+            }
+            catch(Exception e)
             {
-                try 
-                { 
+                try
+                {
                     currentSound = MidiSystem.getSequence((URL) object);
-                } 
-                catch (InvalidMidiDataException imde) 
+                }
+                catch (InvalidMidiDataException imde)
                 {
                 	System.out.println("Unsupported audio file.");
+                    audioStateMachine.getNextAudio();
                 	return false;
-                } 
-                catch (Exception ex) 
-                { 
-                    ex.printStackTrace(); 
+                }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
                     currentSound = null;
                     return false;
                 }
             }
         }
-        else if (object instanceof File) 
+        else if (object instanceof File)
         {
             currentName = ((File) object).getName();
             playbackMonitor.repaint();
-            try 
+            try
             {
                 currentSound = AudioSystem.getAudioInputStream((File) object);
-                
-            } 
-            catch(Exception e1) 
+
+            }
+            catch(Exception e1)
             {
-                // load midi & rmf as inputstreams for now
-                //try { 
-                    //currentSound = MidiSystem.getSequence((File) object);
-                //} catch (Exception e2) { 
-                    try 
-                    { 
+//                load midi & rmf as inputstreams for now
+                try {
+                    currentSound = MidiSystem.getSequence((File) object);
+                } catch (Exception e2) {
+                    try
+                    {
                         FileInputStream is = new FileInputStream((File) object);
                         currentSound = new BufferedInputStream(is, 1024);
-                    } 
-                    catch (Exception e3) 
-                    { 
-                        e3.printStackTrace(); 
+                    }
+                    catch (Exception e3)
+                    {
+                        e3.printStackTrace();
                         currentSound = null;
                         return false;
                     }
-                //}
+                }
             }
         }
 
@@ -286,18 +287,18 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         loading.interrupt();
 
         // user pressed stop or changed tabs while loading
-//        if (sequencer == null) 
+//        if (sequencer == null)
 //        {
 //            currentSound = null;
 //            return false;
-//        } 
+//        }
 
-        if (currentSound instanceof AudioInputStream) 
+        if (currentSound instanceof AudioInputStream)
         {
-           try 
+           try
            {
-        	   	currentAudio = new AudioState((AudioInputStream)currentSound, currentName);
-        	   	audioState.addAudio(currentAudio);
+                // rentAudio = new audioStateMachine((AudioInputStream)currentSound, currentName);
+                // ioStateMachine.addAudio(currentAudio);
                 AudioInputStream stream = (AudioInputStream) currentSound;
                 AudioFormat format = stream.getFormat();
 
@@ -306,10 +307,10 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                  * convert ALAW/ULAW to PCM
                  */
                 if ((format.getEncoding() == AudioFormat.Encoding.ULAW) ||
-                    (format.getEncoding() == AudioFormat.Encoding.ALAW)) 
+                    (format.getEncoding() == AudioFormat.Encoding.ALAW))
                 {
                     AudioFormat tmp = new AudioFormat(
-                                              AudioFormat.Encoding.PCM_SIGNED, 
+                                              AudioFormat.Encoding.PCM_SIGNED,
                                               format.getSampleRate(),
                                               format.getSampleSizeInBits() * 2,
                                               format.getChannels(),
@@ -320,8 +321,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     format = tmp;
                 }
                 DataLine.Info info = new DataLine.Info(
-                                          Clip.class, 
-                                          stream.getFormat(), 
+                                          Clip.class,
+                                          stream.getFormat(),
                                           ((int) stream.getFrameLength() *
                                               format.getFrameSize()));
 
@@ -330,97 +331,98 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 clip.open(stream);
                 currentSound = clip;
                 seekSlider.setMaximum((int) stream.getFrameLength());
-            } 
-           catch (Exception ex) 
-           { 
-        	   ex.printStackTrace(); 
+            }
+           catch (Exception ex)
+           {
+        	   ex.printStackTrace();
         	   currentSound = null;
         	   return false;
            }
-        } 
-        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) 
+        }
+        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
         {
-            try 
+            try
             {
                 sequencer.open();
-                if (currentSound instanceof Sequence) 
+                if (currentSound instanceof Sequence)
                 {
                     sequencer.setSequence((Sequence) currentSound);
                 }
-                else 
+                else
                 {
                     sequencer.setSequence((BufferedInputStream) currentSound);
                 }
 				seekSlider.setMaximum((int)(sequencer.getMicrosecondLength() / 1000));
 
-            } 
-            catch (InvalidMidiDataException imde) 
-            { 
+            }
+            catch (InvalidMidiDataException imde)
+            {
             	System.out.println("Unsupported audio file.");
+                audioStateMachine.getNextAudio();
             	currentSound = null;
             	return false;
-            } 
-            catch (Exception ex) 
-            { 
-            	ex.printStackTrace(); 
+            }
+            catch (Exception ex)
+            {
+            	ex.printStackTrace();
             	currentSound = null;
             	return false;
             }
         }
 
         seekSlider.setValue(0);
-        
+
 		// enable seek, pan, and gain sliders for sequences as well as clips
 		seekSlider.setEnabled(true);
 //		panSlider.setEnabled(true);
-//        gainSlider.setEnabled(true);        
-		
+//        gainSlider.setEnabled(true);
+
         duration = getDuration();
 
         return true;
     }
 
 
-    public void playSound() 
+    public void playSound()
     {
         playbackMonitor.start();
 //        setGain();
 //        setPan();
         midiEOM = audioEOM = bump = false;
-        if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream && thread != null) 
+        if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream && thread != null)
         {
             sequencer.start();
-            while (!midiEOM && thread != null && !bump) 
+            while (!midiEOM && thread != null && !bump)
             {
-                try 
-                { 
-                	Thread.sleep(99); 
-                } 
-                catch (Exception e) 
+                try
+                {
+                	Thread.sleep(99);
+                }
+                catch (Exception e)
                 {
                 	break;
                 }
             }
             sequencer.stop();
             sequencer.close();
-        } 
-        else if (currentSound instanceof Clip && thread != null) 
+        }
+        else if (currentSound instanceof Clip && thread != null)
         {
             Clip clip = (Clip) currentSound;
             clip.start();
-            try 
-            { 
-            	Thread.sleep(99); 
-            } 
-            catch (Exception e) 
-            { }
-            while ((paused || clip.isActive()) && thread != null && !bump) 
+            try
             {
-                try 
-                { 
-                	Thread.sleep(99); 
-                } 
-                catch (Exception e) 
+            	Thread.sleep(99);
+            }
+            catch (Exception e)
+            { }
+            while ((paused || clip.isActive()) && thread != null && !bump)
+            {
+                try
+                {
+                	Thread.sleep(99);
+                }
+                catch (Exception e)
                 {
                 	break;
                 }
@@ -433,41 +435,41 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     }
 
 
-    public double getDuration() 
+    public double getDuration()
     {
         double duration = 0.0;
-        if (currentSound instanceof Sequence) 
+        if (currentSound instanceof Sequence)
         {
             duration = ((Sequence) currentSound).getMicrosecondLength() / 1000000.0;
         }
-        else if (currentSound instanceof BufferedInputStream) 
+        else if (currentSound instanceof BufferedInputStream)
         {
 			duration = sequencer.getMicrosecondLength() / 1000000.0;
 		}
-        else if (currentSound instanceof Clip) 
+        else if (currentSound instanceof Clip)
         {
             Clip clip = (Clip) currentSound;
-            duration = clip.getBufferSize() / 
+            duration = clip.getBufferSize() /
                 (clip.getFormat().getFrameSize() * clip.getFormat().getFrameRate());
-        } 
+        }
         return duration;
     }
 
 
-    public double getSeconds() 
+    public double getSeconds()
     {
         double seconds = 0.0;
-        if (currentSound instanceof Clip) 
+        if (currentSound instanceof Clip)
         {
             Clip clip = (Clip) currentSound;
             seconds = clip.getFramePosition() / clip.getFormat().getFrameRate();
-        } 
-        else if ( (currentSound instanceof Sequence) || (currentSound instanceof BufferedInputStream) ) 
+        }
+        else if ( (currentSound instanceof Sequence) || (currentSound instanceof BufferedInputStream) )
         {
-            try 
+            try
             {
                 seconds = sequencer.getMicrosecondPosition() / 1000000.0;
-            } 
+            }
             catch (IllegalStateException e)
             {
                 System.out.println("TEMP: IllegalStateException "+
@@ -478,45 +480,45 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     }
 
 
-    public void update(LineEvent event) 
+    public void update(LineEvent event)
     {
-        if (event.getType() == LineEvent.Type.STOP && !paused) 
-        { 
+        if (event.getType() == LineEvent.Type.STOP && !paused)
+        {
             audioEOM = true;
         }
     }
 
 
-    public void meta(MetaMessage message) 
+    public void meta(MetaMessage message)
     {
-        if (message.getType() == 47) 
+        if (message.getType() == 47)
         {  // 47 is end of track
             midiEOM = true;
         }
     }
 
 
-    private void reportStatus(String msg) 
+    private void reportStatus(String msg)
     {
-        if ((errStr = msg) != null) 
+        if ((errStr = msg) != null)
         {
             System.out.println(errStr);
             playbackMonitor.repaint();
         }
-        if (credits != null && credits.isAlive()) 
+        if (credits != null && credits.isAlive())
         {
             credits.interrupt();
         }
     }
 
 
-    public Thread getThread() 
+    public Thread getThread()
     {
         return thread;
     }
 
 
-    public void start() 
+    public void start()
     {
         thread = new Thread(this);
         thread.setName("Juke");
@@ -524,9 +526,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     }
 
 
-    public void stop() 
+    public void stop()
     {
-        if (thread != null) 
+        if (thread != null)
         {
             thread.interrupt();
         }
@@ -536,33 +538,39 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     public void run()
     {
-        do 
+        do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
-            for (; num < sounds.size() && thread != null; num++) 
+            for (; num < audioStateMachine.getAudioListSize() && thread != null; num++)
             {
                 table.scrollRectToVisible(new Rectangle(0,(num+2)*(table.getRowHeight()+table.getRowMargin()),
                 		1,1));
                 table.setRowSelectionInterval(num, num);
-                if( loadSound(sounds.get(num)) == true ) 
+                if( loadSound(audioStateMachine.getAudioAtIndex(num).getAudio()) == true )
                 {
                     playSound();
+                    if(nextB.isEnabled())
+                    {
+                    	continue;
+                    }
+                    audioStateMachine.getNextAudio();
                 }
                 // take a little break between sounds
-                try 
-                { 
-                	Thread.sleep(222); 
-                } 
-                catch (Exception e) 
+                try
+                {
+                	Thread.sleep(222);
+                }
+                catch (Exception e)
                 {
                 	break;
                 }
             }
-            num = 0;
-        } 
+            // num = 0;
+
+        }
         while (loopB.isSelected() && thread != null);
 
-        if (thread != null) 
+        if (thread != null)
         {
             startB.doClick();
         }
@@ -573,59 +581,59 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     }
 
 
-//    public void setPan() 
+//    public void setPan()
 //    {
 //
 //        int value = panSlider.getValue();
 //
-//        if (currentSound instanceof Clip) 
+//        if (currentSound instanceof Clip)
 //        {
-//            try 
+//            try
 //            {
 //                Clip clip = (Clip) currentSound;
-//                FloatControl panControl = 
+//                FloatControl panControl =
 //                    (FloatControl) clip.getControl(FloatControl.Type.PAN);  // This line causes an error
 //                panControl.setValue(value/100.0f);
 //            }
-//            catch (Exception ex) 
+//            catch (Exception ex)
 //            {
 //                ex.printStackTrace();
 //            }
 //        }
-//        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) 
+//        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
 //        {
-//            for (int i = 0; i < channels.length; i++) 
-//            {                
+//            for (int i = 0; i < channels.length; i++)
+//            {
 //				channels[i].controlChange(10, (int)(((double)value + 100.0) / 200.0 *  127.0));
-//            }										 
+//            }
 //        }
 //    }
 
 
-//    public void setGain() 
+//    public void setGain()
 //    {
 //        double value = gainSlider.getValue() / 100.0;
 //
-//        if (currentSound instanceof Clip) 
+//        if (currentSound instanceof Clip)
 //        {
-//            try 
+//            try
 //            {
 //                Clip clip = (Clip) currentSound;
-//                FloatControl gainControl = 
+//                FloatControl gainControl =
 //                  (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-//                float dB = (float) 
+//                float dB = (float)
 //                  (Math.log(value==0.0?0.0001:value)/Math.log(10.0)*20.0);
 //                gainControl.setValue(dB);
-//            } 
-//            catch (Exception ex) 
+//            }
+//            catch (Exception ex)
 //            {
 //                ex.printStackTrace();
 //            }
-//        } 
-//        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) 
+//        }
+//        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
 //        {
-//            for (int i = 0; i < channels.length; i++) 
-//            {                
+//            for (int i = 0; i < channels.length; i++)
+//            {
 //				channels[i].controlChange(7, (int)(value * 127.0));
 //			}
 //        }
@@ -636,15 +644,15 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     /**
      * GUI controls for start, stop, previous, next, pan and gain.
      */
-    class JukeControls extends JPanel implements ActionListener, ChangeListener 
+    class JukeControls extends JPanel implements ActionListener, ChangeListener
     {
 
-        public JukeControls() 
+        public JukeControls()
         {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 //            setSize(700,150);
-            
-    
+
+
             JPanel p4 = new JPanel(new BorderLayout());
 //            EmptyBorder eb = new EmptyBorder(5,20,10,20);
 //            BevelBorder bb = new BevelBorder(BevelBorder.LOWERED);
@@ -672,13 +680,13 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 //            gainSlider.setBorder(tb);
 //            p5.add(gainSlider);
             add(p5);
-            
+
             JPanel p1 = new JPanel();
             p1.setLayout(new BoxLayout(p1, BoxLayout.Y_AXIS));
 //            p1.setBorder(new EmptyBorder(10,0,5,0));
             JPanel p2 = new JPanel();
             prevB = addButton("<<", p2, false);
-            startB = addButton("Start", p2, sounds.size() != 0);
+            startB = addButton("Start", p2, audioStateMachine.getAudioListSize() != 0);
             pauseB = addButton("Pause", p2, false);
             nextB = addButton(">>", p2, false);
             p1.add(p2);
@@ -689,7 +697,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             add(p1);
         }
 
-        private JButton addButton(String name, JPanel panel, boolean state) 
+        private JButton addButton(String name, JPanel panel, boolean state)
         {
             JButton b = new JButton(name);
             b.addActionListener(this);
@@ -698,22 +706,22 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             return b;
         }
 
-        public void stateChanged(ChangeEvent e) 
+        public void stateChanged(ChangeEvent e)
         {
             JSlider slider = (JSlider) e.getSource();
             int value = slider.getValue();
-            if (slider.equals(seekSlider)) 
+            if (slider.equals(seekSlider))
             {
-                if (currentSound instanceof Clip) 
+                if (currentSound instanceof Clip)
                 {
                     ((Clip) currentSound).setFramePosition(value);
-                } 
-                else if (currentSound instanceof Sequence) 
+                }
+                else if (currentSound instanceof Sequence)
                 {
                     long dur = ((Sequence) currentSound).getMicrosecondLength();
 					sequencer.setMicrosecondPosition(value * 1000);
-                } 
-                else if (currentSound instanceof BufferedInputStream) 
+                }
+                else if (currentSound instanceof BufferedInputStream)
                 {
                     long dur = sequencer.getMicrosecondLength();
 					sequencer.setMicrosecondPosition(value * 1000);
@@ -723,28 +731,28 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             }
             TitledBorder tb = (TitledBorder) slider.getBorder();
             String s = tb.getTitle();
-//            if (s.startsWith("Pan")) 
+//            if (s.startsWith("Pan"))
 //            {
 //                s = s.substring(0, s.indexOf('=')+1) + s.valueOf(value/100.0);
-//                if (currentSound != null) 
+//                if (currentSound != null)
 //                {
 //                    setPan();
 //                }
-//            } 
-//            else if (s.startsWith("Gain")) 
+//            }
+//            else if (s.startsWith("Gain"))
 //            {
 //                s = s.substring(0, s.indexOf('=')+1) + s.valueOf(value);
-//                if (currentSound != null) 
+//                if (currentSound != null)
 //                {
 //                    setGain();
 //                }
-//            } 
+//            }
             tb.setTitle(s);
             slider.repaint();
         }
 
 
-        public void setComponentsEnabled(boolean state) 
+        public void setComponentsEnabled(boolean state)
         {
             seekSlider.setEnabled(state);
             pauseB.setEnabled(state);
@@ -754,23 +762,23 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
 
 
-        public void actionPerformed(ActionEvent e) 
+        public void actionPerformed(ActionEvent e)
         {
             JButton button = (JButton) e.getSource();
-            if (button.getText().equals("Start")) 
+            if (button.getText().equals("Start"))
             {
-                if (credits != null) 
+                if (credits != null)
                 {
                     credits.interrupt();
                 }
                 paused = false;
                 num = table.getSelectedRow();
-                num = num == -1 ? 0 : num;
+                // num = num == -1 ? 0 : num;
                 start();
                 button.setText("Stop");
                 setComponentsEnabled(true);
-            } 
-            else if (button.getText().equals("Stop")) 
+            }
+            else if (button.getText().equals("Stop"))
             {
                 credits = new Credits();
                 credits.start();
@@ -779,46 +787,49 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 button.setText("Start");
                 pauseB.setText("Pause");
                 setComponentsEnabled(false);
-            } 
-            else if (button.getText().equals("Pause")) 
+            }
+            else if (button.getText().equals("Pause"))
             {
                 paused = true;
                 if (currentSound instanceof Clip) {
                     ((Clip) currentSound).stop();
-                } 
-                else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) 
+                }
+                else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
                 {
                     sequencer.stop();
                 }
                 playbackMonitor.stop();
                 pauseB.setText("Resume");
-            } 
-            else if (button.getText().equals("Resume")) 
+            }
+            else if (button.getText().equals("Resume"))
             {
                 paused = false;
-                if (currentSound instanceof Clip) 
+                if (currentSound instanceof Clip)
                 {
                     ((Clip) currentSound).start();
-                } 
-                else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream) 
+                }
+                else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
                 {
                     sequencer.start();
                 }
                 playbackMonitor.start();
                 pauseB.setText("Pause");
-            } 
-            else if (button.getText().equals("<<")) 
+            }
+            else if (button.getText().equals("<<"))
             {
                 paused = false;
                 pauseB.setText("Pause");
-                num = num-1 < 0 ? sounds.size()-1 : num-2;
+                // num = num-1 < 0 ? audioStateMachine.getAudioListSize()-1 : num-2;
+                // loadSound(audioStateMachine.getPreviousAudio().getAudio());
+                num = audioStateMachine.getPreviousAudio();
                 bump = true;
-            } 
-            else if (button.getText().equals(">>")) 
+            }
+            else if (button.getText().equals(">>"))
             {
                 paused = false;
                 pauseB.setText("Pause");
-                num = num+1 == sounds.size() ? -1 : num;
+                num = audioStateMachine.getNextAudio();
+                // loadSound(audioStateMachine.getNextAudio().getAudio());
                 bump = true;
             }
         }
@@ -829,12 +840,12 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     /**
      * Displays current sound and time elapsed.
      */
-    public class PlaybackMonitor extends JPanel implements Runnable 
+    public class PlaybackMonitor extends JPanel implements Runnable
     {
-        
+
         String welcomeStr = "Welcome to Java Sound";
         Thread pbThread;
-        Color black = new Color(20, 20, 20); 
+        Color black = new Color(20, 20, 20);
         Color jfcBlue = new Color(204, 204, 255);
         Color jfcDarkBlue = jfcBlue.darker();
         Font font24 = new Font("serif", Font.BOLD, 24);
@@ -842,13 +853,13 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         Font font42 = new Font("serif", Font.BOLD, 42);
         FontMetrics fm28, fm42;
 
-        public PlaybackMonitor() 
+        public PlaybackMonitor()
         {
             fm28 = getFontMetrics(font28);
             fm42 = getFontMetrics(font42);
         }
-    
-        public void paint(Graphics g) 
+
+        public void paint(Graphics g)
         {
             Graphics2D g2 = (Graphics2D) g;
             Dimension d = getSize();
@@ -869,44 +880,44 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 LineBreakMeasurer lbm = new LineBreakMeasurer(aci, frc);
                 float x = 5, y = 25;
                 lbm.setPosition(0);
-                while (lbm.getPosition() < errStr.length()) 
+                while (lbm.getPosition() < errStr.length())
                 {
                     TextLayout tl = lbm.nextLayout(d.width-x-5);
-                    if (!tl.isLeftToRight()) 
+                    if (!tl.isLeftToRight())
                     {
                         x = d.width - tl.getAdvance();
                     }
                     tl.draw(g2, x, y += tl.getAscent());
                     y += tl.getDescent() + tl.getLeading();
                 }
-            } 
-            else if (currentName == null) 
+            }
+            else if (currentName == null)
             {
                 FontRenderContext frc = g2.getFontRenderContext();
                 TextLayout tl = new TextLayout(welcomeStr, font28, frc);
                 float x = (float) (d.width/2-tl.getBounds().getWidth()/2);
                 tl.draw(g2, x, d.height/2);
-                if (credits != null) 
+                if (credits != null)
                 {
                     credits.render(d, g2);
                 }
-            } 
-            else 
+            }
+            else
             {
                 g2.setFont(font24);
                 g2.drawString(currentName, 5, fm28.getHeight()-5);
-                if (duration <= 0.0) 
+                if (duration <= 0.0)
                 {
                     loading.render(d, g2);
-                } 
-                else 
+                }
+                else
                 {
                     double seconds = getSeconds();
-                    if (midiEOM || audioEOM) 
+                    if (midiEOM || audioEOM)
                     {
                         seconds = duration;
                     }
-                    if (seconds > 0.0) 
+                    if (seconds > 0.0)
                     {
                         g2.setFont(font42);
                         String s = String.valueOf(seconds);
@@ -919,12 +930,12 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                         double ww = ((double) (d.width - 10) / (double) num);
                         double hh = (int) (d.height * 0.25);
                         double x = 0.0;
-                        for ( ; x < progress; x+=1.0) 
+                        for ( ; x < progress; x+=1.0)
                         {
                             g2.fill(new Rectangle2D.Double(x*ww+5, d.height-hh-5, ww-1, hh));
                         }
                         g2.setColor(jfcDarkBlue);
-                        for ( ; x < num; x+=1.0) 
+                        for ( ; x < num; x+=1.0)
                         {
                             g2.fill(new Rectangle2D.Double(x*ww+5, d.height-hh-5, ww-1, hh));
                         }
@@ -932,33 +943,34 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 }
             }
         }
-        
-        public void start() 
+
+        public void start()
         {
             pbThread = new Thread(this);
             pbThread.setName("PlaybackMonitor");
             pbThread.start();
         }
-        
-        public void stop() 
+
+        public void stop()
         {
-            if (pbThread != null) 
+            if (pbThread != null)
             {
                 pbThread.interrupt();
             }
             pbThread = null;
         }
-        
-        public void run() 
+
+        public void run()
         {
-            while (pbThread != null) 
+            while (pbThread != null)
             {
-                try 
+                try
                 {
+                	//seekSlider.setValue((int)Math.min(getDuration(), getSeconds()));
                     Thread.sleep(99);
-                } 
-                catch (Exception e) 
-                { 
+                }
+                catch (Exception e)
+                {
                 	break;
                 }
                 repaint();
@@ -966,7 +978,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             pbThread = null;
         }
     } // End PlaybackMonitor
-            
+
 
 
     /**
@@ -984,21 +996,21 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             setPreferredSize(new Dimension(155,300)); // width and height
 
             final String[] names = { "#", "Name" };
-    
+
             dataModel = new AbstractTableModel() {
                 public int getColumnCount() { return names.length; }
-                public int getRowCount() { return sounds.size();}
-                public Object getValueAt(int row, int col) { 
+                public int getRowCount() { return audioStateMachine.getAudioListSize();}
+                public Object getValueAt(int row, int col) {
                     if (col == 0) {
                         return new Integer(row);
                     } else if (col == 1) {
-                        Object object = sounds.get(row);
+                        Object object = audioStateMachine.getAudioAtIndex(row).getAudio();
                         if (object instanceof File) {
                             return ((File) object).getName();
                         } else if (object instanceof URL) {
                             return ((URL) object).getFile();
                         }
-                    } 
+                    }
                     return null;
                 }
                 public String getColumnName(int col) {return names[col]; }
@@ -1011,12 +1023,12 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 public void setValueAt(Object aValue, int row, int col) {
                 }
             };
-    
+
             table = new JTable(dataModel);
             TableColumn col = table.getColumn("#");
             col.setMaxWidth(20);
             table.sizeColumnsToFit(0);
-        
+
             JScrollPane scrollPane = new JScrollPane(table);
             EmptyBorder eb = new EmptyBorder(5,5,2,5);
             scrollPane.setBorder(new CompoundBorder(eb,new EtchedBorder()));
@@ -1026,11 +1038,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             JMenuBar menuBar = new JMenuBar();
             menuBar.setBorder(new BevelBorder(BevelBorder.RAISED));
             JMenu menu = (JMenu) menuBar.add(new JMenu("+"));
-            String items[] = { "File or Directory of Files", "URL" };
+            String items[] = { "File or Directory of Files"};//, "URL" };
             for (int i = 0; i < items.length; i++) {
                 JMenuItem item = menu.add(new JMenuItem(items[i]));
                 item.addActionListener(this);
-            } 
+            }
             p1.add(menuBar);
 
             menuBar = new JMenuBar();
@@ -1042,14 +1054,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             item.addActionListener(this);
             p1.add(menuBar);
 
-            loopB = addButton("loop", p1);
-            loopB.setBackground(Color.gray);
-            loopB.setSelected(true);
+            // loopB = addButton("loop", p1);
+            // loopB.setBackground(Color.gray);
+            // loopB.setSelected(false);
 
             add("South", p1);
         }
 
-        
+
         private JButton addButton(String name, JPanel p) {
             JButton b = new JButton(name);
             b.addActionListener(this);
@@ -1057,7 +1069,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             return b;
         }
 
- 
+
         private void doFrame(String titleName) {
             int w = 500;
             int h = 130;
@@ -1067,7 +1079,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 p1.add(new JLabel("URL :"));
                 textField = new JTextField("http://foo.bar.com/foo.wav");
                 textField.addActionListener(this);
-            } 
+            }
 //            else {
 //                p1.add(new JLabel("File or Dir :"));
 //                String sep = String.valueOf(System.getProperty("file.separator").toCharArray()[0]);
@@ -1103,7 +1115,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             Object object = e.getSource();
             if (object instanceof JTextField) {
                 applyB.doClick();
-            } else 
+            } else
             if (object instanceof JMenuItem) {
                 JMenuItem mi = (JMenuItem) object;
                 if (mi.getText().startsWith("File")) {
@@ -1112,11 +1124,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     JFileChooser fc = new JFileChooser();
                     fc.setFileSelectionMode(2); //FILES_AND_DIRECTORIES
                     panel.add(fc);
-//                    SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
+//                    SlideShowStateMachine audioStateMachine = SlideShowStateMachine.getInstance();
                     int result = fc.showDialog(null, "Add Audio");
             		if (result == JFileChooser.APPROVE_OPTION){
-            			String selectedFilePath = fc.getSelectedFile().getPath();
-//            			Pattern pattern = Pattern.compile("(\\.(?i)(au|rmf|mid|.wav))$");           			
+            			String selectedFilePath = fc.getSelectedFile().getPath(); //"C:\\Users\\J\\Documents\\GitHub\\SlideShow\\SeniorSlideshowProject\\src\\SoundFiles";
+//            			Pattern pattern = Pattern.compile("(\\.(?i)(au|rmf|mid|.wav))$");
 //            		    Matcher matcher = pattern.matcher(selectedFilePath);
             			//if(matcher.lookingAt()){}
             			if (selectedFilePath.endsWith(".au")||
@@ -1124,15 +1136,17 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             					selectedFilePath.endsWith(".mid")||
             					selectedFilePath.endsWith(".wav")||
             					selectedFilePath.endsWith(".aif")||
-            					selectedFilePath.endsWith(".aiff")) { 
+            					selectedFilePath.endsWith(".aiff")) {
                             try {
-                                sounds.add(new File(selectedFilePath));
-                                audioState.addAudio(new AudioState(new File(selectedFilePath)));
+                                // sounds.add(new File(selectedFilePath));
+                                audioStateMachine.addAudio(new AudioState(new File(selectedFilePath)));
+//                                audioStateMachine.addAudio(new audioStateMachine(new File(selectedFilePath)));
                             } catch (Exception ex) { ex.printStackTrace(); };
                         } else {
                             loadJuke(selectedFilePath);
                         }
                         tableChanged();
+                        startB.setEnabled(audioStateMachine.getAudioListSize() != 0);
             		}
                 } else if (mi.getText().equals("URL")) {
                     doFrame("Add URL");
@@ -1140,12 +1154,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     int rows[] = table.getSelectedRows();
                     Vector tmp = new Vector();
                     for (int i = 0; i < rows.length;i++) {
-                        tmp.add(sounds.get(rows[i]));
+                        tmp.add(audioStateMachine.getAudioAtIndex(rows[i]));
                     }
-                    sounds.removeAll(tmp);
+                    audioStateMachine.removeSelectedAudios(tmp);
+//                    sounds.removeAll(tmp);
                     tableChanged();
                 } else if (mi.getText().equals("All")) {
-                    sounds.clear();
+                    audioStateMachine.removeAllAudios();
+//                	sounds.clear();
                     tableChanged();
                 }
             } else if (object instanceof JButton) {
@@ -1165,12 +1181,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     frame = null;
                     errStr = null;
                     playbackMonitor.repaint();
-                } else if (button.getText().equals("loop")) {
-                    loopB.setSelected(!loopB.isSelected());
-                    loopB.setBackground(loopB.isSelected() ? Color.gray : Color.lightGray);
-                }
-                startB.setEnabled(sounds.size() != 0);
+                } //else if (button.getText().equals("loop")) {
+//                     loopB.setSelected(!loopB.isSelected());
+//                     audioStateMachine.setAudioLoopFlag();
+// //                    nextB.setEnabled(ture);
+//                     loopB.setBackground(loopB.isSelected() ? Color.gray : Color.lightGray);
+//                 }
             }
+
         }
 
         public void tableChanged() {
@@ -1195,7 +1213,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             }
         }
 
-        public void render(Dimension d, Graphics2D g2) { 
+        public void render(Dimension d, Graphics2D g2) {
             if (isAlive()) {
                 FontRenderContext frc = g2.getFontRenderContext();
                 TextLayout tl = new TextLayout("Loading", g2.getFont(), frc);
@@ -1211,7 +1229,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         }
     }
 
-            
+
 
     /**
      * Animation thread for the contributors of Java Sound.
@@ -1220,12 +1238,12 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
         int x;
         Font font16 = new Font("serif", Font.PLAIN, 16);
-        String contributors = "Contributors : Kara Kytle, " + 
+        String contributors = "Contributors : Kara Kytle, " +
                               "Jan Borgersen, " + "Brian Lichtenwalter";
         int strWidth = getFontMetrics(font16).stringWidth(contributors);
 
         public void run() {
-            x = -999; 
+            x = -999;
             while (!playbackMonitor.isShowing()) {
                 try { sleep(999); } catch (Exception e) { return; }
             }
@@ -1244,13 +1262,13 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         public void render(Dimension d, Graphics2D g2) {
             if (isAlive()) {
                 g2.setFont(font16);
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_OFF);
                 g2.drawString(contributors, x, d.height-5);
             }
         }
     }
-            
+
 
     public static void main(String args[]) {
         String media = "./audio";
@@ -1259,7 +1277,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         JFrame f = new JFrame("Juke Box");
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {System.exit(0);}
-            public void windowIconified(WindowEvent e) { 
+            public void windowIconified(WindowEvent e) {
                 juke.credits.interrupt();
             }
         });
@@ -1275,7 +1293,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             File file = new File(args[0]);
             if (file == null && !file.isDirectory()) {
                 System.out.println("usage: java Juke audioDirectory");
-            } 
+            }
         }
     }
-} 
+}
