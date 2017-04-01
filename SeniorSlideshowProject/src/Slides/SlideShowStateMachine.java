@@ -312,6 +312,11 @@ public class SlideShowStateMachine implements Serializable {
 		}
 
 	}
+	
+	public double returnAudioTime()
+	{
+		return showTime;
+	}
 
 	public int getAudioIndex(){
 		return audioIndex;
