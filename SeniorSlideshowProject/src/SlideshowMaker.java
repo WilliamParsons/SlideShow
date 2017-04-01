@@ -119,7 +119,7 @@ public class SlideshowMaker extends JFrame {
 			}
 		});
 		mnFile.add(mntmNew);
-		
+
 		mntmOpen = new JMenuItem("Open");
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -143,7 +143,7 @@ public class SlideshowMaker extends JFrame {
 					}
 					layoutSlider.setValue(0);
 					updateLayout();
-				}	
+				}
 			}
 		});
 		mnFile.add(mntmOpen);
@@ -163,7 +163,7 @@ public class SlideshowMaker extends JFrame {
 						selectedFilePath += ".ssp";
 					}
 					fMgr.writeFile(slideStateMachine, selectedFilePath);
-				}	
+				}
 			}
 		});
 		mnFile.add(mntmSave);
@@ -229,7 +229,7 @@ public class SlideshowMaker extends JFrame {
 							slideStateMachine.addSlide(mySlide);
 						}
 					}
-				}				
+				}
 				updateLayout();
 			}
 		});
@@ -247,8 +247,6 @@ public class SlideshowMaker extends JFrame {
 		});
 		removeImageBtn.setBounds(704, 110, 45, 20);
 		LayoutPanel.add(removeImageBtn);
-
-		
 
 		lblSlidesRight = new JLabel("");
 		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
@@ -403,7 +401,7 @@ public class SlideshowMaker extends JFrame {
 				if(currentSlide != null){
 					currentSlide.setTransitionType(SlideState.Transition.NONE);
 				}
-				
+
 			}
 		});
 		rdbtnNoTrans.setHorizontalAlignment(SwingConstants.LEFT);
@@ -576,7 +574,7 @@ public class SlideshowMaker extends JFrame {
 			resizePreviewImage();
 			SlideState.Transition trans = currentSlide.getTransition();
 			switch(trans){
-			case NONE: 
+			case NONE:
 				rdbtnNoTrans.setSelected(true);
 				break;
 			case LEFT:
@@ -606,7 +604,7 @@ public class SlideshowMaker extends JFrame {
 			resizeImageIcon(lblNextImage, nextSlide.getIcon());
 		} else {
 			lblNextImage.setIcon(null);
-		}	
+		}
 	}
 
 	private void resizeImageIcon(JLabel label, ImageIcon icon){
@@ -649,4 +647,3 @@ public class SlideshowMaker extends JFrame {
 		}
 	}
 }
-
