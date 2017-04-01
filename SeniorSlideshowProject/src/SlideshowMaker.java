@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 import FileManager.*;
 import Slides.*;
+import Transitions.*;
 import pkgImageTransitions.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -69,6 +70,7 @@ public class SlideshowMaker extends JFrame {
 	private JMenu mnModes;
 	private JMenuItem mntmNewMenuItem;
 	private ImageIcon previewIcon;
+	private int slideSize;
 
 	/**
 	 * Launch the application.
@@ -110,6 +112,9 @@ public class SlideshowMaker extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				SlideShowStateMachine state = SlideShowStateMachine.getInstance();
 				state.clearSlideShow();
+				layoutSlider.setEnabled(false);
+				slideSize = 0;
+				layoutSlider.setValue(0);
 				updateLayout();
 			}
 		});
@@ -138,6 +143,7 @@ public class SlideshowMaker extends JFrame {
 					}
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
 					soundTrack.jukeTable.tableChanged();
+					layoutSlider.setValue(0);
 					updateLayout();
 				}
 			}
@@ -244,19 +250,6 @@ public class SlideshowMaker extends JFrame {
 		removeImageBtn.setBounds(704, 110, 45, 20);
 		LayoutPanel.add(removeImageBtn);
 
-		layoutSlider = new JSlider();
-		layoutSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				updateLayout();
-			}
-		});
-		layoutSlider.setEnabled(false);
-		layoutSlider.setBounds(15, 120, 642, 20);
-		layoutSlider.setValue(0);
-		layoutSlider.setMinimum(0);
-		layoutSlider.setSnapToTicks(true);
-		LayoutPanel.add(layoutSlider);
-
 		lblSlidesRight = new JLabel("");
 		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSlidesRight.setBounds(487, 37, 40, 30);
@@ -305,11 +298,100 @@ public class SlideshowMaker extends JFrame {
 		EditPanel.setBounds(542, 9, 124, 212);
 		TransitionPanel.add(EditPanel);
 		EditPanel.setLayout(null);
+		
+		layoutSlider = new JSlider();
+		layoutSlider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				updateLayout();
+			}
+		});
+		layoutSlider.setEnabled(false);
+		layoutSlider.setBounds(15, 120, 642, 20);
+		layoutSlider.setValue(0);
+		layoutSlider.setMinimum(0);		
+		layoutSlider.setSnapToTicks(true);
+		slideSize = 0;
+		LayoutPanel.add(layoutSlider);	
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TO DO : Preview transitions
+				if (currentSlide != null)
+				{
+					if (currentSlide.getTransition() == SlideState.Transition.NONE)
+					{
+						//do nothing
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.DOWN)
+					{
+						SwipeDown swipeDownTransition = new SwipeDown();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeDownTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.UP)
+					{
+						SwipeUp swipeUpTransition = new SwipeUp();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeUpTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.LEFT)
+					{
+						SwipeLeft swipeLeftTransition = new SwipeLeft();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeLeftTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.RIGHT)
+					{
+						SwipeRight swipeRightTransition = new SwipeRight();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						swipeRightTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
+						updateLayout();
+					}
+					else if (currentSlide.getTransition() == SlideState.Transition.CROSSFADE)
+					{
+						CrossFade crossFadeTransition = new CrossFade();
+						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+						Graphics g = imageToTransition.createGraphics();
+						Image image = currentSlide.getIcon().getImage();
+						Image newImage = image.getScaledInstance(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+						ImageIcon previewIcon = new ImageIcon(newImage);
+						previewIcon.paintIcon(null, g, 0, 0);
+						BufferedImage blankImage = new BufferedImage(PreviewImagePanel.getWidth(),PreviewImagePanel.getHeight(),BufferedImage.TYPE_INT_RGB);
+						crossFadeTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 25);
+						updateLayout();
+					}
+					else
+					{
+						System.out.println("error with transition type");
+					}	
+				}
 			}
 		});
 		PreviewTransition.setBounds(35, 166, 45, 23);
@@ -463,14 +545,18 @@ public class SlideshowMaker extends JFrame {
 	}
 	
 	private void updateLayout(){
-		int slideSize = slideStateMachine.getSlideShowSize();
-		if(slideSize > 0 && !layoutSlider.isEnabled()) {
-			layoutSlider.setEnabled(true);
+		
+		if(slideStateMachine.getSlideShowSize() != slideSize) {
+			slideSize = slideStateMachine.getSlideShowSize();
+			
+			if (slideSize == 0) {
+				layoutSlider.setValue(0);
+				layoutSlider.setEnabled(false);			
+			}			
+			else if(!layoutSlider.isEnabled()) {
+				layoutSlider.setEnabled(true);
+			}			
 			layoutSlider.setMaximum(slideSize - 1);
-		}
-		else if (slideSize == 0) {
-			layoutSlider.setValue(0);
-			layoutSlider.setEnabled(false);
 		}
 
 		int currentIndex = layoutSlider.getValue();
@@ -480,7 +566,7 @@ public class SlideshowMaker extends JFrame {
 
 		if(previousSlide != null) {
 			resizeImageIcon(lblPreviousImage, previousSlide.getIcon());
-		} else if (layoutSlider.isEnabled()){
+		} else {
 			lblPreviousImage.setIcon(null);
 		}
 
@@ -512,13 +598,13 @@ public class SlideshowMaker extends JFrame {
 				rdbtnNoTrans.setSelected(true);
 				break;
 			}
-		} else if (layoutSlider.isEnabled()){
+		} else {
 			lblPrimaryImage.setIcon(null);
 		}
 
 		if(nextSlide != null) {
 			resizeImageIcon(lblNextImage, nextSlide.getIcon());
-		} else if (layoutSlider.isEnabled()){
+		} else {
 			lblNextImage.setIcon(null);
 		}
 	}
