@@ -2,10 +2,10 @@
 /#SoundTrack.java#
 /.gitignore
 /.project
-/ImageFiles/
-/SoundFiles/
 /FileManager/
+/ImageFiles/
 /Slides/
+/SoundFiles/
 /Transitions/
 /pkgImageTransitions/
 /radioBtnListener/
