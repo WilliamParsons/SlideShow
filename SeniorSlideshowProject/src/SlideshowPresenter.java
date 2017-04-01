@@ -86,8 +86,6 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(MainPanel);
 		MainPanel.setLayout(null);
-		
-		int currentIndex = 0;
 
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		fMgr = new FileManager();
@@ -114,7 +112,7 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.add(btnPlayPause);
 		btnPlayPause.setEnabled(true);
 
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 784, 21);
 		MainPanel.add(menuBar);
 
