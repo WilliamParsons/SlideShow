@@ -17,6 +17,7 @@ public class SlideState implements Serializable {
 	public SlideState(ImageIcon icon)
 	{
 		this.icon = icon;
+		transitionType = Transition.NONE;
 	}
 	
 	public SlideState(ImageIcon icon, Transition type)
