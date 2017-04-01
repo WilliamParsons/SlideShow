@@ -98,12 +98,13 @@ public class SlideshowPresenter extends JFrame {
 			{
 				if(slidePlaying == false)
 				{	
+					soundTrack.pauseB.doClick();
 					btnPlayPause.setText("Play");
 					slidePlaying = true;
 				}
 				else
 				{
-					soundTrack.startB.setSelected(true);
+					soundTrack.startB.doClick();
 					//double track = slideStateMachine.returnAudioTime();
 					//showTimer = new Timer((int)track, (ActionListener) btnPlayPause);
 					btnPlayPause.setText("Pause");
@@ -115,7 +116,7 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.add(btnPlayPause);
 		btnPlayPause.setEnabled(true);
 
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 784, 21);
 		MainPanel.add(menuBar);
 
