@@ -44,6 +44,7 @@ public class SlideshowMaker extends JFrame {
 	private SoundTrack soundTrack;
 	private JPanel AudioPanel;
 	private JMenu mnFile;
+	private JMenuItem mntmNew;
 	private JMenuItem mntmOpen;
 	private JMenuItem mntmSave;
 	private JMenuItem mntmPresent;
@@ -104,6 +105,16 @@ public class SlideshowMaker extends JFrame {
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		fMgr = new FileManager();
 
+		mntmNew = new JMenuItem("New");
+		mntmNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				SlideShowStateMachine state = SlideShowStateMachine.getInstance();
+				state.clearSlideShow();
+				updateLayout();
+			}
+		});
+		mnFile.add(mntmNew);
+		
 		mntmOpen = new JMenuItem("Open");
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
