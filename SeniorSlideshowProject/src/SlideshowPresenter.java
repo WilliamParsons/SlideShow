@@ -45,7 +45,9 @@ public class SlideshowPresenter extends JFrame {
 	private JMenuItem mntmAuto;
 	private JMenuItem mntmManual;
 	private JLabel lblMainSlide;
+	private SlideState previousSlide;
 	private SlideState currentSlide;
+	private SlideState nextSlide;
 	private FileManager fMgr;
 	private ImagePanel PresentationImagePanel;
 
@@ -185,9 +187,26 @@ public class SlideshowPresenter extends JFrame {
 		btnNext.setEnabled(false);
 		resizeMainPanel();
 		
+		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
+		currentSlide = slideState.getFirstSlide();
 		PresentationImagePanel = new ImagePanel();
 		PresentationImagePanel.setBounds(0, 0, MainPanel.getWidth(), MainPanel.getHeight() - 50);
-		PresentationImagePanel.initializeImages();
+		if (currentSlide != null){
+			System.out.println("got here");
+			BufferedImage imageToTransition = new BufferedImage(PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+			Graphics g = imageToTransition.createGraphics();
+			Image image = currentSlide.getIcon().getImage();
+			Image newImage = image.getScaledInstance(PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), java.awt.Image.SCALE_SMOOTH);
+			ImageIcon previewIcon = new ImageIcon(newImage);
+			previewIcon.paintIcon(null, g, 0, 0);
+			Graphics gPan = PresentationImagePanel.getGraphics();
+			System.out.println(PresentationImagePanel);
+			//gPan.drawImage(previewIcon.getImage(), 0, 0, PresentationImagePanel);
+		}
+		else {
+			System.out.println("Initialize Images");
+			PresentationImagePanel.initializeImages();
+		}
 		MainPanel.add(PresentationImagePanel);
 	}
 
