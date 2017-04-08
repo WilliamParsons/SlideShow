@@ -211,6 +211,8 @@ public class SlideshowPresenter extends JFrame {
 				{
 					btnPrevious.setEnabled(true);
 				}
+				else 
+					btnPrevious.setEnabled(false);
 			}
 		});
 		btnPrevious.setBounds(50, -30, 89, 23);
@@ -226,6 +228,7 @@ public class SlideshowPresenter extends JFrame {
 				{
 					btnNext.setEnabled(true);
 				}
+				else if(currentSlide = slideStateMachine.)
 			}
 		});
 		btnNext.setBounds(445, 530, 89, 23);
