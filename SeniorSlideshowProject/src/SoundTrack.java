@@ -534,6 +534,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     public void run()
     {
+    	boolean loopStatus = false;
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
@@ -563,7 +564,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             }
             num = 0;
         }
-        while (loopB.isSelected() && thread != null);
+        while (loopStatus && thread != null);
 
         if (thread != null)
         {
