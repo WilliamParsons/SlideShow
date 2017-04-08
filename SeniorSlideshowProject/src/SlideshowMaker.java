@@ -69,7 +69,7 @@ public class SlideshowMaker extends JFrame {
 	private FileManager fMgr;
 	private JMenu mnModes;
 	private JMenuItem mntmNewMenuItem;
-	private ImageIcon previewIcon;
+	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
 
 	/**
@@ -253,7 +253,7 @@ public class SlideshowMaker extends JFrame {
 		lblSlidesRight = new JLabel("");
 		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSlidesRight.setBounds(487, 37, 40, 30);
-		ImageIcon iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));
+		iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));
 		Image slidesRight = iconRight.getImage().getScaledInstance(lblSlidesRight.getWidth(), lblSlidesRight.getHeight(), Image.SCALE_SMOOTH);
 		lblSlidesRight.setIcon(new ImageIcon(slidesRight, iconRight.getDescription()));
 		LayoutPanel.add(lblSlidesRight);
@@ -276,7 +276,7 @@ public class SlideshowMaker extends JFrame {
 		lblSlidesLeft = new JLabel("");
 		lblSlidesLeft.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSlidesLeft.setBounds(127, 37, 40, 30);
-		ImageIcon iconLeft = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesLeft.jpg"));
+		iconLeft = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesLeft.jpg"));
 		Image slidesLeft = iconLeft.getImage().getScaledInstance(lblSlidesLeft.getWidth(), lblSlidesLeft.getHeight(), Image.SCALE_SMOOTH);
 		lblSlidesLeft.setIcon(new ImageIcon(slidesLeft, iconLeft.getDescription()));
 		LayoutPanel.add(lblSlidesLeft);
@@ -505,21 +505,47 @@ public class SlideshowMaker extends JFrame {
 		int mainPanelWidth = MainPanel.getWidth();
 		int panelWidth = LayoutPanel.getWidth();
 		int panelHeight = LayoutPanel.getHeight();
-		double heightRatio = (double)panelHeight/(double)panelWidth;
+		double heightwidthRatio = (double)panelHeight/(double)panelWidth;
+		double heightRatio = (double)(panelWidth*heightwidthRatio)/(double)panelHeight;
+		double widthRatio = (double)(mainPanelWidth - 10)/(double)panelWidth;
 		panelWidth = mainPanelWidth - 10;
-		panelHeight = (int)(panelWidth*heightRatio);
+		panelHeight = (int)(panelWidth*heightwidthRatio);
 		LayoutPanel.setBounds(10, 26, panelWidth, panelHeight);
 		removeImageBtn.setBounds(panelWidth-60, panelHeight-30, 45, 20);
 		addImageBtn.setBounds(panelWidth-110, panelHeight-30, 45, 20);
 		layoutSlider.setBounds(15, panelHeight-30, panelWidth-160, 20);
-		lblPrimaryImage.setBounds((panelWidth-225)/2, panelHeight-125, 120, 90);
+		
+		int primWidth = (int)(lblPrimaryImage.getWidth()*widthRatio);
+		int primHeight = (int)(primWidth*0.75);
+		int primX = panelWidth/2 - primWidth/2;
+		int primY = 15;	
+		lblPrimaryImage.setBounds(primX, primY, primWidth, primHeight);
+
+		int nextWidth = (int)(lblNextImage.getWidth()*widthRatio);
+	    int nextHeight = (int)(nextWidth*0.75);
+	    int nextX = primX + primWidth + 10;
+	    int nextY = primY + (primHeight/2) - (nextHeight/2);	    
+		lblNextImage.setBounds(nextX, nextY, nextWidth, nextHeight);
+		
+		int prevWidth = (int)(lblPreviousImage.getWidth()*widthRatio);
+	    int prevHeight = (int)(prevWidth*0.75);
+	    int prevX = primX - prevWidth - 10;
+	    int prevY = primY + (primHeight/2) - (prevHeight/2);	    
+		lblPreviousImage.setBounds(prevX, prevY, prevWidth, prevHeight);
+		
+		int slidesRightWidth = (int)(lblSlidesRight.getWidth()*widthRatio);
+	    int slidesRightHeight = (int)(slidesRightWidth*0.75);
+	    int slidesRightX = nextX + nextWidth + 10;
+	    int slidesRightY = nextY + (nextHeight/2) - (slidesRightHeight/2);	    
+		lblSlidesRight.setBounds(slidesRightX, slidesRightY, slidesRightWidth, slidesRightHeight);
+		
+		int slidesLeftWidth = (int)(lblSlidesLeft.getWidth()*widthRatio);
+	    int slidesLeftHeight = (int)(slidesLeftWidth*0.75);
+	    int slidesLeftX = prevX - slidesLeftWidth - 10;
+	    int slidesLeftY = prevY + (prevHeight/2) - (slidesLeftHeight/2);	    
+		lblSlidesLeft.setBounds(slidesLeftX, slidesLeftY, slidesLeftWidth, slidesLeftHeight);
+		
 		updateLayout();
-		lblNextImage.setBounds((panelWidth+30)/2, panelHeight-115, 80, 60);
-		updateLayout();
-		lblPreviousImage.setBounds((panelWidth-400)/2, panelHeight-115, 80, 60);
-		updateLayout();
-		lblSlidesRight.setBounds((panelWidth+210)/2, panelHeight-115, 40, 30);
-		lblSlidesLeft.setBounds((panelWidth-500)/2, panelHeight-115, 40, 30);
 	}
 
 	private void resizeTransitionPanel(){
@@ -545,6 +571,9 @@ public class SlideshowMaker extends JFrame {
 	}
 	
 	private void updateLayout(){
+		
+		resizeImageIcon(lblSlidesLeft, iconLeft);
+		resizeImageIcon(lblSlidesRight, iconRight);
 		
 		if(slideStateMachine.getSlideShowSize() != slideSize) {
 			slideSize = slideStateMachine.getSlideShowSize();

@@ -1,7 +1,12 @@
 /bin/
-/SoundFiles/
+/#SoundTrack.java#
+/.gitignore
+/.project
 /FileManager/
+/ImageFiles/
 /Slides/
+/SoundFiles/
 /Transitions/
 /pkgImageTransitions/
 /radioBtnListener/
+/test.ssp
