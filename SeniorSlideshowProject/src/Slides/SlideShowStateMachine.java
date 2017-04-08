@@ -223,7 +223,7 @@ public class SlideShowStateMachine implements Serializable {
 	{
 		if(audioIndex > 0)
 		{
-//			return audioIndex--;
+			audioIndex--;
 			return audioList.get(audioIndex);
 		}
 		else
