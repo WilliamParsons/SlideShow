@@ -2,6 +2,7 @@ package pkgImageTransitions;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 import java.util.Vector;
@@ -177,6 +178,18 @@ public class ImagePanel extends JPanel
 		
 	}
 	
+	public void initializeImages(Image img) {
+		m_iPanelWidth = this.getWidth();
+		m_iPanelHeight = this.getHeight();
+//		System.out.println("Creating imagepanel size = " + m_iPanelWidth + " x " + m_iPanelHeight);
+		// Create the off-screen BufferedImages for use by the transitions
+		m_CurrentImage = new BufferedImage(m_iPanelWidth, m_iPanelHeight, BufferedImage.TYPE_INT_RGB);
+		m_NextImage = new BufferedImage(m_iPanelWidth, m_iPanelHeight, BufferedImage.TYPE_INT_RGB);
+		
+		// Draw black frame as first image
+		m_CurrentImage.getGraphics().drawImage(img, 0, 0, this);
+	}
+	
 	//--------------------------------------------------------
 	/** Set the reference to the image to be drawn. */
 	//--------------------------------------------------------
@@ -235,7 +248,7 @@ public class ImagePanel extends JPanel
 		//   index in the vector of transitions in the call to m_vTransitions.elemantAt(i)
 		m_vTransitions.elementAt(0).DrawImageTransition(this, m_CurrentImage, m_NextImage, 0.5);  
 	}
-	
+
 	//--------------------------------------------------------
 	/** Override the paint function to draw the image. */
 	//--------------------------------------------------------
