@@ -207,7 +207,7 @@ public class SlideshowPresenter extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				currentSlide = slideStateMachine.getPreviousSlide();
 				updateShow();
-				if(slideStateMachine.getPreviousSlide() != null)
+				if(currentSlide != null)
 				{
 					btnPrevious.setEnabled(true);
 				}
@@ -222,7 +222,7 @@ public class SlideshowPresenter extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				currentSlide = slideStateMachine.getNextSlide();
 				updateShow();
-				if(slideStateMachine.getNextSlide() != null)
+				if(currentSlide != null)
 				{
 					btnNext.setEnabled(true);
 				}
