@@ -6,7 +6,7 @@ import javax.swing.ImageIcon;
 
 public class SlideState implements Serializable {
 	
-	public enum Transition{ LEFT, RIGHT, UP, DOWN, CROSSFADE };
+	public enum Transition{ NONE, LEFT, RIGHT, UP, DOWN, CROSSFADE };
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -17,6 +17,7 @@ public class SlideState implements Serializable {
 	public SlideState(ImageIcon icon)
 	{
 		this.icon = icon;
+		transitionType = Transition.NONE;
 	}
 	
 	public SlideState(ImageIcon icon, Transition type)
