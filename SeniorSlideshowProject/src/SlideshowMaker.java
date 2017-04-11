@@ -71,6 +71,8 @@ public class SlideshowMaker extends JFrame {
 	private JMenuItem mntmNewMenuItem;
 	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
+	private SlideshowPresenter presenter = null;
+	private SlideshowMaker creator;
 
 	/**
 	 * Launch the application.
@@ -177,7 +179,9 @@ public class SlideshowMaker extends JFrame {
 		mnModes.add(mntmPresent);
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				SlideshowPresenter presenter = new SlideshowPresenter();
+				if (presenter == null) {
+				presenter = new SlideshowPresenter(creator);
+				}
 				presenter.setVisible(true);
 				setVisible(false);
 			}
@@ -485,7 +489,9 @@ public class SlideshowMaker extends JFrame {
 		PreviewImagePanel.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
 		PreviewImagePanel.initializeImages();
 		TransitionPanel.add(PreviewImagePanel);
+		
 		resizePanels();
+		creator = this;
 	}
 
 	private void resizePanels(){
@@ -569,15 +575,17 @@ public class SlideshowMaker extends JFrame {
 		AudioPanel.setBounds(10, MainPanel.getHeight()-129, panelWidth, 119);
 		soundTrack.setBounds(0, 0, panelWidth, 110);
 	}
-	
+
 	private void updateLayout(){
-		
+
+
+
 		resizeImageIcon(lblSlidesLeft, iconLeft);
 		resizeImageIcon(lblSlidesRight, iconRight);
-		
+
 		if(slideStateMachine.getSlideShowSize() != slideSize) {
 			slideSize = slideStateMachine.getSlideShowSize();
-			
+
 			if (slideSize == 0) {
 				layoutSlider.setValue(0);
 				layoutSlider.setEnabled(false);			
@@ -638,6 +646,7 @@ public class SlideshowMaker extends JFrame {
 		}
 	}
 
+
 	private void resizeImageIcon(JLabel label, ImageIcon icon){
 		if(slideStateMachine.getSlideShowSize() > 0) {
 			BufferedImage bufferedImg = new BufferedImage(
@@ -666,7 +675,7 @@ public class SlideshowMaker extends JFrame {
 	}
 
 	private void resizePreviewImage(){
-		if(previewIcon != null) {
+		if(previewIcon != null && PreviewImagePanel != null) {
 			BufferedImage bufferedImg = new BufferedImage(
 					PreviewImagePanel.getWidth(),
 					PreviewImagePanel.getHeight(),
