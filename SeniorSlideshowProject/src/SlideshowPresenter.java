@@ -15,6 +15,7 @@ import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
+import Animation.Animator;
 import FileManager.FileManager;
 import Slides.AudioState;
 import Slides.SlideShowStateMachine;
@@ -306,80 +307,9 @@ public class SlideshowPresenter extends JFrame {
 	}
 
 	private void startAutomaticSlideShow() {
-		currentSlide = slideStateMachine.getFirstSlide();
-		nextSlide = slideStateMachine.getNextSlide();
-		while (currentSlide != null && nextSlide != null)
-		{
-			double animationTime;
-			double slideTime = currentSlide.getTransitionTime();
-			if (slideTime - 1 > 0) {
-				slideTime = slideTime--;
-				animationTime = 1;
-			}
-			else
-			{
-				animationTime = slideTime;
-				slideTime = 0;
-			}
-			
-			try {
-				Thread.sleep((long)slideTime*1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			BufferedImage currentImg = new BufferedImage(
-					PresentationImagePanel.getWidth(),
-					PresentationImagePanel.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g1 = currentImg.createGraphics();
-			g1.drawImage(currentSlide.getIcon().getImage(), 0, 0, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
-			
-			BufferedImage nextImg = new BufferedImage(
-					PresentationImagePanel.getWidth(),
-					PresentationImagePanel.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g2 = nextImg.createGraphics();
-			g2.drawImage(nextSlide.getIcon().getImage(), 0, 0, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
-
-			if (nextSlide.getTransition() == SlideState.Transition.NONE)
-			{
-				Transition transition = new SwipeDown();
-				transition.DrawImageTransition(PresentationImagePanel, currentImg, nextImg, animationTime);
-			}
-			else if (nextSlide.getTransition() == SlideState.Transition.DOWN)
-			{
-				SwipeDown swipeDownTransition = new SwipeDown();
-				swipeDownTransition.DrawImageTransition(PresentationImagePanel, currentImg, nextImg, animationTime);
-			}
-			else if (nextSlide.getTransition() == SlideState.Transition.UP)
-			{
-				SwipeUp swipeUpTransition = new SwipeUp();
-				swipeUpTransition.DrawImageTransition(PresentationImagePanel, currentImg, nextImg, animationTime);
-			}
-			else if (nextSlide.getTransition() == SlideState.Transition.LEFT)
-			{
-				SwipeLeft swipeLeftTransition = new SwipeLeft();
-				swipeLeftTransition.DrawImageTransition(PresentationImagePanel, currentImg, nextImg, animationTime);
-			}
-			else if (nextSlide.getTransition() == SlideState.Transition.RIGHT)
-			{
-				SwipeRight swipeRightTransition = new SwipeRight();
-				swipeRightTransition.DrawImageTransition(PresentationImagePanel, currentImg, nextImg, animationTime);
-			}
-			else if (nextSlide.getTransition() == SlideState.Transition.CROSSFADE)
-			{
-				CrossFade crossFadeTransition = new CrossFade();
-				crossFadeTransition.DrawImageTransition(PresentationImagePanel, currentImg, nextImg, animationTime);
-			}
-			else
-			{
-				System.out.println("error with transition type");
-			}	
-
-			currentSlide = nextSlide;
-			nextSlide = slideStateMachine.getNextSlide();
-		}
+		
+		PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+		Animator animator = new Animator(PresentationImagePanel);
+		animator.start();
 	}
 }
