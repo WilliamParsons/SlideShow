@@ -57,6 +57,7 @@ public class SlideshowPresenter extends JFrame {
 	private boolean clickedPlay = false;
 	private Timer showTimer;
 	private boolean automatic;
+	private SlideshowMaker creator;
 
 
 	/**
@@ -79,6 +80,7 @@ public class SlideshowPresenter extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	
 	public SlideshowPresenter() {
 		setTitle("Slideshow Presentation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -206,8 +208,7 @@ public class SlideshowPresenter extends JFrame {
 		mnModes.add(mntmCreate);
 		mntmCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SlideshowMaker maker = new SlideshowMaker();
-				maker.setVisible(true);
+				creator.setVisible(true);
 				setVisible(false);
 			}
 		});
@@ -252,6 +253,11 @@ public class SlideshowPresenter extends JFrame {
 		if(currentSlide != null) {
 			//PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
 		}
+	}
+	
+	public SlideshowPresenter(SlideshowMaker creator) {
+		this();
+		this.creator = creator;		
 	}
 
 	private void resizeMainPanel() {
