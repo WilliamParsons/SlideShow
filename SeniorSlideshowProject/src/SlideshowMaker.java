@@ -483,7 +483,7 @@ public class SlideshowMaker extends JFrame {
 
 		PreviewImagePanel = new ImagePanel();
 		PreviewImagePanel.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
-		PreviewImagePanel.initializeImages();
+		PreviewImagePanel.initializeBlankImage();
 		TransitionPanel.add(PreviewImagePanel);
 		resizePanels();
 	}
@@ -667,14 +667,8 @@ public class SlideshowMaker extends JFrame {
 
 	private void resizePreviewImage(){
 		if(previewIcon != null) {
-			BufferedImage bufferedImg = new BufferedImage(
-					PreviewImagePanel.getWidth(),
-					PreviewImagePanel.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g = bufferedImg.createGraphics();
-			g.drawImage(previewIcon.getImage(), 0, 0, PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), null);
-			PreviewImagePanel.initializeImages();
-			PreviewImagePanel.setImage(bufferedImg);
+			PreviewImagePanel.initializeBlankImage();
+			PreviewImagePanel.setImage(previewIcon.getImage());
 		}
 	}
 }
