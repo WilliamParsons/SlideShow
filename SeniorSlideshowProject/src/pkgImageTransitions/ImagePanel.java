@@ -8,10 +8,12 @@ import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
+import Slides.SlideState;
 import pkgImageTransitions.Transitions.Trans_CrossDissolve;
 import pkgImageTransitions.Transitions.Trans_PushDown;
 import pkgImageTransitions.Transitions.Trans_PushLeft;
@@ -164,7 +166,7 @@ public class ImagePanel extends JPanel
 
 	}
 	
-	public void initializeImages() {
+	public void initializeBlankImage() {
 		m_iPanelWidth = this.getWidth();
 		m_iPanelHeight = this.getHeight();
 //		System.out.println("Creating imagepanel size = " + m_iPanelWidth + " x " + m_iPanelHeight);
@@ -174,33 +176,26 @@ public class ImagePanel extends JPanel
 		
 		// Draw black frame as first image
 		m_CurrentImage.getGraphics().setColor(Color.BLACK);
-		m_CurrentImage.getGraphics().drawRect(0, 0, m_iPanelWidth, m_iPanelHeight);
-		
-	}
-	
-	public void initializeImages(Image img) {
-		m_iPanelWidth = this.getWidth();
-		m_iPanelHeight = this.getHeight();
-//		System.out.println("Creating imagepanel size = " + m_iPanelWidth + " x " + m_iPanelHeight);
-		// Create the off-screen BufferedImages for use by the transitions
-		m_CurrentImage = new BufferedImage(m_iPanelWidth, m_iPanelHeight, BufferedImage.TYPE_INT_RGB);
-		m_NextImage = new BufferedImage(m_iPanelWidth, m_iPanelHeight, BufferedImage.TYPE_INT_RGB);
-		
-		// Draw black frame as first image
-		m_CurrentImage.getGraphics().drawImage(img, 0, 0, this);
+		m_CurrentImage.getGraphics().drawRect(0, 0, m_iPanelWidth, m_iPanelHeight);		
 	}
 	
 	//--------------------------------------------------------
 	/** Set the reference to the image to be drawn. */
 	//--------------------------------------------------------
-	public void setImage(BufferedImage nextImg)
+	public void setImage(Image nextImg)
 	{
-		theImage = nextImg;
+		BufferedImage bufferedImg = new BufferedImage(
+				m_iPanelWidth,
+				m_iPanelHeight,
+				BufferedImage.TYPE_INT_RGB);
+		Graphics g = bufferedImg.createGraphics();
+		g.drawImage(nextImg, 0, 0, m_iPanelWidth, m_iPanelHeight, null);
+		theImage = bufferedImg;
 		
 		// Scale and copy this into the m_NextImage buffer
 	    // Note: If the image is too large or too small we try to scale it
-        int imgWidth = nextImg.getWidth(this);	// this panel is the ImageObserver required.
-        int imgHeight = nextImg.getHeight(this);
+        int imgWidth = bufferedImg.getWidth(this);	// this panel is the ImageObserver required.
+        int imgHeight = bufferedImg.getHeight(this);
         int posX, posY; // Position to place upper-left corner of image
         int imgScaleWidth, imgScaleHeight; // In case we need to scale - Using class vars temporarily
         
@@ -238,24 +233,16 @@ public class ImagePanel extends JPanel
         // Draw into m_NextImage
 		Graphics gNext = m_NextImage.getGraphics();
 		gNext.drawImage(nextImg, posX, posY, imgScaleWidth, imgScaleHeight, this);
-
-		// Randomly select a transition and pass this on to it
-		//int transIdx = m_RandGen.nextInt(m_vTransitions.size());
-		
-		// Do random transition taking 2.0 seconds
-		//m_vTransitions.elementAt(transIdx).DrawImageTransition(this, m_CurrentImage, m_NextImage, 2.0);
-		// For testing a single transition comment out the above line and put the appropriate
-		//   index in the vector of transitions in the call to m_vTransitions.elemantAt(i)
 		m_vTransitions.elementAt(0).DrawImageTransition(this, m_CurrentImage, m_NextImage, 0.5);  
 	}
 
 	//--------------------------------------------------------
 	/** Override the paint function to draw the image. */
 	//--------------------------------------------------------
-	public void paint(Graphics g)
+	public void paintComponent(Graphics g)
 	{
-		this.paintComponent(g);
-		this.paintBorder(g);
+		super.paintComponent(g);
+		super.paintBorder(g);
 		if(this.theImage != null)
 		{
 			g.drawImage(m_CurrentImage, 0, 0, null);
