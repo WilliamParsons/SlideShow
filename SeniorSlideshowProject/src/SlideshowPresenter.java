@@ -170,10 +170,13 @@ public class SlideshowPresenter extends JFrame {
 					}
 					currentSlide = slideStateMachine.getFirstSlide();
 					if (currentSlide != null) {
-						PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+
+						Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
+						imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
 					}
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
 					soundTrack.jukeTable.tableChanged();
+					updateShow();
 				}	
 			}
 		});
@@ -209,6 +212,9 @@ public class SlideshowPresenter extends JFrame {
 		mnModes.add(mntmCreate);
 		mntmCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (creator == null) {
+				creator = new SlideshowMaker();
+				}
 				creator.setVisible(true);
 				setVisible(false);
 			}
@@ -302,7 +308,7 @@ public class SlideshowPresenter extends JFrame {
 		if(currentSlide != null)
 		{
 			Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
-			imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 0, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
+			imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
 		}
 	}
 
