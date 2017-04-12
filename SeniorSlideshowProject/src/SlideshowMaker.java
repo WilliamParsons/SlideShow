@@ -71,6 +71,8 @@ public class SlideshowMaker extends JFrame {
 	private JMenuItem mntmNewMenuItem;
 	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
+	private SlideshowPresenter presenter = null;
+	private SlideshowMaker creator;
 
 	/**
 	 * Launch the application.
@@ -141,6 +143,8 @@ public class SlideshowMaker extends JFrame {
 						slideStateMachine.addAudio(audio);
 						audio = tempState.getNextAudio();
 					}
+					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
+					soundTrack.jukeTable.tableChanged();
 					layoutSlider.setValue(0);
 					updateLayout();
 				}
@@ -175,7 +179,9 @@ public class SlideshowMaker extends JFrame {
 		mnModes.add(mntmPresent);
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				SlideshowPresenter presenter = new SlideshowPresenter();
+				if (presenter == null) {
+				presenter = new SlideshowPresenter(creator);
+				}
 				presenter.setVisible(true);
 				setVisible(false);
 			}
@@ -481,9 +487,11 @@ public class SlideshowMaker extends JFrame {
 
 		PreviewImagePanel = new ImagePanel();
 		PreviewImagePanel.setBounds((TransitionPanel.getWidth()/2)-150, (TransitionPanel.getHeight()/2)-110, 300, 225);
-		PreviewImagePanel.initializeImages();
+		PreviewImagePanel.initializeBlankImage();
 		TransitionPanel.add(PreviewImagePanel);
+		
 		resizePanels();
+		creator = this;
 	}
 
 	private void resizePanels(){
@@ -569,13 +577,15 @@ public class SlideshowMaker extends JFrame {
 	}
 
 	private void updateLayout(){
-		
+
+
+
 		resizeImageIcon(lblSlidesLeft, iconLeft);
 		resizeImageIcon(lblSlidesRight, iconRight);
-		
+
 		if(slideStateMachine.getSlideShowSize() != slideSize) {
 			slideSize = slideStateMachine.getSlideShowSize();
-			
+
 			if (slideSize == 0) {
 				layoutSlider.setValue(0);
 				layoutSlider.setEnabled(false);			
@@ -636,6 +646,7 @@ public class SlideshowMaker extends JFrame {
 		}
 	}
 
+
 	private void resizeImageIcon(JLabel label, ImageIcon icon){
 		if(slideStateMachine.getSlideShowSize() > 0) {
 			BufferedImage bufferedImg = new BufferedImage(
@@ -665,14 +676,8 @@ public class SlideshowMaker extends JFrame {
 
 	private void resizePreviewImage(){
 		if(previewIcon != null) {
-			BufferedImage bufferedImg = new BufferedImage(
-					PreviewImagePanel.getWidth(),
-					PreviewImagePanel.getHeight(),
-					BufferedImage.TYPE_INT_RGB);
-			Graphics g = bufferedImg.createGraphics();
-			g.drawImage(previewIcon.getImage(), 0, 0, PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), null);
-			PreviewImagePanel.initializeImages();
-			PreviewImagePanel.setImage(bufferedImg);
+			PreviewImagePanel.initializeBlankImage();
+			PreviewImagePanel.setImage(previewIcon.getImage());
 		}
 	}
 }
