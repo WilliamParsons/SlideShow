@@ -15,10 +15,12 @@ import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
+import Animation.Animator;
 import FileManager.FileManager;
 import Slides.AudioState;
 import Slides.SlideShowStateMachine;
 import Slides.SlideState;
+import Transitions.*;
 import pkgImageTransitions.ImagePanel;
 
 import javax.swing.ImageIcon;
@@ -55,6 +57,8 @@ public class SlideshowPresenter extends JFrame {
 	private boolean slidePlaying = false;
 	private boolean clickedPlay = false;
 	private Timer showTimer;
+	private boolean automatic;
+	private SlideshowMaker creator;
 
 
 	/**
@@ -72,16 +76,17 @@ public class SlideshowPresenter extends JFrame {
 				}
 			}
 		});
-		InitializeShow();
 	}
 
 	/**
 	 * Create the frame.
 	 */
+	
 	public SlideshowPresenter() {
 		setTitle("Slideshow Presentation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
+		automatic = true;
 		MainPanel = new JPanel();
 		MainPanel.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
@@ -91,7 +96,7 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(MainPanel);
 		MainPanel.setLayout(null);
-		
+
 		int currentIndex = 0;
 
 		slideStateMachine = SlideShowStateMachine.getInstance();
@@ -105,7 +110,7 @@ public class SlideshowPresenter extends JFrame {
 
 
 				// InitializeShow();
-                if(slidePlaying == true)
+				if(slidePlaying == true)
 				{
 					btnPlayPause.setText("Play"); // change Pause to Play when pause
 					soundTrack.pauseB.doClick(); // Pause soundtrack
@@ -123,6 +128,9 @@ public class SlideshowPresenter extends JFrame {
 					}else{
 						soundTrack.startB.doClick(); // start soundtrack
 						slidePlaying = true;
+					}
+					if(automatic) {
+						startAutomaticSlideShow();
 					}
 				}
 			}
@@ -160,6 +168,15 @@ public class SlideshowPresenter extends JFrame {
 						slideStateMachine.addAudio(audio);
 						audio = tempState.getNextAudio();
 					}
+					currentSlide = slideStateMachine.getFirstSlide();
+					if (currentSlide != null) {
+
+						Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
+						imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
+					}
+					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
+					soundTrack.jukeTable.tableChanged();
+					updateShow();
 				}	
 			}
 		});
@@ -185,7 +202,6 @@ public class SlideshowPresenter extends JFrame {
 		mnPresentModes.add(mntmManual);
 		mntmManual.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				InitializeShow();
 				btnPlayPause.setEnabled(false);
 				btnPrevious.setEnabled(true);
 				btnNext.setEnabled(true);
@@ -196,8 +212,10 @@ public class SlideshowPresenter extends JFrame {
 		mnModes.add(mntmCreate);
 		mntmCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SlideshowMaker maker = new SlideshowMaker();
-				maker.setVisible(true);
+				if (creator == null) {
+				creator = new SlideshowMaker();
+				}
+				creator.setVisible(true);
 				setVisible(false);
 			}
 		});
@@ -235,15 +253,21 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.add(btnNext);
 		btnNext.setEnabled(false);
 		resizeMainPanel();
-		
 
-//		PresentationPanel = new JPanel();
-//		PresentationPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-//		PresentationPanel.setBounds(0, 0, MainPanel.getWidth(), MainPanel.getHeight());
-//		MainPanel.add(PresentationPanel);
 		PresentationImagePanel = new ImagePanel();
-		PresentationImagePanel.setBounds(0, 11, 765, 504);
-		MainPanel.add(PresentationImagePanel);
+		PresentationImagePanel.setBounds(0, 11, 765, 504);		
+		MainPanel.add(PresentationImagePanel);	
+		PresentationImagePanel.initializeBlankImage();
+		PresentationImagePanel.repaint();	
+		currentSlide = slideStateMachine.getFirstSlide();
+		if(currentSlide != null) {
+			//PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+		}
+	}
+	
+	public SlideshowPresenter(SlideshowMaker creator) {
+		this();
+		this.creator = creator;		
 	}
 
 	private void resizeMainPanel() {
@@ -254,7 +278,7 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious.setBounds((panelWidth / 2) - 150, panelHeight - 40, 89, 23);
 		btnPlayPause.setBounds((panelWidth / 2) - 43, panelHeight - 40, 100, 23);
 		btnNext.setBounds((panelWidth / 2) + 75, panelHeight - 40, 89, 23);
-		
+
 	}
 
 	private void resizeImageIcon(JLabel label, ImageIcon icon) {
@@ -281,31 +305,20 @@ public class SlideshowPresenter extends JFrame {
 			label.setIcon(icon);
 		}
 	}
-    private static void InitializeShow()
-    {
-		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
-		currentSlide = slideState.getFirstSlide();
-    	if (currentSlide != null){
-			//BufferedImage bufferedImg = new BufferedImage(
-			//		PresentationImagePanel.getWidth(),
-			//		PresentationImagePanel.getHeight(),
-			//		BufferedImage.TYPE_INT_RGB);
-			//Graphics g = bufferedImg.createGraphics();
-			//g.drawImage(currentSlide.getIcon().getImage(), 0, 0, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
-    		
+	
+	private void updateShow() {
+		currentSlide = slideStateMachine.getCurrentSlide();
+		if(currentSlide != null)
+		{
 			Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
-			imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 0, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
-		}	
-    }
-    
-    private static void updateShow()
-    {
-    	SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
-    	currentSlide = slideState.getCurrentSlide();
-    	if(currentSlide != null)
-    	{
-    		Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
-    		imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 0, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
-    	}
-    }
+			imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
+		}
+	}
+
+	private void startAutomaticSlideShow() {
+		
+		PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+		Animator animator = new Animator(PresentationImagePanel);
+		animator.start();
+	}
 }
