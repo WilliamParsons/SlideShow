@@ -67,8 +67,7 @@ public class SlideshowMaker extends JFrame {
 	private SlideState currentSlide;
 	private SlideState nextSlide;
 	private FileManager fMgr;
-	private JMenu mnModes;
-	private JMenuItem mntmNewMenuItem;
+	private JMenu mnPresentation;
 	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
 	private SlideshowPresenter presenter = null;
@@ -172,11 +171,11 @@ public class SlideshowMaker extends JFrame {
 		});
 		mnFile.add(mntmSave);
 
-		mnModes = new JMenu("Modes");
-		menuBar.add(mnModes);
+		mnPresentation = new JMenu("Presentation Mode");
+		menuBar.add(mnPresentation);
 
-		mntmPresent = new JMenuItem("Presentation");
-		mnModes.add(mntmPresent);
+		mntmPresent = new JMenuItem("Switch to Presentation Mode");
+		mnPresentation.add(mntmPresent);
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				if (presenter == null) {
