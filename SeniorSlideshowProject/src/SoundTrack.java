@@ -85,6 +85,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     String currentName;
     double duration;
     int num;
+    boolean nextBisClicked = false;
     boolean bump;
     boolean paused = false;
     JButton startB, pauseB, loopB, prevB, nextB;
@@ -534,11 +535,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     public void run()
     {
-    	boolean loopStatus = false;
+    	boolean loopStatus = true;
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
-            for (; num < audioStateMachine.getAudioListSize() && thread != null; num++)
+            for (; num < audioStateMachine.getAudioListSize() && thread != null;)
             {
                 table.scrollRectToVisible(new Rectangle(0,(num+2)*(table.getRowHeight()+table.getRowMargin()),
                 		1,1));
@@ -546,23 +547,26 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 if( loadSound(audioStateMachine.getAudioAtIndex(num).getAudio()) == true )
                 {
                     playSound();
-                    if(nextB.isEnabled())
-                    {
-                        continue;
-                    }
-                    audioStateMachine.getNextAudio();
+
+//                    audioStateMachine.getNextAudio();                    
                 }
+                if(nextBisClicked == true)
+                {
+                	nextBisClicked = false;
+                    continue;
+                }
+                num = audioStateMachine.getNextAudioIndex();
                 // take a little break between sounds
-                try
-                {
-                	Thread.sleep(222);
-                }
-                catch (Exception e)
-                {
-                	break;
-                }
+//                try
+//                {
+//                	Thread.sleep(222);
+//                }
+//                catch (Exception e)
+//                {
+//                	break;
+//                }
             }
-            num = 0;
+//            num = 0;
         }
         while (loopStatus && thread != null);
 
@@ -769,7 +773,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 }
                 paused = false;
                 num = table.getSelectedRow();
-                num = num == -1 ? 0 : num;
+//                num = num == -1 ? 0 : num;
+                num = 0;
                 start();
                 button.setText("Stop");
                 setComponentsEnabled(true);
@@ -820,6 +825,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             }
             else if (button.getText().equals(">>"))
             {
+            	nextBisClicked = true;
                 paused = false;
                 pauseB.setText("Pause");
                 num = audioStateMachine.getNextAudioIndex();
