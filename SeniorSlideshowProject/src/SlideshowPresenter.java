@@ -112,6 +112,7 @@ public class SlideshowPresenter extends JFrame {
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
+					slideStateMachine.decrementIndex();
 				}
 				else if(slidePlaying == false)
 				{	
@@ -254,7 +255,7 @@ public class SlideshowPresenter extends JFrame {
 		PresentationImagePanel.setBounds(0, 11, 765, 504);		
 		MainPanel.add(PresentationImagePanel);	
 		PresentationImagePanel.initializeBlankImage();
-		//PresentationImagePanel.repaint();
+		PresentationImagePanel.repaint();
 	}
 	
 	public SlideshowPresenter(SlideshowMaker creator) {

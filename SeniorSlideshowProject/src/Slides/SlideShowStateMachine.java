@@ -60,6 +60,14 @@ public class SlideShowStateMachine implements Serializable {
 		slideIndex = newIndex;
 	}
 
+	public void decrementIndex (){
+		slideIndex--;
+	}
+	
+	public void incrementIndex (){
+		slideIndex++;
+	}
+	
 	public SlideState getFirstSlide()
 	{
 		slideIndex = 0;
