@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
+import Slides.SlideShowStateMachine;
+
 public class SwipeDown extends Transition
 {
 	//---------------------------------------------------
@@ -33,7 +35,7 @@ public class SwipeDown extends Transition
 	{
 		Graphics gPan = imgPanel.getGraphics();
 		Graphics gA = ImageA.getGraphics();
-		
+		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
 		// Dimension holders
 		int sAY2, dAY1;		// Dimensions for imageA - ImageA Source Y1, ImageA Destination Y1
 		int sBY1, dBY2;		// Dimensions for imageB - ImageB Source Y1, ImageB Destination Y2
@@ -54,38 +56,40 @@ public class SwipeDown extends Transition
 		// Initialize the dimensions for section of ImageB to draw into ImageA
 		dBY2 = incY;
 		sBY1 = imgHeight - incY;
-		
-        // Draw the scaled current image if necessary
-		gPan.drawImage(ImageA, 0, 0, imgPanel);
+		if (!slideState.getPausedState()){
+	        // Draw the scaled current image if necessary
+			gPan.drawImage(ImageA, 0, 0, imgPanel);
 
-		// Draw image A
-		for(int i=0; i<numIterations; i++)
-		{
-			// It appears that moving image A down within itself will not work because
-			//  pixels become corrupted.  Try drawing both image parts directly to the scren
-			// Move section of A down
-			gPan.drawImage(ImageA, 0, dAY1, imgWidth, imgHeight, 0, 0, imgWidth, sAY2, null);
-			// Draw part of B into A
-			gPan.drawImage(ImageB, 0, 0, imgWidth, dBY2, 0, sBY1, imgWidth, imgHeight, null); // Draw portion of ImageB into ImageA
-			// Take a bigger section next time
-			sAY2 -= incY;
-			dAY1 += incY;
-			dBY2 += incY;
-			sBY1 -= incY;
-			// Pause a bit
-			try 
+			// Draw image A
+			for(int i=0; i<numIterations; i++)
 			{
-			    Thread.sleep(timeInc);                 
-			} 
-			catch(InterruptedException ex) 
-			{
-			    Thread.currentThread().interrupt();
-			} 
-		}	
-		// Move m_NextImage into m_CurrentImage for next time -  May not need this
-		ImageA.getGraphics().drawImage(ImageB, 0, 0, imgPanel);
-		// And one final draw to the panel to be sure it's all there
-		gPan.drawImage(ImageA, 0,0, imgPanel); 
+				// It appears that moving image A down within itself will not work because
+				//  pixels become corrupted.  Try drawing both image parts directly to the scren
+				// Move section of A down
+				gPan.drawImage(ImageA, 0, dAY1, imgWidth, imgHeight, 0, 0, imgWidth, sAY2, null);
+				// Draw part of B into A
+				gPan.drawImage(ImageB, 0, 0, imgWidth, dBY2, 0, sBY1, imgWidth, imgHeight, null); // Draw portion of ImageB into ImageA
+				// Take a bigger section next time
+				sAY2 -= incY;
+				dAY1 += incY;
+				dBY2 += incY;
+				sBY1 -= incY;
+				// Pause a bit
+				try 
+				{
+				    Thread.sleep(timeInc);                 
+				} 
+				catch(InterruptedException ex) 
+				{
+				    Thread.currentThread().interrupt();
+				} 
+			}	
+			// Move m_NextImage into m_CurrentImage for next time -  May not need this
+			ImageA.getGraphics().drawImage(ImageB, 0, 0, imgPanel);
+			// And one final draw to the panel to be sure it's all there
+			gPan.drawImage(ImageA, 0,0, imgPanel); 
+		}
+
 	}
 	
 	//---------------------------------------------------

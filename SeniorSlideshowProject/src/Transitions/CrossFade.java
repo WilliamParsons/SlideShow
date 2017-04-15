@@ -7,6 +7,8 @@ import java.awt.image.RescaleOp;
 
 import javax.swing.JPanel;
 
+import Slides.SlideShowStateMachine;
+
 public class CrossFade extends Transition
 {
 	//---------------------------------------------------
@@ -33,6 +35,7 @@ public class CrossFade extends Transition
 	{
 		Graphics gPan = imgPanel.getGraphics();
 		Graphics2D gA = ImageA.createGraphics();
+		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
 		
 		int timeInc;				// Milliseconds to pause each time
 		timeInc = (int)(time * 1000) / 40;
@@ -46,25 +49,27 @@ public class CrossFade extends Transition
 		float[] scales = { 1.0f, 1.0f, 1.0f, alphaInc};
 		float[] offsets = new float[4];
 		RescaleOp rop = new RescaleOp(scales, offsets, null);
+		if (!slideState.getPausedState()){
+	        // Draw the scaled current image if necessary
+			gPan.drawImage(ImageA, 0, 0, imgPanel);
 
-        // Draw the scaled current image if necessary
-		gPan.drawImage(ImageA, 0, 0, imgPanel);
+			// Draw image A -- appears we need to do this fade longer
+			// Each time we redraw ImageB_ARGB over ImageA we add just a bit more
+			for(int i=0; i<15; i++)
+			{
+				// Draw B over A. Note: Can't do the first draw directly into the screen panel
+				//	because that drawImage only works with BufferedImages as the destination.
+				gA.drawImage(ImageB_ARGB, rop, 0, 0); // Draw portion of ImageB into ImageA
+				gPan.drawImage(ImageA, 0,0, imgPanel); // Copy ImageA into panel
+				// Note: Can not pause here like we do in the other transitions because
+				//     cross dissolve takes longer than a simple blit draw
+			}	
+			// Move m_NextImage into m_CurrentImage for next time -  May not need this
+			ImageA.getGraphics().drawImage(ImageB, 0, 0, imgPanel);
+			// And one final draw to the panel to be sure it's all there
+			gPan.drawImage(ImageA, 0,0, imgPanel); 
+		}
 
-		// Draw image A -- appears we need to do this fade longer
-		// Each time we redraw ImageB_ARGB over ImageA we add just a bit more
-		for(int i=0; i<15; i++)
-		{
-			// Draw B over A. Note: Can't do the first draw directly into the screen panel
-			//	because that drawImage only works with BufferedImages as the destination.
-			gA.drawImage(ImageB_ARGB, rop, 0, 0); // Draw portion of ImageB into ImageA
-			gPan.drawImage(ImageA, 0,0, imgPanel); // Copy ImageA into panel
-			// Note: Can not pause here like we do in the other transitions because
-			//     cross dissolve takes longer than a simple blit draw
-		}	
-		// Move m_NextImage into m_CurrentImage for next time -  May not need this
-		ImageA.getGraphics().drawImage(ImageB, 0, 0, imgPanel);
-		// And one final draw to the panel to be sure it's all there
-		gPan.drawImage(ImageA, 0,0, imgPanel); 
 	}
 	
 	//---------------------------------------------------
