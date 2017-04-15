@@ -27,7 +27,11 @@ public class Animator extends Thread {
 	}
 	@Override
 	public void run() {
-		if(currentSlide != null && nextSlide != null) {
+		
+		int indexTester = slideStateMachine.getCurrentIndex();
+		boolean isPaused = slideStateMachine.getPausedState();
+		
+		if(currentSlide != null && nextSlide != null && !isPaused) {
 
 			double animationTime;
 			double slideTime = currentSlide.getTransitionTime();
@@ -62,32 +66,32 @@ public class Animator extends Thread {
 			Graphics g2 = nextImg.createGraphics();
 			g2.drawImage(nextSlide.getIcon().getImage(), 0, 0, imgPan.getWidth(), imgPan.getHeight(), null);
 
-			if (nextSlide.getTransition() == SlideState.Transition.NONE)
+			if (nextSlide.getTransition() == SlideState.Transition.NONE && !isPaused)
 			{
 				Transition transition = new SwipeDown();
 				transition.DrawImageTransition(imgPan, currentImg, nextImg, animationTime);
 			}
-			else if (nextSlide.getTransition() == SlideState.Transition.DOWN)
+			else if (nextSlide.getTransition() == SlideState.Transition.DOWN && !isPaused)
 			{
 				SwipeDown swipeDownTransition = new SwipeDown();
 				swipeDownTransition.DrawImageTransition(imgPan, currentImg, nextImg, animationTime);
 			}
-			else if (nextSlide.getTransition() == SlideState.Transition.UP)
+			else if (nextSlide.getTransition() == SlideState.Transition.UP && !isPaused)
 			{
 				SwipeUp swipeUpTransition = new SwipeUp();
 				swipeUpTransition.DrawImageTransition(imgPan, currentImg, nextImg, animationTime);
 			}
-			else if (nextSlide.getTransition() == SlideState.Transition.LEFT)
+			else if (nextSlide.getTransition() == SlideState.Transition.LEFT && !isPaused)
 			{
 				SwipeLeft swipeLeftTransition = new SwipeLeft();
 				swipeLeftTransition.DrawImageTransition(imgPan, currentImg, nextImg, animationTime);
 			}
-			else if (nextSlide.getTransition() == SlideState.Transition.RIGHT)
+			else if (nextSlide.getTransition() == SlideState.Transition.RIGHT && !isPaused)
 			{
 				SwipeRight swipeRightTransition = new SwipeRight();
 				swipeRightTransition.DrawImageTransition(imgPan, currentImg, nextImg, animationTime);
 			}
-			else if (nextSlide.getTransition() == SlideState.Transition.CROSSFADE)
+			else if (nextSlide.getTransition() == SlideState.Transition.CROSSFADE && !isPaused)
 			{
 				CrossFade crossFadeTransition = new CrossFade();
 				crossFadeTransition.DrawImageTransition(imgPan, currentImg, nextImg, animationTime);
@@ -96,15 +100,23 @@ public class Animator extends Thread {
 			{
 				System.out.println("error with transition type");
 			}	
-
-			currentSlide = nextSlide;
-			nextSlide = slideStateMachine.getNextSlide();
-			imgPan.setImage(currentSlide.getIcon().getImage());
-
+			if(!slideStateMachine.getPausedState()){
+				System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
+				currentSlide = nextSlide;
+				nextSlide = slideStateMachine.getNextSlide();
+			}
+			if (slideStateMachine.getPausedState() && slideStateMachine.getCurrentIndex() != indexTester){
+				System.out.println("Fix slides while paused \n");
+				SlideState previousSlide = slideStateMachine.getPreviousSlide();
+				nextSlide = currentSlide;
+				currentSlide = previousSlide;
+				
+			}
 			if (nextSlide != null) {
+				System.out.println("currentIndex at end of run " + slideStateMachine.getCurrentIndex() + "\n");
 				run();
 			}
-
+			
 		}
 	}
 

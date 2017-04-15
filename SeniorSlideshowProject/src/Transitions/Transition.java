@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import Slides.SlideShowStateMachine;
+
 //==========================================================================================
 // class Transition
 // Define the parent class that all image transitions will extend.  This way new transitions
@@ -53,10 +55,12 @@ public class Transition
 		// Get all the graphics objects
 		Graphics gPan = imgPanel.getGraphics();
 		Graphics gA = ImageA.getGraphics();
-		
+		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
 		// Default just copy ImageB into ImageA then copy to screen
-	    gA.drawImage(ImageB, 0, 0, null);
-	    gPan.drawImage(ImageA, 0, 0, imgPanel);
+		if (!slideState.getPausedState()){
+		    gA.drawImage(ImageB, 0, 0, null);
+		    gPan.drawImage(ImageA, 0, 0, imgPanel);
+		}
 	}
 	
 	//---------------------------------------------------
