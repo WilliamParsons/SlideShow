@@ -19,6 +19,8 @@ public class SlideShowStateMachine implements Serializable {
 	private double showTime;
 	private boolean audioLoopFlag;
 	private boolean isPaused;
+	private boolean needsReset;
+	private boolean showEnded;
 
 	private SlideShowStateMachine()
 	{
@@ -28,6 +30,9 @@ public class SlideShowStateMachine implements Serializable {
 		slideIndex = 0;
 		showTime = 0;
 		audioLoopFlag = false;
+		needsReset = false;
+		isPaused = false;
+		showEnded = false;
 	}
 
 	public static SlideShowStateMachine getInstance()
@@ -60,12 +65,33 @@ public class SlideShowStateMachine implements Serializable {
 		slideIndex = newIndex;
 	}
 
-	public void decrementIndex (){
+	public void decrementIndex()
+	{
+		
 		slideIndex--;
+		
 	}
 	
-	public void incrementIndex (){
+	public void incrementIndex()
+	{
+		
 		slideIndex++;
+		
+	}
+	public void setNeedsReset(boolean reset){
+		needsReset = reset;
+	}
+	
+	public void setShowEnded(boolean showState){
+		showEnded = showState;
+	}
+	
+	public boolean getShowEnded(){
+		return showEnded;
+	}
+	
+	public boolean getNeedsReset(){
+		return needsReset;
 	}
 	
 	public SlideState getFirstSlide()
@@ -366,4 +392,5 @@ public class SlideShowStateMachine implements Serializable {
 		// TODO Auto-generated method stub
 		audioLoopFlag = !audioLoopFlag;
 	}
+
 }
