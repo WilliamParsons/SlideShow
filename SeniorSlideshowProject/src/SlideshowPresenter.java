@@ -144,7 +144,8 @@ public class SlideshowPresenter extends JFrame {
 					}
 				}
 			}
-		});
+		}
+	});
 		btnPlayPause.setBounds(345, 530, 89, 23);							//Bounds of the "Play" button
 		MainPanel.add(btnPlayPause);										//Add to the Main Panel
 		btnPlayPause.setEnabled(true);										//Set enabled button to true
@@ -172,19 +173,6 @@ public class SlideshowPresenter extends JFrame {
 					while(slide != null){																			//While the slide is not null, do...
 						slideStateMachine.addSlide(slide);															//Add the slide to the array in the slideStateMachine
 						slide = tempState.getNextSlide();															//Get the next slide in the tempState
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int result = fc.showOpenDialog(null);
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);
-					slideStateMachine.clearSlideShow();
-					SlideState slide = tempState.getFirstSlide();
-					while(slide != null){
-						System.out.println(slide.toString());
-						slideStateMachine.addSlide(slide);
-						slide = tempState.getNextSlide();
 					}
 					AudioState audio = tempState.getFirstAudio();													//Get the first audio of the tempState
 					while(audio != null){																			//While the audio is not null, do...
@@ -201,7 +189,7 @@ public class SlideshowPresenter extends JFrame {
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);						
 					soundTrack.jukeTable.tableChanged();
 				}	
-			}
+			}		
 		});
 		mnFile.add(mntmOpen);												//Add Open to File Menu
 
@@ -224,7 +212,8 @@ public class SlideshowPresenter extends JFrame {
 				creator.setVisible(true);									//Set the Maker window to true (aka. view the Creation Window) 
 				setVisible(false);											//Set the Presenter window to false (aka. hide the Presentation Window)
 			}
-		});
+		}
+	});
 
 		btnPrevious = new JButton("<<<<");
 		btnPrevious.addActionListener(new ActionListener() {
@@ -298,14 +287,13 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.add(PresentationImagePanel);	
 		PresentationImagePanel.initializeBlankImage();
 		PresentationImagePanel.repaint();
-	}
+}
 	
 	public SlideshowPresenter(SlideshowMaker creator) {
 		this();
 		this.creator = creator;		
 	}
-
-	private void resizeMainPanel() {										//Function to resize all components in the Main Panel when window is enlarged
+	
 	private void resizeAllPanels(){
 		resizeMainPanel();
 		resizePresentationPanel();
@@ -327,17 +315,6 @@ public class SlideshowPresenter extends JFrame {
 		rdbtnAutomatic.setBounds((panelWidth / 2) - 330, panelHeight - 40, 140, 33);
 		rdbtnManual.setBounds((panelWidth / 2) + 225, panelHeight - 40, 131, 33);
 	}
-
-	private void updateShow() {												//Function to display the currentSlide of the SlideShow in Manual Mode
-		currentSlide = slideStateMachine.getCurrentSlide();
-		if(currentSlide != null)
-		{
-			Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
-			imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
-		menuBar.setBounds(0, 0, MainPanel.getWidth(), 21);
-
-	}
-
 	
 	private void updateShow() {
 		if (!slidePlaying){
@@ -356,10 +333,6 @@ public class SlideshowPresenter extends JFrame {
 		imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
 	}
 
-	private void startAutomaticSlideShow() {								//Function to start the animation of the SlideShow in Automatic Mode
-		PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
-		Animator animator = new Animator(PresentationImagePanel);
-		animator.start();
 	private void startAutomaticSlideShow() {
 		if (!slideStateMachine.getPausedState()){
 			currentSlide = slideStateMachine.getCurrentSlide();
