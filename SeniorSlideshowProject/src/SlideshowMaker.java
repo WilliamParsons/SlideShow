@@ -2,6 +2,7 @@ import java.awt.EventQueue;
 import FileManager.*;
 import Slides.*;
 import Transitions.*;
+import javafx.scene.shape.Box;
 import pkgImageTransitions.*;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,6 +33,11 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import radioBtnListener.*;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.BoxLayout;
 
 public class SlideshowMaker extends JFrame {
 
@@ -40,6 +46,7 @@ public class SlideshowMaker extends JFrame {
 	private JPanel MainPanel;
 	private JPanel LayoutPanel;
 	private JSlider layoutSlider;
+	private JPanel layoutTracker;
 	private JButton addImageBtn;
 	private JButton removeImageBtn;
 	private JPanel TransitionPanel;
@@ -146,6 +153,7 @@ public class SlideshowMaker extends JFrame {
 					}
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
 					soundTrack.jukeTable.tableChanged();
+					updateLayoutTracker();
 					layoutSlider.setValue(0);
 					updateLayout();
 				}
@@ -318,10 +326,12 @@ public class SlideshowMaker extends JFrame {
 		slideSize = 0;
 		LayoutPanel.add(layoutSlider);	
 		
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.LIGHT_GRAY);
-		panel.setBounds(15, 87, 595, 20);
-		LayoutPanel.add(panel);
+		layoutTracker = new JPanel();
+		layoutTracker.setToolTipText("");
+		layoutTracker.setBackground(Color.LIGHT_GRAY);
+		layoutTracker.setBounds(15, 95, 595, 20);
+		LayoutPanel.add(layoutTracker);
+		layoutTracker.setLayout(new BoxLayout(layoutTracker, BoxLayout.X_AXIS));
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
@@ -526,6 +536,7 @@ public class SlideshowMaker extends JFrame {
 		removeImageBtn.setBounds(panelWidth-60, panelHeight-30, 45, 20);
 		addImageBtn.setBounds(panelWidth-110, panelHeight-30, 45, 20);
 		layoutSlider.setBounds(15, panelHeight-23, panelWidth-160, 20);
+		layoutTracker.setBounds(15, panelHeight-43, panelWidth-160, 20);
 		
 		int primWidth = (int)(lblPrimaryImage.getWidth()*widthRatio);
 		int primHeight = (int)(primWidth*0.75);
@@ -582,13 +593,25 @@ public class SlideshowMaker extends JFrame {
 		soundTrack.setBounds(0, 0, panelWidth, 110);
 	}
 
+	private void updateLayoutTracker(){
+		if(slideStateMachine.getAudioListSize() != 0){
+			//add sound square to layoutTracker
+			layoutTracker.removeAll();
+			for(int i=0;i<slideStateMachine.getAudioListSize();i++){
+				JButton square = new JButton();
+				square.setText(slideStateMachine.getAudioAtIndex(i).getFileName());
+				square.setSize(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight());
+				layoutTracker.add(square);
+			}
+		}
+	}
 	private void updateLayout(){
 
 
 
 		resizeImageIcon(lblSlidesLeft, iconLeft);
 		resizeImageIcon(lblSlidesRight, iconRight);
-
+		
 		if(slideStateMachine.getSlideShowSize() != slideSize) {
 			slideSize = slideStateMachine.getSlideShowSize();
 

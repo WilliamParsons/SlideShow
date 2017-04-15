@@ -365,4 +365,9 @@ public class SlideShowStateMachine implements Serializable {
 		// TODO Auto-generated method stub
 		audioLoopFlag = !audioLoopFlag;
 	}
+
+	public double getTotalTime() {
+		// TODO Auto-generated method stub
+		return showTime;
+	}
 }
