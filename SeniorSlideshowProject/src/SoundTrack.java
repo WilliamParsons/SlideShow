@@ -199,7 +199,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         }
     }
 
-
+    // Add supported file object to audioStateMachine
     private void addSound(File file)
     {
         String s = file.getName();
@@ -348,7 +348,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             catch (InvalidMidiDataException imde)
             {
             	System.out.println("Unsupported audio file.");
-                audioStateMachine.getNextAudio();
+                audioStateMachine.getNextAudio();//Once get into a unsupported audio file, get next audio to play
             	currentSound = null;
             	return false;
             }
@@ -521,13 +521,13 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         thread = null;
     }
 
-
     public void run()
     {
     	boolean loopStatus = true;
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
+            // Play loop for soundTrack
             for (; num < audioStateMachine.getAudioListSize() && thread != null;)
             {
                 table.scrollRectToVisible(new Rectangle(0,(num+2)*(table.getRowHeight()+table.getRowMargin()),
@@ -538,6 +538,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     playSound();
 
                 }
+                // If the ">>" button is clicked, skip this loop and get into the next
                 if(nextBisClicked == true)
                 {
                 	nextBisClicked = false;
@@ -546,7 +547,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 num = audioStateMachine.getNextAudioIndex();
             }
         }
-        while (loopStatus && thread != null);
+        while (loopStatus && thread != null); //loopStatus enable the loop function
 
         if (thread != null)
         {

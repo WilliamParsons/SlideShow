@@ -31,6 +31,7 @@ import java.awt.Graphics;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import radioBtnListener.*;
+import java.awt.Color;
 
 public class SlideshowMaker extends JFrame {
 
@@ -205,7 +206,7 @@ public class SlideshowMaker extends JFrame {
 
 		TransitionPanel = new JPanel();
 		TransitionPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		TransitionPanel.setBounds(10, 162, 764, 238);
+		TransitionPanel.setBounds(10, 178, 764, 238);
 
 		MainPanel.setLayout(null);
 		MainPanel.add(LayoutPanel);
@@ -316,6 +317,11 @@ public class SlideshowMaker extends JFrame {
 		layoutSlider.setSnapToTicks(true);
 		slideSize = 0;
 		LayoutPanel.add(layoutSlider);	
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBounds(15, 87, 595, 20);
+		LayoutPanel.add(panel);
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
