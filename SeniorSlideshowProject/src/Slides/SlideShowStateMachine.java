@@ -18,6 +18,7 @@ public class SlideShowStateMachine implements Serializable {
 	private int slideIndex;
 	private double showTime;
 	private boolean audioLoopFlag;
+	private boolean isPaused;
 
 	private SlideShowStateMachine()
 	{
@@ -42,11 +43,21 @@ public class SlideShowStateMachine implements Serializable {
 			x.setTransitionTime(slideTime);
 		}
 	}
+	
+	public void setPausedState(boolean state){
+		
+		isPaused = state;
+	}
 
 	public void addSlide(SlideState slide)
 	{
 		slideList.add(slide);
 		setSlideTransitionTimes();
+	}
+	
+	public void setCurrentIndex (int newIndex)
+	{
+		slideIndex = newIndex;
 	}
 
 	public SlideState getFirstSlide()
@@ -59,6 +70,10 @@ public class SlideShowStateMachine implements Serializable {
 		}
 
 	}
+	public int getCurrentIndex()
+	{
+		return slideIndex;
+	}
 
 	public SlideState getCurrentSlide()
 	{
@@ -70,6 +85,7 @@ public class SlideShowStateMachine implements Serializable {
 		if(slideIndex + 1 < slideList.size())
 		{
 			slideIndex++;
+			System.out.println(slideIndex);
 			return slideList.get(slideIndex);
 		}
 		else
@@ -101,6 +117,11 @@ public class SlideShowStateMachine implements Serializable {
 			return null;
 		}
 
+	}
+	
+	public boolean getPausedState()
+	{
+		return isPaused;
 	}
 
 	public void removeSlideAtIndex(int i)
@@ -312,7 +333,7 @@ public class SlideShowStateMachine implements Serializable {
 		}
 
 	}
-
+	
 	public int getAudioIndex(){
 		return audioIndex;
 	}
