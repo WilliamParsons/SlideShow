@@ -112,7 +112,7 @@ public class SlideshowPresenter extends JFrame {
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
-					slideStateMachine.decrementIndex();
+					//slideStateMachine.decrementIndex();
 				}
 				else if(slidePlaying == false)
 				{	
@@ -158,6 +158,7 @@ public class SlideshowPresenter extends JFrame {
 					slideStateMachine.clearSlideShow();
 					SlideState slide = tempState.getFirstSlide();
 					while(slide != null){
+						System.out.println(slide.toString());
 						slideStateMachine.addSlide(slide);
 						slide = tempState.getNextSlide();
 					}
@@ -287,11 +288,14 @@ public class SlideshowPresenter extends JFrame {
 
 	
 	private void updateShow() {
-		currentSlide = slideStateMachine.getCurrentSlide();
-		if(currentSlide != null)
-		{
-			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+		if (!slidePlaying){
+			currentSlide = slideStateMachine.getCurrentSlide();
+			if(currentSlide != null)
+			{
+				PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+			}
 		}
+
 	}
 
 	private void startAutomaticSlideShow() {

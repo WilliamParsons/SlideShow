@@ -24,7 +24,6 @@ public class Animator extends Thread {
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		currentSlide = slideStateMachine.getFirstSlide();
 		nextSlide = slideStateMachine.getNextSlide();
-		SlideState slideResetter = slideStateMachine.getPreviousSlide();
 	}
 	@Override
 	public void run() {
