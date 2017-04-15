@@ -168,9 +168,7 @@ public class SlideshowPresenter extends JFrame {
 					currentSlide = slideStateMachine.getFirstSlide();
 					if (currentSlide != null) {
 
-						//Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
 						PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
-						//imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
 					}
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
 					soundTrack.jukeTable.tableChanged();
@@ -256,8 +254,7 @@ public class SlideshowPresenter extends JFrame {
 		PresentationImagePanel.setBounds(0, 11, 765, 504);		
 		MainPanel.add(PresentationImagePanel);	
 		PresentationImagePanel.initializeBlankImage();
-		PresentationImagePanel.repaint();	
-		currentSlide = slideStateMachine.getFirstSlide();
+		//PresentationImagePanel.repaint();
 	}
 	
 	public SlideshowPresenter(SlideshowMaker creator) {
@@ -290,7 +287,7 @@ public class SlideshowPresenter extends JFrame {
 	
 	private void updateShow() {
 		currentSlide = slideStateMachine.getCurrentSlide();
-		if(currentSlide != null && slideStateMachine.getPausedState())
+		if(currentSlide != null)
 		{
 			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
 		}
@@ -302,8 +299,8 @@ public class SlideshowPresenter extends JFrame {
 			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
 			if (animator == null){
 				animator = new Animator(PresentationImagePanel);
-				animator.start();
 			}
+			animator.start();
 		}
 
 	}

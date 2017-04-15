@@ -29,8 +29,7 @@ public class Animator extends Thread {
 	@Override
 	public void run() {
 		
-		
-
+		int indexTester = slideStateMachine.getCurrentIndex();
 		boolean isPaused = slideStateMachine.getPausedState();
 		
 		if(currentSlide != null && nextSlide != null && !isPaused) {
@@ -102,20 +101,20 @@ public class Animator extends Thread {
 			{
 				System.out.println("error with transition type");
 			}	
-			if(!isPaused){
+			if(!slideStateMachine.getPausedState()){
 				System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
 				currentSlide = nextSlide;
 				nextSlide = slideStateMachine.getNextSlide();
-				imgPan.setImage(currentSlide.getIcon().getImage());
 			}
-			if (isPaused){
+			if (slideStateMachine.getPausedState() && slideStateMachine.getCurrentIndex() != indexTester){
+				System.out.println("Fix slides while paused \n");
 				SlideState previousSlide = slideStateMachine.getPreviousSlide();
 				nextSlide = currentSlide;
 				currentSlide = previousSlide;
-				imgPan.setImage(currentSlide.getIcon().getImage());
 				
 			}
 			if (nextSlide != null) {
+				System.out.println("currentIndex at end of run " + slideStateMachine.getCurrentIndex() + "\n");
 				run();
 			}
 			
