@@ -236,6 +236,9 @@ public class ImagePanel extends JPanel
 		m_vTransitions.elementAt(0).DrawImageTransition(this, m_CurrentImage, m_NextImage, 0.5);  
 	}
 
+//	public void paint(Graphics g){
+//		
+//	}
 	//--------------------------------------------------------
 	/** Override the paint function to draw the image. */
 	//--------------------------------------------------------
@@ -245,7 +248,8 @@ public class ImagePanel extends JPanel
 		super.paintBorder(g);
 		if(this.theImage != null)
 		{
-			g.drawImage(m_CurrentImage, 0, 0, null);
+			g.drawImage(m_CurrentImage, 0, 11, this.getWidth(), this.getHeight(), null);
+			//g.drawImage(m_CurrentImage, 0, 0, null);
 		}
 		else
 		{
