@@ -36,32 +36,28 @@ import javax.swing.JRadioButton;
 
 public class SlideshowPresenter extends JFrame {
 
-	private SlideShowStateMachine slideStateMachine;
-	private SoundTrack soundTrack;
-	private FileManager fMgr;
-	private SlideshowMaker creator;
 	private JPanel MainPanel;
-	private JPanel PresentationPanel;
+	private SlideShowStateMachine slideStateMachine;
 	private JMenuBar menuBar;
 	private JMenu mnFile;
 	private JMenu mnCreation;
-	private JMenu mnPresentModes;
 	private JMenuItem mntmOpen;
 	private JMenuItem mntmCreate;
-	private JMenuItem mntmAuto;
-	private JMenuItem mntmManual;
-	private ImagePanel MainSlide;
 	private JButton btnPlayPause;
 	private JButton btnPrevious;
 	private JButton btnNext;
 	private JRadioButton rdbtnAutomatic;
 	private JRadioButton rdbtnManual;
+	private ImagePanel MainSlide;
 	private static SlideState currentSlide;
+	private FileManager fMgr;
+	private SoundTrack soundTrack;
 	private static ImagePanel PresentationImagePanel;
 	private boolean slidePlaying = false;
 	private boolean clickedPlay = false;
 	private boolean automatic;
-
+	private SlideshowMaker creator;
+	private Animator animator;
 
 	/**
 	 * Launch the application.
@@ -93,16 +89,22 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				resizeMainPanel();											//Resize the window when adjusting
+				resizeAllPanels();
+				SlideShowStateMachine testSlide = SlideShowStateMachine.getInstance();
+				if (testSlide.getCurrentSlide() != null){
+					updateShow();
+				}
 			}
 		});
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(MainPanel);											//Add all components to the Main Panel
 		MainPanel.setLayout(null);
-
 		slideStateMachine = SlideShowStateMachine.getInstance();			//Get an instance of SlideShowStateMachine for this run
 		soundTrack = new SoundTrack((String) null);							//Get an instance of SoundTrack for this run
 		fMgr = new FileManager();											//Get an instance of FileManager for this run
-
+		slideStateMachine = SlideShowStateMachine.getInstance();
+		soundTrack = new SoundTrack((String) null);
+		fMgr = new FileManager();
 		btnPlayPause = new JButton("Play");									//Create a "Play" button
 		btnPlayPause.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e)
@@ -113,11 +115,22 @@ public class SlideshowPresenter extends JFrame {
 					soundTrack.pauseB.doClick(); 							//Pause soundtrack
 					clickedPlay = true;										//Set the state "clickedPlay" to true
 					slidePlaying = false;									//Set the state "slidePlaying" to false
+				if(slidePlaying == true)
+				{
+					btnPlayPause.setText("Play"); // change Pause to Play when pause
+					soundTrack.pauseB.doClick(); // Pause soundtrack
+					clickedPlay = true;
+					slidePlaying = false;
+					slideStateMachine.setPausedState(true);
+					//slideStateMachine.decrementIndex();
 				}
 				else if(slidePlaying == false)								//If "slidePlaying" is false, do...
 				{	
 					btnPlayPause.setText("Pause"); 							//Change Play to Pause when start
 					if(clickedPlay == true)									//If "clickedPlay" is true, do...
+					btnPlayPause.setText("Pause"); //change Play to Pause when start
+					slideStateMachine.setPausedState(false);
+					if(clickedPlay == true)
 					{
 						soundTrack.pauseB.doClick(); 						//Restore a paused soundtrack
 						clickedPlay = false;								//Set the state "clickedPlay" to false
@@ -159,6 +172,19 @@ public class SlideshowPresenter extends JFrame {
 					while(slide != null){																			//While the slide is not null, do...
 						slideStateMachine.addSlide(slide);															//Add the slide to the array in the slideStateMachine
 						slide = tempState.getNextSlide();															//Get the next slide in the tempState
+				JFileChooser fc = new JFileChooser();
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				int result = fc.showOpenDialog(null);
+				if (result == JFileChooser.APPROVE_OPTION){
+					String selectedFilePath = fc.getSelectedFile().getPath();
+					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);
+					slideStateMachine.clearSlideShow();
+					SlideState slide = tempState.getFirstSlide();
+					while(slide != null){
+						System.out.println(slide.toString());
+						slideStateMachine.addSlide(slide);
+						slide = tempState.getNextSlide();
 					}
 					AudioState audio = tempState.getFirstAudio();													//Get the first audio of the tempState
 					while(audio != null){																			//While the audio is not null, do...
@@ -170,10 +196,10 @@ public class SlideshowPresenter extends JFrame {
 
 						Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();																							//Get the graphics of the slide
 						imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);		//Draw the graphic into the PresentationImagePanel
+						PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
 					}
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);						
 					soundTrack.jukeTable.tableChanged();
-					updateShow();
 				}	
 			}
 		});
@@ -188,6 +214,12 @@ public class SlideshowPresenter extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (creator == null) {										//If creator is null, do...
 				creator = new SlideshowMaker();								//Get an instance of SlideshowMaker
+				SlideShowStateMachine currentSlide = SlideShowStateMachine.getInstance();
+				if(currentSlide != null){
+					currentSlide.clearSlideShow();
+				}
+				if (creator == null) {
+					creator = new SlideshowMaker();
 				}
 				creator.setVisible(true);									//Set the Maker window to true (aka. view the Creation Window) 
 				setVisible(false);											//Set the Presenter window to false (aka. hide the Presentation Window)
@@ -261,6 +293,11 @@ public class SlideshowPresenter extends JFrame {
 		if(currentSlide != null) {
 			//PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
 		}
+		PresentationImagePanel = new ImagePanel();
+		PresentationImagePanel.setBounds(0, 11, 765, 504);		
+		MainPanel.add(PresentationImagePanel);	
+		PresentationImagePanel.initializeBlankImage();
+		PresentationImagePanel.repaint();
 	}
 	
 	public SlideshowPresenter(SlideshowMaker creator) {
@@ -269,6 +306,17 @@ public class SlideshowPresenter extends JFrame {
 	}
 
 	private void resizeMainPanel() {										//Function to resize all components in the Main Panel when window is enlarged
+	private void resizeAllPanels(){
+		resizeMainPanel();
+		resizePresentationPanel();
+	}
+
+	private void resizePresentationPanel() {
+		PresentationImagePanel.setBounds(0, 10, MainPanel.getWidth(), MainPanel.getHeight() -60);
+		
+	}
+
+	private void resizeMainPanel() {
 		int panelWidth = this.getWidth() - 35;
 		int panelHeight = this.getHeight() - 35;
 		MainPanel.setBounds(5, 5, panelWidth, panelHeight);
@@ -286,7 +334,20 @@ public class SlideshowPresenter extends JFrame {
 		{
 			Graphics imagePanelGraphics = PresentationImagePanel.getGraphics();
 			imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
+		menuBar.setBounds(0, 0, MainPanel.getWidth(), 21);
+
+	}
+
+	
+	private void updateShow() {
+		if (!slidePlaying){
+			currentSlide = slideStateMachine.getCurrentSlide();
+			if(currentSlide != null)
+			{
+				PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+			}
 		}
+
 	}
 	
 	private void getFirstImage() {											//Function to get the first slide in the SlideShow in Manual Mode
@@ -299,5 +360,15 @@ public class SlideshowPresenter extends JFrame {
 		PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
 		Animator animator = new Animator(PresentationImagePanel);
 		animator.start();
+	private void startAutomaticSlideShow() {
+		if (!slideStateMachine.getPausedState()){
+			currentSlide = slideStateMachine.getCurrentSlide();
+			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+			if (animator == null){
+				animator = new Animator(PresentationImagePanel);
+			}
+			animator.start();
+		}
+
 	}
 }

@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
+import Slides.SlideShowStateMachine;
+
 
 public class SwipeLeft extends Transition
 {
@@ -39,6 +41,7 @@ public class SwipeLeft extends Transition
 	{
 		Graphics gPan = imgPanel.getGraphics();
 		Graphics gA = ImageA.getGraphics();
+		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
 		
 		// Dimension holders
 		int dAX2, sAX1;			// Source and destination dimensions for imageA 
@@ -61,35 +64,38 @@ public class SwipeLeft extends Transition
 		sBX2 = incX;
 //		dBX2 = imgHeight;
 
-        // Draw the scaled current image if necessary
-		gPan.drawImage(ImageA, 0, 0, imgPanel);
+		if (!slideState.getPausedState()){
+			// Draw the scaled current image if necessary
+			gPan.drawImage(ImageA, 0, 0, imgPanel);
 
-		// Draw image A
-		for(int i=0; i<numIterations; i++)
-		{
-			// Move section of A to the screen
-			gPan.drawImage(ImageA, 0, 0, dAX2, imgHeight, sAX1, 0, imgWidth, imgHeight, null);
-			// Move section of B to the screen
-			gPan.drawImage(ImageB, dAX2, 0, imgWidth, imgHeight, 0, 0, sBX2, imgHeight, null); // Draw portion of ImageB into ImageA
-//			gPan.drawImage(ImageA, 0,0, imgPanel); // Copy ImageA into panel
-			// Take a bigger section next time
-			sAX1 += incX;
-			dAX2 -= incX;
-			sBX2 += incX;
-			// Pause a bit
-			try 
+			// Draw image A
+			for(int i=0; i<numIterations; i++)
 			{
-			    Thread.sleep(timeInc);                 
-			} 
-			catch(InterruptedException ex) 
-			{
-			    Thread.currentThread().interrupt();
-			} 
- 		}
-		// Move m_NextImage into m_CurrentImage for next time -  May not need this
-		ImageA.getGraphics().drawImage(ImageB, 0, 0, imgPanel);
-		// And one final draw to the panel to be sure it's all there
-		gPan.drawImage(ImageA, 0,0, imgPanel); 
+				// Move section of A to the screen
+				gPan.drawImage(ImageA, 0, 0, dAX2, imgHeight, sAX1, 0, imgWidth, imgHeight, null);
+				// Move section of B to the screen
+				gPan.drawImage(ImageB, dAX2, 0, imgWidth, imgHeight, 0, 0, sBX2, imgHeight, null); // Draw portion of ImageB into ImageA
+//				gPan.drawImage(ImageA, 0,0, imgPanel); // Copy ImageA into panel
+				// Take a bigger section next time
+				sAX1 += incX;
+				dAX2 -= incX;
+				sBX2 += incX;
+				// Pause a bit
+				try 
+				{
+				    Thread.sleep(timeInc);                 
+				} 
+				catch(InterruptedException ex) 
+				{
+				    Thread.currentThread().interrupt();
+				} 
+	 		}
+			// Move m_NextImage into m_CurrentImage for next time -  May not need this
+			ImageA.getGraphics().drawImage(ImageB, 0, 0, imgPanel);
+			// And one final draw to the panel to be sure it's all there
+			gPan.drawImage(ImageA, 0,0, imgPanel); 
+		}
+        
 	}
 	
 	//---------------------------------------------------
