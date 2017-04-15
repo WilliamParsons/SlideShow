@@ -112,7 +112,9 @@ public class SlideshowPresenter extends JFrame {
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
-					//slideStateMachine.decrementIndex();
+					if (slideStateMachine.getNeedsReset()){
+						slideStateMachine.getPreviousSlide();
+					}
 				}
 				else if(slidePlaying == false)
 				{	
@@ -123,9 +125,17 @@ public class SlideshowPresenter extends JFrame {
 						soundTrack.pauseB.doClick(); // restore a paused soundtrack
 						clickedPlay = false;
 						slidePlaying = true;
+						if (slideStateMachine.getNeedsReset()){
+							slideStateMachine.getNextSlide();
+							slideStateMachine.setNeedsReset(false);
+						}
 					}else{
 						soundTrack.startB.doClick(); // start soundtrack
 						slidePlaying = true;
+						if (slideStateMachine.getNeedsReset()){
+							slideStateMachine.getNextSlide();
+							slideStateMachine.setNeedsReset(false);
+						}
 					}
 					if(automatic) {
 						startAutomaticSlideShow();
@@ -270,7 +280,7 @@ public class SlideshowPresenter extends JFrame {
 	}
 
 	private void resizePresentationPanel() {
-		PresentationImagePanel.setBounds(0, 10, MainPanel.getWidth(), MainPanel.getHeight() -60);
+		PresentationImagePanel.setBounds(0, 10, MainPanel.getWidth(), MainPanel.getHeight() -  (2 * menuBar.getHeight()) - btnPrevious.getHeight() );
 		
 	}
 
@@ -302,10 +312,11 @@ public class SlideshowPresenter extends JFrame {
 		if (!slideStateMachine.getPausedState()){
 			currentSlide = slideStateMachine.getCurrentSlide();
 			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
-			if (animator == null){
+			if (animator == null || slideStateMachine.getShowEnded()){
+				slideStateMachine.setShowEnded(false);
 				animator = new Animator(PresentationImagePanel);
+				animator.start();
 			}
-			animator.start();
 		}
 
 	}
