@@ -48,7 +48,6 @@ public class SlideshowPresenter extends JFrame {
 	private JButton btnNext;
 	private JRadioButton rdbtnAutomatic;
 	private JRadioButton rdbtnManual;
-	private ImagePanel MainSlide;
 	private static SlideState currentSlide;
 	private FileManager fMgr;
 	private SoundTrack soundTrack;
