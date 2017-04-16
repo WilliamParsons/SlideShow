@@ -301,6 +301,7 @@ public class SlideshowMaker extends JFrame {
 
 		soundTrack = new SoundTrack((String) null);
 		soundTrack.setBounds(0, 0, 764, 110);
+		
 		AudioPanel.add(soundTrack);
 		MainPanel.add(TransitionPanel);
 
@@ -599,8 +600,8 @@ public class SlideshowMaker extends JFrame {
 			layoutTracker.removeAll();
 			for(int i=0;i<slideStateMachine.getAudioListSize();i++){
 				JButton square = new JButton();
-				square.setText(slideStateMachine.getAudioAtIndex(i).getFileName());
-				square.setSize(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight());
+				square.setText(String.valueOf(i));
+				square.setPreferredSize(new Dimension(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight()));
 				layoutTracker.add(square);
 			}
 		}

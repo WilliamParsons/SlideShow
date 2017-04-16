@@ -29,14 +29,10 @@ public class SlideShowStateMachine implements Serializable {
 		audioIndex = 0;
 		slideIndex = 0;
 		showTime = 0;
-<<<<<<< HEAD
 		audioLoopFlag = true;
-=======
-		audioLoopFlag = false;
 		needsReset = false;
 		isPaused = false;
 		showEnded = false;
->>>>>>> master
 	}
 
 	public static SlideShowStateMachine getInstance()
@@ -396,11 +392,8 @@ public class SlideShowStateMachine implements Serializable {
 		audioLoopFlag = !audioLoopFlag;
 	}
 
-<<<<<<< HEAD
 	public double getTotalTime() {
 		// TODO Auto-generated method stub
 		return showTime;
 	}
-=======
->>>>>>> master
 }
