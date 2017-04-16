@@ -68,10 +68,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 {
 	// Rick Note:  it appears that LineListener is for clips and MetaEventListener is for MIDI files
     final int bufSize = 16384;
+    final ComponentObservable observable = new ComponentObservable();
     PlaybackMonitor playbackMonitor = new PlaybackMonitor();
-
     Vector sounds = new Vector();
-    //public ArrayList<AudioState> audioList = new ArrayList<AudioState>();;
     SlideShowStateMachine audioStateMachine = SlideShowStateMachine.getInstance();
 
     Thread thread;
@@ -85,11 +84,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     String currentName;
     double duration;
     int num;
+    boolean nextBisClicked = false;
     boolean bump;
     boolean paused = false;
     JButton startB, pauseB, loopB, prevB, nextB;
     JTable table;
-//    JSlider panSlider, gainSlider;
     JSlider seekSlider;
     JukeTable jukeTable;
     Loading loading;
@@ -98,10 +97,10 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     JukeControls controls;
 
 
-    public SoundTrack(String dirName)
+    public SoundTrack(String dirName, SlideshowMaker slideshowMaker)
     {
+    	observable.addObserver(slideshowMaker);
         setLayout(new BorderLayout());
-//        setBorder(new EmptyBorder(5,5,5,5));
 
         if (dirName != null)
         {
@@ -109,12 +108,11 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         }
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            jukeTable = new JukeTable(), controls = new JukeControls());
+            jukeTable = new JukeTable(slideshowMaker), controls = new JukeControls());
         splitPane.setContinuousLayout(true);
       //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(155, 150);
         jukeTable.setMinimumSize(minimumSize);
-//        controls.setMinimumSize(minimumSize);
 
         add(splitPane, BorderLayout.CENTER);
     }
@@ -140,7 +138,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         	ex.printStackTrace();
         	return;
         }
-        //sequencer.addMetaEventListener(this);
         (credits = new Credits()).start();
     }
 
@@ -196,7 +193,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         catch (SecurityException ex)
         {
             reportStatus(ex.toString());
-//            JavaSound.showInfoDialog();
         }
         catch (Exception ex)
         {
@@ -204,7 +200,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         }
     }
 
-
+    // Add supported file object to audioStateMachine
     private void addSound(File file)
     {
         String s = file.getName();
@@ -263,9 +259,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             catch(Exception e1)
             {
                 // load midi & rmf as inputstreams for now
-                //try {
-                    //currentSound = MidiSystem.getSequence((File) object);
-                //} catch (Exception e2) {
+                try {
+                    currentSound = MidiSystem.getSequence((File) object);
+                } catch (Exception e2) {
                     try
                     {
                         FileInputStream is = new FileInputStream((File) object);
@@ -277,7 +273,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                         currentSound = null;
                         return false;
                     }
-                //}
+                }
             }
         }
 
@@ -323,7 +319,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                                               format.getFrameSize()));
 
                 Clip clip = (Clip) AudioSystem.getLine(info);
-//                clip.addLineListener(this);
                 clip.open(stream);
                 currentSound = clip;
                 seekSlider.setMaximum((int) stream.getFrameLength());
@@ -354,7 +349,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             catch (InvalidMidiDataException imde)
             {
             	System.out.println("Unsupported audio file.");
-                audioStateMachine.getNextAudio();
+                audioStateMachine.getNextAudio();//Once get into a unsupported audio file, get next audio to play
             	currentSound = null;
             	return false;
             }
@@ -370,8 +365,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
 		// enable seek, pan, and gain sliders for sequences as well as clips
 		seekSlider.setEnabled(true);
-//		panSlider.setEnabled(true);
-//        gainSlider.setEnabled(true);
 
         duration = getDuration();
 
@@ -382,8 +375,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     public void playSound()
     {
         playbackMonitor.start();
-//        setGain();
-//        setPan();
         midiEOM = audioEOM = bump = false;
         if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream && thread != null)
         {
@@ -531,14 +522,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         thread = null;
     }
 
-
     public void run()
     {
-    	boolean loopStatus = false;
+    	boolean loopStatus = true;
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
-            for (; num < audioStateMachine.getAudioListSize() && thread != null; num++)
+            // Play loop for soundTrack
+            for (; num < audioStateMachine.getAudioListSize() && thread != null;)
             {
                 table.scrollRectToVisible(new Rectangle(0,(num+2)*(table.getRowHeight()+table.getRowMargin()),
                 		1,1));
@@ -546,25 +537,18 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 if( loadSound(audioStateMachine.getAudioAtIndex(num).getAudio()) == true )
                 {
                     playSound();
-                    if(nextB.isEnabled())
-                    {
-                        continue;
-                    }
-                    audioStateMachine.getNextAudio();
+
                 }
-                // take a little break between sounds
-                try
+                // If the ">>" button is clicked, skip this loop and get into the next
+                if(nextBisClicked == true)
                 {
-                	Thread.sleep(222);
+                	nextBisClicked = false;
+                    continue;
                 }
-                catch (Exception e)
-                {
-                	break;
-                }
+                num = audioStateMachine.getNextAudioIndex();
             }
-            num = 0;
         }
-        while (loopStatus && thread != null);
+        while (loopStatus && thread != null); //loopStatus enable the loop function
 
         if (thread != null)
         {
@@ -575,68 +559,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         currentSound = null;
         playbackMonitor.repaint();
     }
-
-
-//    public void setPan()
-//    {
-//
-//        int value = panSlider.getValue();
-//
-//        if (currentSound instanceof Clip)
-//        {
-//            try
-//            {
-//                Clip clip = (Clip) currentSound;
-//                FloatControl panControl =
-//                    (FloatControl) clip.getControl(FloatControl.Type.PAN);  // This line causes an error
-//                panControl.setValue(value/100.0f);
-//            }
-//            catch (Exception ex)
-//            {
-//                ex.printStackTrace();
-//            }
-//        }
-//        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
-//        {
-//            for (int i = 0; i < channels.length; i++)
-//            {
-//				channels[i].controlChange(10, (int)(((double)value + 100.0) / 200.0 *  127.0));
-//            }
-//        }
-//    }
-
-
-//    public void setGain()
-//    {
-//        double value = gainSlider.getValue() / 100.0;
-//
-//        if (currentSound instanceof Clip)
-//        {
-//            try
-//            {
-//                Clip clip = (Clip) currentSound;
-//                FloatControl gainControl =
-//                  (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-//                float dB = (float)
-//                  (Math.log(value==0.0?0.0001:value)/Math.log(10.0)*20.0);
-//                gainControl.setValue(dB);
-//            }
-//            catch (Exception ex)
-//            {
-//                ex.printStackTrace();
-//            }
-//        }
-//        else if (currentSound instanceof Sequence || currentSound instanceof BufferedInputStream)
-//        {
-//            for (int i = 0; i < channels.length; i++)
-//            {
-//				channels[i].controlChange(7, (int)(value * 127.0));
-//			}
-//        }
-//    }
-
-
-
     /**
      * GUI controls for start, stop, previous, next, pan and gain.
      */
@@ -646,13 +568,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         public JukeControls()
         {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//            setSize(700,150);
-
 
             JPanel p4 = new JPanel(new BorderLayout());
-//            EmptyBorder eb = new EmptyBorder(5,20,10,20);
-//            BevelBorder bb = new BevelBorder(BevelBorder.LOWERED);
-//            p4.setBorder(new CompoundBorder(eb,bb));
             p4.add(playbackMonitor);
             seekSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
             seekSlider.setEnabled(false);
@@ -662,34 +579,16 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
             JPanel p5 = new JPanel();
             p5.setLayout(new BoxLayout(p5, BoxLayout.X_AXIS));
-//            p5.setBorder(new EmptyBorder(5,5,10,5));
-//            panSlider = new JSlider(-100, 100, 0);
-//            panSlider.addChangeListener(this);
-//            TitledBorder tb = new TitledBorder(new EtchedBorder());
-//            tb.setTitle("Pan = 0.0");
-//            panSlider.setBorder(tb);
-//            p5.add(panSlider);
-//            gainSlider = new JSlider(0, 100, 80);
-//            gainSlider.addChangeListener(this);
-//            tb = new TitledBorder(new EtchedBorder());
-//            tb.setTitle("Gain = 80");
-//            gainSlider.setBorder(tb);
-//            p5.add(gainSlider);
             add(p5);
 
             JPanel p1 = new JPanel();
             p1.setLayout(new BoxLayout(p1, BoxLayout.Y_AXIS));
-//            p1.setBorder(new EmptyBorder(10,0,5,0));
             JPanel p2 = new JPanel();
             prevB = addButton("<<", p2, false);
             startB = addButton("Start", p2, audioStateMachine.getAudioListSize() != 0);
             pauseB = addButton("Pause", p2, false);
             nextB = addButton(">>", p2, false);
             p1.add(p2);
-//            JPanel p3 = new JPanel();
-//            prevB = addButton("<<", p3, false);
-//            nextB = addButton(">>", p3, false);
-//            p1.add(p3);
             add(p1);
         }
 
@@ -727,22 +626,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             }
             TitledBorder tb = (TitledBorder) slider.getBorder();
             String s = tb.getTitle();
-//            if (s.startsWith("Pan"))
-//            {
-//                s = s.substring(0, s.indexOf('=')+1) + s.valueOf(value/100.0);
-//                if (currentSound != null)
-//                {
-//                    setPan();
-//                }
-//            }
-//            else if (s.startsWith("Gain"))
-//            {
-//                s = s.substring(0, s.indexOf('=')+1) + s.valueOf(value);
-//                if (currentSound != null)
-//                {
-//                    setGain();
-//                }
-//            }
             tb.setTitle(s);
             slider.repaint();
         }
@@ -769,7 +652,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 }
                 paused = false;
                 num = table.getSelectedRow();
-                num = num == -1 ? 0 : num;
+                num = 0;
                 start();
                 button.setText("Stop");
                 setComponentsEnabled(true);
@@ -820,6 +703,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             }
             else if (button.getText().equals(">>"))
             {
+            	nextBisClicked = true;
                 paused = false;
                 pauseB.setText("Pause");
                 num = audioStateMachine.getNextAudioIndex();
@@ -977,13 +861,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
      * Table to display the name of the sound.
      */
     class JukeTable extends JPanel implements ActionListener {
-
+    	
         TableModel dataModel;
         JFrame frame;
         JTextField textField;
         JButton applyB;
 
-        public JukeTable() {
+        public JukeTable(SlideshowMaker maker) {
+        	
             setLayout(new BorderLayout());
             setPreferredSize(new Dimension(155,300)); // width and height
 
@@ -1072,21 +957,6 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 textField = new JTextField("http://foo.bar.com/foo.wav");
                 textField.addActionListener(this);
             }
-//            else {
-//                p1.add(new JLabel("File or Dir :"));
-//                String sep = String.valueOf(System.getProperty("file.separator").toCharArray()[0]);
-//                String text = null;
-//                try {
-//                    text = System.getProperty("user.dir") + sep;
-//                } catch (SecurityException ex) {
-//                    reportStatus(ex.toString());
-////                    JavaSound.showInfoDialog();
-//                    return;
-//                }
-//                textField = new JTextField(text);
-//                textField.setPreferredSize(new Dimension(w-100, 30));
-//                textField.addActionListener(this);
-//            }
             p1.add(textField);
             panel.add(p1);
             JPanel p2 = new JPanel();
@@ -1116,13 +986,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     JFileChooser fc = new JFileChooser();
                     fc.setFileSelectionMode(2); //FILES_AND_DIRECTORIES
                     panel.add(fc);
-//                    SlideShowStateMachine audioState = SlideShowStateMachine.getInstance();
                     int result = fc.showDialog(null, "Add Audio");
             		if (result == JFileChooser.APPROVE_OPTION){
             			String selectedFilePath = fc.getSelectedFile().getPath();
-//            			Pattern pattern = Pattern.compile("(\\.(?i)(au|rmf|mid|.wav))$");
-//            		    Matcher matcher = pattern.matcher(selectedFilePath);
-            			//if(matcher.lookingAt()){}
             			if (selectedFilePath.endsWith(".au")||
             					selectedFilePath.endsWith(".rmf")||
             					selectedFilePath.endsWith(".mid")||
@@ -1169,7 +1035,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     frame = null;
                     errStr = null;
                     playbackMonitor.repaint();
-                } 
+                }
 //                else if (button.getText().equals("loop")) {
 //                    loopB.setSelected(!loopB.isSelected());
 //                    loopB.setBackground(loopB.isSelected() ? Color.gray : Color.lightGray);
@@ -1180,6 +1046,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
         public void tableChanged() {
             table.tableChanged(new TableModelEvent(dataModel));
+            observable.changeData();
         }
     }  // End JukeTable
 
@@ -1259,7 +1126,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     public static void main(String args[]) {
         String media = "./audio";
-        final SoundTrack juke = new SoundTrack(args.length == 0 ? media : args[0]);
+        final SoundTrack juke = new SoundTrack(args.length == 0 ? media : args[0], new SlideshowMaker());
         juke.open();
         JFrame f = new JFrame("Juke Box");
         f.addWindowListener(new WindowAdapter() {

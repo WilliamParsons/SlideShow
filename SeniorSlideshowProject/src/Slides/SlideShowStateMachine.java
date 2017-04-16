@@ -29,7 +29,7 @@ public class SlideShowStateMachine implements Serializable {
 		audioIndex = 0;
 		slideIndex = 0;
 		showTime = 0;
-		audioLoopFlag = false;
+		audioLoopFlag = true;
 		needsReset = false;
 		isPaused = false;
 		showEnded = false;
@@ -251,8 +251,7 @@ public class SlideShowStateMachine implements Serializable {
 	{
 		if(audioIndex + 1 < audioList.size())
 		{
-			return audioIndex++;
-			// return audioList.get(audioIndex);
+			audioIndex++;
 		}
 		else
 		{
@@ -260,22 +259,18 @@ public class SlideShowStateMachine implements Serializable {
 			{
 				audioIndex = 0;
 			}
-			return audioIndex;
 		}
+		return audioIndex;
 	}
 	
 	public int getPreviousAudioIndex()
 	{
 		if(audioIndex > 0)
 		{
-			return audioIndex--;
+			audioIndex--;
 			// return audioList.get(audioIndex);
 		}
-		else
-		{
-			return audioIndex;
-		}
-
+		return audioIndex;
 	}
 	
 	public AudioState getPreviousAudio()
@@ -397,4 +392,8 @@ public class SlideShowStateMachine implements Serializable {
 		audioLoopFlag = !audioLoopFlag;
 	}
 
+	public double getTotalTime() {
+		// TODO Auto-generated method stub
+		return showTime;
+	}
 }
