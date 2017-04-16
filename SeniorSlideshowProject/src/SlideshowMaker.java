@@ -15,6 +15,8 @@ import java.awt.Dimension;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import java.awt.Image;
+import java.awt.Rectangle;
+
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
@@ -335,7 +337,7 @@ public class SlideshowMaker extends JFrame implements Observer{
 		layoutTracker.setBackground(Color.LIGHT_GRAY);
 		layoutTracker.setBounds(15, 95, 595, 20);
 		LayoutPanel.add(layoutTracker);
-		layoutTracker.setLayout(new GridLayout(1, 0, 0, 0));
+		layoutTracker.setLayout(new BoxLayout(layoutTracker, BoxLayout.X_AXIS));
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
@@ -601,10 +603,14 @@ public class SlideshowMaker extends JFrame implements Observer{
 		if(slideStateMachine.getAudioListSize() != 0){
 			//add sound square to layoutTracker
 			layoutTracker.removeAll();
+			int height = layoutTracker.getHeight();
 			for(int i=0;i<slideStateMachine.getAudioListSize();i++){
 				JButton square = new JButton();
 				square.setText(String.valueOf(i));
-				square.setPreferredSize(new Dimension(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight()));
+//				square.setPreferredSize(new Dimension(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight()));
+				int width = layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime());
+//				new Rectangle(layoutTracker.getLocation(), new Dimension(width, height));
+				square.setSize(width, height);
 				layoutTracker.add(square);
 			}
 		}
@@ -719,7 +725,7 @@ public class SlideshowMaker extends JFrame implements Observer{
 
 	@Override
 	public void update(Observable o, Object arg) {
-		updateLayoutTracker();
+		updateLayoutTracker();	//Whenever the soundtrack's table is updated, it will tell the observer to update by invoking this function
 		System.out.print("SlideshowMaker: soundtrack table is changed\n");
 	}
 }
