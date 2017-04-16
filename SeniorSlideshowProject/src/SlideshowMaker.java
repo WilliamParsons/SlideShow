@@ -18,6 +18,8 @@ import java.awt.Image;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -38,8 +40,9 @@ import java.awt.GridLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.BoxLayout;
+import java.awt.GridBagLayout;
 
-public class SlideshowMaker extends JFrame {
+public class SlideshowMaker extends JFrame implements Observer{
 
 	private static final long serialVersionUID = 1L;
 
@@ -299,7 +302,7 @@ public class SlideshowMaker extends JFrame {
 		MainPanel.add(AudioPanel);
 		AudioPanel.setLayout(null);
 
-		soundTrack = new SoundTrack((String) null);
+		soundTrack = new SoundTrack((String) null, this);
 		soundTrack.setBounds(0, 0, 764, 110);
 		
 		AudioPanel.add(soundTrack);
@@ -332,7 +335,7 @@ public class SlideshowMaker extends JFrame {
 		layoutTracker.setBackground(Color.LIGHT_GRAY);
 		layoutTracker.setBounds(15, 95, 595, 20);
 		LayoutPanel.add(layoutTracker);
-		layoutTracker.setLayout(new BoxLayout(layoutTracker, BoxLayout.X_AXIS));
+		layoutTracker.setLayout(new GridLayout(1, 0, 0, 0));
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
@@ -709,5 +712,11 @@ public class SlideshowMaker extends JFrame {
 			PreviewImagePanel.initializeBlankImage();
 			PreviewImagePanel.setImage(previewIcon.getImage());
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		updateLayoutTracker();
+		System.out.print("SlideshowMaker: soundtrack table is changed\n");
 	}
 }

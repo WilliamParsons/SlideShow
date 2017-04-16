@@ -68,8 +68,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 {
 	// Rick Note:  it appears that LineListener is for clips and MetaEventListener is for MIDI files
     final int bufSize = 16384;
+    final ComponentObservable observable = new ComponentObservable();
     PlaybackMonitor playbackMonitor = new PlaybackMonitor();
-
     Vector sounds = new Vector();
     SlideShowStateMachine audioStateMachine = SlideShowStateMachine.getInstance();
 
@@ -97,8 +97,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
     JukeControls controls;
 
 
-    public SoundTrack(String dirName)
+    public SoundTrack(String dirName, SlideshowMaker slideshowMaker)
     {
+    	observable.addObserver(slideshowMaker);
         setLayout(new BorderLayout());
 
         if (dirName != null)
@@ -107,7 +108,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
         }
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-            jukeTable = new JukeTable(), controls = new JukeControls());
+            jukeTable = new JukeTable(slideshowMaker), controls = new JukeControls());
         splitPane.setContinuousLayout(true);
       //Provide minimum sizes for the two components in the split pane
         Dimension minimumSize = new Dimension(155, 150);
@@ -860,13 +861,14 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
      * Table to display the name of the sound.
      */
     class JukeTable extends JPanel implements ActionListener {
-
+    	
         TableModel dataModel;
         JFrame frame;
         JTextField textField;
         JButton applyB;
 
-        public JukeTable() {
+        public JukeTable(SlideshowMaker maker) {
+        	
             setLayout(new BorderLayout());
             setPreferredSize(new Dimension(155,300)); // width and height
 
@@ -1044,6 +1046,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
         public void tableChanged() {
             table.tableChanged(new TableModelEvent(dataModel));
+            observable.changeData();
         }
     }  // End JukeTable
 
@@ -1123,7 +1126,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     public static void main(String args[]) {
         String media = "./audio";
-        final SoundTrack juke = new SoundTrack(args.length == 0 ? media : args[0]);
+        final SoundTrack juke = new SoundTrack(args.length == 0 ? media : args[0], new SlideshowMaker());
         juke.open();
         JFrame f = new JFrame("Juke Box");
         f.addWindowListener(new WindowAdapter() {
