@@ -111,7 +111,11 @@ public class SlideShowStateMachine implements Serializable {
 
 	public SlideState getCurrentSlide()
 	{
+		if(getSlideShowSize() > 0) {
 			return slideList.get(slideIndex);
+		} else {
+			return null;
+		}
 	}
 
 	public SlideState getNextSlide()
