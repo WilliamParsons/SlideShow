@@ -608,6 +608,9 @@ public class SlideshowMaker extends JFrame implements Observer{
 				layoutTracker.add(square);
 			}
 		}
+//		resizePanels();
+		validate();
+		repaint();
 	}
 	private void updateLayout(){
 
