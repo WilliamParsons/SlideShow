@@ -86,6 +86,7 @@ public class SlideshowMaker extends JFrame implements Observer{
 	private int slideSize;
 	private SlideshowPresenter presenter = null;
 	private SlideshowMaker creator;
+	private Color[] rainbowColor;
 
 	/**
 	 * Launch the application.
@@ -111,8 +112,14 @@ public class SlideshowMaker extends JFrame implements Observer{
 		setTitle("Slideshow Maker");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
-
-
+		rainbowColor = new Color[6];
+//		 Add color to rainbowColor list
+		rainbowColor[0] = Color.red;
+		rainbowColor[1] = Color.orange;
+		rainbowColor[2] = Color.yellow;
+		rainbowColor[3] = Color.green;
+		rainbowColor[4] = Color.cyan;
+		rainbowColor[5] = Color.pink;
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
@@ -604,14 +611,19 @@ public class SlideshowMaker extends JFrame implements Observer{
 			//add sound square to layoutTracker
 			layoutTracker.removeAll();
 			int height = layoutTracker.getHeight();
+			
+			
 			for(int i=0;i<slideStateMachine.getAudioListSize();i++){
 				JButton square = new JButton();
-				square.setText(String.valueOf(i));
+//				square.setText(String.valueOf(i));
 //				square.setPreferredSize(new Dimension(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight()));
+				AudioImagePanel panel = new AudioImagePanel(rainbowColor[i%rainbowColor.length], slideStateMachine.getAudioAtIndex(i).getFileName());
+//				AudioImagePanel panel = new AudioImagePanel(Color.getHSBColor(i+10, i+20, i+30), slideStateMachine.getAudioAtIndex(i).getFileName());
 				int width = layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime());
 //				new Rectangle(layoutTracker.getLocation(), new Dimension(width, height));
-				square.setSize(width, height);
-				layoutTracker.add(square);
+//				square.setSize(width, height);
+				panel.setSize(width, height);
+				layoutTracker.add(panel);
 			}
 		}
 //		resizePanels();
