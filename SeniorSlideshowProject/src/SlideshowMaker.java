@@ -67,8 +67,7 @@ public class SlideshowMaker extends JFrame {
 	private SlideState currentSlide;
 	private SlideState nextSlide;
 	private FileManager fMgr;
-	private JMenu mnModes;
-	private JMenuItem mntmNewMenuItem;
+	private JMenu mnPresentation;
 	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
 	private SlideshowPresenter presenter = null;
@@ -95,238 +94,238 @@ public class SlideshowMaker extends JFrame {
 	 * Create the frame.
 	 */
 	public SlideshowMaker() {
-		setTitle("Slideshow Maker");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
+		setTitle("Slideshow Maker");									//Det the title of the Creator window
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);					//Pressing X on the window will close it
+		setBounds(100, 100, 800, 600);									//Set the bounds of the window
 
+		JMenuBar menuBar = new JMenuBar();								//Create menu bar
+		setJMenuBar(menuBar);											//Set the bounds of the menu bar to the window
 
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
+		mnFile = new JMenu("File");										//Create File Menu
+		menuBar.add(mnFile);											//Add to menu bar
 
-		mnFile = new JMenu("File");
-		menuBar.add(mnFile);
+		slideStateMachine = SlideShowStateMachine.getInstance();		//Get an instance of the SlideShowStateMachine
+		fMgr = new FileManager();										//Get an instance of the FileManager
 
-		slideStateMachine = SlideShowStateMachine.getInstance();
-		fMgr = new FileManager();
-
-		mntmNew = new JMenuItem("New");
-		mntmNew.addActionListener(new ActionListener() {
+		mntmNew = new JMenuItem("New");									//Create New option
+		mntmNew.addActionListener(new ActionListener() {	
 			public void actionPerformed(ActionEvent e) {
-				SlideShowStateMachine state = SlideShowStateMachine.getInstance();
-				state.clearSlideShow();
-				layoutSlider.setEnabled(false);
-				slideSize = 0;
-				layoutSlider.setValue(0);
-				updateLayout();
+				SlideShowStateMachine state = SlideShowStateMachine.getInstance();				//Get an instance of SlideShowStateMachine
+				state.clearSlideShow();															//Clear to a blank slide show
+				layoutSlider.setEnabled(false);													//Disable the layout slider
+				slideSize = 0;																	//Set slide show to 0
+				layoutSlider.setValue(0);														//Initialize layout slider to value 0
+				updateLayout();																	//Call updateLayout()
 			}
 		});
-		mnFile.add(mntmNew);
+		mnFile.add(mntmNew);											//Add to File Menu
 
-		mntmOpen = new JMenuItem("Open");
+		mntmOpen = new JMenuItem("Open");								//Create Open option
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int result = fc.showOpenDialog(null);
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);
-					slideStateMachine.clearSlideShow();
-					SlideState slide = tempState.getFirstSlide();
-					while(slide != null){
-						slideStateMachine.addSlide(slide);
-						slide = tempState.getNextSlide();
+				JFileChooser fc = new JFileChooser();											//Get an instance of JFileChooser
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));	//Filter out only ".ssp" files
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);								//Select only those files
+				int result = fc.showOpenDialog(null);											//No open dialog
+				if (result == JFileChooser.APPROVE_OPTION){										//If file is approved, do...
+					String selectedFilePath = fc.getSelectedFile().getPath();					//Get the path of the selected file
+					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);			//Set tempState to read the file
+					slideStateMachine.clearSlideShow();											//Clear the current slide show in the window
+					SlideState slide = tempState.getFirstSlide();								//Get the first slide of the tempState
+					while(slide != null){														//While the slide is not null, do...
+						slideStateMachine.addSlide(slide);										//Add slide to the array
+						slide = tempState.getNextSlide();										//Go to next slide
 					}
-					AudioState audio = tempState.getFirstAudio();
-					while(audio != null){
-						slideStateMachine.addAudio(audio);
-						audio = tempState.getNextAudio();
+					AudioState audio = tempState.getFirstAudio();								//Get the first audio for tempState
+					while(audio != null){														//While audio is not null, do...
+						slideStateMachine.addAudio(audio);										//Add the audio to the array
+						audio = tempState.getNextAudio();										//Get the next audio
 					}
-					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
-					soundTrack.jukeTable.tableChanged();
-					layoutSlider.setValue(0);
-					updateLayout();
+					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);	//Enable the start function for audio
+					soundTrack.jukeTable.tableChanged();										//Update the table
+					layoutSlider.setValue(0);													//Set the layout slider to 0
+					updateLayout();																//Call updateLayout()
 				}
 			}
 		});
-		mnFile.add(mntmOpen);
+		mnFile.add(mntmOpen);											//Add to File Menu
 
-		mntmSave = new JMenuItem("Save");
+		mntmSave = new JMenuItem("Save");								//Create Save option
 		mntmSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int result = fc.showSaveDialog(null);
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					if(selectedFilePath.endsWith(".ssp")) {
+				JFileChooser fc = new JFileChooser();											//Get an instance of JFileChooser
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));	//Filter out only ".ssp"files
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);								//Select only those files
+				int result = fc.showSaveDialog(null);											//No open dialog
+				if (result == JFileChooser.APPROVE_OPTION){										//If file is approved, do...
+					String selectedFilePath = fc.getSelectedFile().getPath();					//Get the path of the selected file
+					if(selectedFilePath.endsWith(".ssp")) {										//If selected path ends with ".ssp", do...
 
 					} else {
-						selectedFilePath += ".ssp";
+						selectedFilePath += ".ssp";												//Create a file with the suffix ".ssp"
 					}
-					fMgr.writeFile(slideStateMachine, selectedFilePath);
+					fMgr.writeFile(slideStateMachine, selectedFilePath);						//Write information to the file path
 				}
 			}
 		});
-		mnFile.add(mntmSave);
+		mnFile.add(mntmSave);											//Add to File Menu
 
-		mnModes = new JMenu("Modes");
-		menuBar.add(mnModes);
+		mnPresentation = new JMenu("Presentation Mode");				//Create Presentation Menu
+		menuBar.add(mnPresentation);									//Add to menu bar
 
-		mntmPresent = new JMenuItem("Presentation");
-		mnModes.add(mntmPresent);
+		mntmPresent = new JMenuItem("Switch to Presentation Mode");		//Create Switch to Presentation Mode option
+		mnPresentation.add(mntmPresent);								//Add to Presentation Menu
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				if (presenter == null) {
-				presenter = new SlideshowPresenter(creator);
+				if (presenter == null) {								//If the presenter is null, do...
+				presenter = new SlideshowPresenter(creator);			//Presenter is equal to the creator instance
 				}
-				presenter.setVisible(true);
-				setVisible(false);
+				presenter.setVisible(true);								//Open presenter window
+				setVisible(false);										//Hide creator window
 			}
 		});
 
 
-		MainPanel = new JPanel();
+		MainPanel = new JPanel();										//Create Main Panel
 		MainPanel.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				resizePanels();
+				resizePanels();											//Call resizePanels() for enlarging or shirking the window
 			}
 		});
-		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		MainPanel.setBounds(5, 5, 790, 590);
-		setContentPane(MainPanel);
+		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));				//Set the border for Main Panel
+		MainPanel.setBounds(5, 5, 790, 590);							//Set the bounds for Main Panel
+		setContentPane(MainPanel);										//Set components into the Main Panel
 
-		LayoutPanel = new JPanel();
-		LayoutPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		LayoutPanel.setBounds(10, 11, 764, 140);
+		LayoutPanel = new JPanel();																	//Create Layout Panel
+		LayoutPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));		//Set the border for Layout Panel
+		LayoutPanel.setBounds(10, 11, 764, 140);													//Set the bounds for Layout Panel
 
-		TransitionPanel = new JPanel();
-		TransitionPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		TransitionPanel.setBounds(10, 162, 764, 238);
+		TransitionPanel = new JPanel();																//Create Transition Panel
+		TransitionPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));	//Set the border for Transition Panel
+		TransitionPanel.setBounds(10, 162, 764, 238);												//Set the bounds for Transition Panel
 
-		MainPanel.setLayout(null);
-		MainPanel.add(LayoutPanel);
-		LayoutPanel.setLayout(null);
+		MainPanel.setLayout(null);										//Set the Main Panel layout to null
+		MainPanel.add(LayoutPanel);										//Add to Main Panel
+		LayoutPanel.setLayout(null);									//Set the Layout Panel layout to null
 
-		addImageBtn = new JButton("+");
+		addImageBtn = new JButton("+");									//Create + button
 		addImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".jpg", "image file"));
-				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				int result = fc.showDialog(null, "Add Image");
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					if (selectedFilePath.contains(".jpg")){
-						ImageIcon icon = new ImageIcon(selectedFilePath);
-						SlideState mySlide = new SlideState(icon);
-						slideStateMachine.addSlide(mySlide);
+				JFileChooser fc = new JFileChooser();															//Get an instance of JFileChooser
+				fc.setFileFilter(new FileTypeFilter(".jpg", "image file"));										//Filter out only ".jpg" and "image file" files
+				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);									//Select only those files
+				int result = fc.showDialog(null, "Add Image");													//Show dialog that the image is added
+				if (result == JFileChooser.APPROVE_OPTION){														//If file is approved, do...
+					String selectedFilePath = fc.getSelectedFile().getPath();									//Get the path of the file
+					if (selectedFilePath.contains(".jpg")){														//If the file path has ".jpg" in it, do...
+						ImageIcon icon = new ImageIcon(selectedFilePath);										//Set the image of the file to variable icon
+						SlideState mySlide = new SlideState(icon);												//Set the variable mySlide to icon
+						slideStateMachine.addSlide(mySlide);													//Add to slideStateMachine
 					}
 					else{
-						makeListOfImages imageVector = new makeListOfImages();
-						Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
-						for (int i = 0; i < imageFileVector.size(); i++){
-							String filePath = (String) imageFileVector.elementAt(i);
-							ImageIcon icon = new ImageIcon(filePath);
-							SlideState mySlide = new SlideState(icon);
-							slideStateMachine.addSlide(mySlide);
+						makeListOfImages imageVector = new makeListOfImages();									//Create a list of vectors
+						Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath); //Add all images in the file path to the vector
+						for (int i = 0; i < imageFileVector.size(); i++){										
+							String filePath = (String) imageFileVector.elementAt(i);							//File path of image at index i
+							ImageIcon icon = new ImageIcon(filePath);											//Set the icon to image of the file path
+							SlideState mySlide = new SlideState(icon);											//Set the variable mySide to icon
+							slideStateMachine.addSlide(mySlide);												//Add to slideStateMachine
 						}
 					}
 				}
-				updateLayout();
+				updateLayout();																					//Call updateLayout()
 			}
 		});
-		addImageBtn.setBounds(659, 110, 45, 20);
-		LayoutPanel.add(addImageBtn);
+		addImageBtn.setBounds(659, 110, 45, 20);						//Set the bounds for the button										
+		LayoutPanel.add(addImageBtn);									//Add to Layout Panel
 
-		removeImageBtn = new JButton("-");
+		removeImageBtn = new JButton("-");								//Create - button
 		removeImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int currentIndex = layoutSlider.getValue();
-				slideStateMachine.removeSlideAtIndex(currentIndex);
-				updateLayout();
+				int currentIndex = layoutSlider.getValue();				//Set currentIndex to the value of the layout slider
+				slideStateMachine.removeSlideAtIndex(currentIndex);		//Remove the image at that index
+				updateLayout();											//Call updateLayout()
 
 			}
 		});
-		removeImageBtn.setBounds(704, 110, 45, 20);
-		LayoutPanel.add(removeImageBtn);
+		removeImageBtn.setBounds(704, 110, 45, 20);						//Set the bounds for the button
+		LayoutPanel.add(removeImageBtn);								//Add to Layout Panel
 
-		lblSlidesRight = new JLabel("");
-		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSlidesRight.setBounds(487, 37, 40, 30);
-		iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));
-		Image slidesRight = iconRight.getImage().getScaledInstance(lblSlidesRight.getWidth(), lblSlidesRight.getHeight(), Image.SCALE_SMOOTH);
-		lblSlidesRight.setIcon(new ImageIcon(slidesRight, iconRight.getDescription()));
-		LayoutPanel.add(lblSlidesRight);
+		lblSlidesRight = new JLabel("");								//Create lblSlidesRight
+		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);	//Set alignment
+		lblSlidesRight.setBounds(487, 37, 40, 30);						//Set the bounds for the label
+		iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));												//Get the image for the label to "/ImageFiles/SlidesRight.jpg"
+		Image slidesRight = iconRight.getImage().getScaledInstance(lblSlidesRight.getWidth(), lblSlidesRight.getHeight(), Image.SCALE_SMOOTH);	//Set the icon to the image
+		lblSlidesRight.setIcon(new ImageIcon(slidesRight, iconRight.getDescription()));															//Display icon
+		LayoutPanel.add(lblSlidesRight);								//Add to Layout Panel
 
-		lblNextImage = new JLabel("");
-		lblNextImage.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNextImage.setBounds(397, 22, 80, 60);
-		LayoutPanel.add(lblNextImage);
+		lblNextImage = new JLabel("");									//Create lblNextImage
+		lblNextImage.setHorizontalAlignment(SwingConstants.CENTER);		//Set alignment
+		lblNextImage.setBounds(397, 22, 80, 60);						//Set the bounds for the label
+		LayoutPanel.add(lblNextImage);									//Add to Layout Panel
 
-		lblPrimaryImage = new JLabel("");
-		lblPrimaryImage.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPrimaryImage.setBounds(267, 7, 120, 90);
-		LayoutPanel.add(lblPrimaryImage);
+		lblPrimaryImage = new JLabel("");								//Create lblPrimaryImage
+		lblPrimaryImage.setHorizontalAlignment(SwingConstants.CENTER);	//Set alignment
+		lblPrimaryImage.setBounds(267, 7, 120, 90);						//Set the bounds of the label
+		LayoutPanel.add(lblPrimaryImage);								//Add to Layout Panel
 
-		lblPreviousImage = new JLabel("");
-		lblPreviousImage.setHorizontalAlignment(SwingConstants.CENTER);
-		lblPreviousImage.setBounds(177, 22, 80, 60);
-		LayoutPanel.add(lblPreviousImage);
+		lblPreviousImage = new JLabel("");								//Create lblPreviousImage
+		lblPreviousImage.setHorizontalAlignment(SwingConstants.CENTER);	//Set alignment
+		lblPreviousImage.setBounds(177, 22, 80, 60);					//Set the bounds of the label
+		LayoutPanel.add(lblPreviousImage);								//Add to Layout Panel
 
-		lblSlidesLeft = new JLabel("");
-		lblSlidesLeft.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSlidesLeft.setBounds(127, 37, 40, 30);
-		iconLeft = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesLeft.jpg"));
-		Image slidesLeft = iconLeft.getImage().getScaledInstance(lblSlidesLeft.getWidth(), lblSlidesLeft.getHeight(), Image.SCALE_SMOOTH);
-		lblSlidesLeft.setIcon(new ImageIcon(slidesLeft, iconLeft.getDescription()));
-		LayoutPanel.add(lblSlidesLeft);
+		lblSlidesLeft = new JLabel("");									//Create lblSlidesLeft
+		lblSlidesLeft.setHorizontalAlignment(SwingConstants.CENTER);	//Set alignment
+		lblSlidesLeft.setBounds(127, 37, 40, 30);						//Set the bounds for the label
+		iconLeft = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesLeft.jpg"));											//Get the image for the label to "/ImageFiles/SlidesLeft.jpg"
+		Image slidesLeft = iconLeft.getImage().getScaledInstance(lblSlidesLeft.getWidth(), lblSlidesLeft.getHeight(), Image.SCALE_SMOOTH);	//Set the icon to the image
+		lblSlidesLeft.setIcon(new ImageIcon(slidesLeft, iconLeft.getDescription()));														//Display icon
+		LayoutPanel.add(lblSlidesLeft);									//Add to Layout Panel
 
-		AudioPanel = new JPanel();
-		AudioPanel.setBounds(10, 411, 764, 119);
-		MainPanel.add(AudioPanel);
-		AudioPanel.setLayout(null);
+		AudioPanel = new JPanel();										//Create Audio Panel
+		AudioPanel.setBounds(10, 411, 764, 119);						//Set the bounds Audio Panel
+		MainPanel.add(AudioPanel);										//Add to Main Panel 
+		AudioPanel.setLayout(null);										//Set Audio Panel layout to null
 
-		soundTrack = new SoundTrack((String) null);
-		soundTrack.setBounds(0, 0, 764, 110);
-		AudioPanel.add(soundTrack);
-		MainPanel.add(TransitionPanel);
+		soundTrack = new SoundTrack((String) null);						//Set the soundTrack string to null
+		soundTrack.setBounds(0, 0, 764, 110);							//Set the bounds for the soundTrack
+		AudioPanel.add(soundTrack);										//Add to Audio Panel
+		MainPanel.add(TransitionPanel);									//Add to Main Panel
 
-		TransitionPanel.setLayout(null);
+		TransitionPanel.setLayout(null);								//Set the Transition Panel layout to null
 
-		EditPanel = new JPanel();
-		EditPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));
-		EditPanel.setBounds(542, 9, 124, 212);
-		TransitionPanel.add(EditPanel);
-		EditPanel.setLayout(null);
+		EditPanel = new JPanel();												//Create Edit Panel
+		EditPanel.setBorder(new EtchedBorder(EtchedBorder.RAISED, null, null));	//Set the border for Edit Panel
+		EditPanel.setBounds(542, 9, 124, 212);									//Set the bounds for Edit Panel
+		TransitionPanel.add(EditPanel);											//Add to Transition Panel
+		EditPanel.setLayout(null);												//Set the Edit Panel layout to null
 		
-		layoutSlider = new JSlider();
-		layoutSlider.addChangeListener(new ChangeListener() {
+		layoutSlider = new JSlider();									//Create Layout Slider
+		layoutSlider.addChangeListener(new ChangeListener() {	
 			public void stateChanged(ChangeEvent arg0) {
-				updateLayout();
+				updateLayout();											//Call updateLayout()
 			}
 		});
-		layoutSlider.setEnabled(false);
-		layoutSlider.setBounds(15, 120, 642, 20);
-		layoutSlider.setValue(0);
-		layoutSlider.setMinimum(0);		
-		layoutSlider.setSnapToTicks(true);
-		slideSize = 0;
-		LayoutPanel.add(layoutSlider);	
+		layoutSlider.setEnabled(false);									//Disable Layout Slider
+		layoutSlider.setBounds(15, 120, 642, 20);						//Set the bounds for the Layout Sldier
+		layoutSlider.setValue(0);										//Set the slider to value 0
+		layoutSlider.setMinimum(0);										//Set the slider minimum to 0
+		layoutSlider.setSnapToTicks(true);								//Enable the snap to ticks for the slider
+		slideSize = 0;													//Initialize slideSize to 0
+		LayoutPanel.add(layoutSlider);									//Add to Layout Panel
 
-		JButton PreviewTransition = new JButton(">");
+		JButton PreviewTransition = new JButton(">");					//Create > button
 		PreviewTransition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (currentSlide != null)
+				if (currentSlide != null)								//If currentSlide is not null, do...
 				{
-					if (currentSlide.getTransition() == SlideState.Transition.NONE)
+					if (currentSlide.getTransition() == SlideState.Transition.NONE)		//If getTransition() == NONE
 					{
 						//do nothing
 					}
-					else if (currentSlide.getTransition() == SlideState.Transition.DOWN)
+					else if (currentSlide.getTransition() == SlideState.Transition.DOWN)//If getTransition() == Down, do...
+																							//do a preview of transition and add to array
 					{
 						SwipeDown swipeDownTransition = new SwipeDown();
 						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -339,7 +338,8 @@ public class SlideshowMaker extends JFrame {
 						swipeDownTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
 						updateLayout();
 					}
-					else if (currentSlide.getTransition() == SlideState.Transition.UP)
+					else if (currentSlide.getTransition() == SlideState.Transition.UP)	//If getTransition() == UP, do...
+																							//do a preview of transition and add to array
 					{
 						SwipeUp swipeUpTransition = new SwipeUp();
 						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -352,7 +352,8 @@ public class SlideshowMaker extends JFrame {
 						swipeUpTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
 						updateLayout();
 					}
-					else if (currentSlide.getTransition() == SlideState.Transition.LEFT)
+					else if (currentSlide.getTransition() == SlideState.Transition.LEFT)//If getTransition() == LEFT, do...
+																							//do a preview of transition and add to array
 					{
 						SwipeLeft swipeLeftTransition = new SwipeLeft();
 						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -365,7 +366,8 @@ public class SlideshowMaker extends JFrame {
 						swipeLeftTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
 						updateLayout();
 					}
-					else if (currentSlide.getTransition() == SlideState.Transition.RIGHT)
+					else if (currentSlide.getTransition() == SlideState.Transition.RIGHT)//If getTransition() == RIGHT, do...
+																							//do a preview of transition and add to array
 					{
 						SwipeRight swipeRightTransition = new SwipeRight();
 						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -378,7 +380,8 @@ public class SlideshowMaker extends JFrame {
 						swipeRightTransition.DrawImageTransition(PreviewImagePanel, imageToTransition, blankImage, 3);
 						updateLayout();
 					}
-					else if (currentSlide.getTransition() == SlideState.Transition.CROSSFADE)
+					else if (currentSlide.getTransition() == SlideState.Transition.CROSSFADE)//If getTransition() == CROSSFADE, do...
+																							//do a preview of transition and add to array
 					{
 						CrossFade crossFadeTransition = new CrossFade();
 						BufferedImage imageToTransition = new BufferedImage(PreviewImagePanel.getWidth(), PreviewImagePanel.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -393,87 +396,87 @@ public class SlideshowMaker extends JFrame {
 					}
 					else
 					{
-						System.out.println("error with transition type");
+						System.out.println("error with transition type");				//Transition Error
 					}	
 				}
 			}
 		});
-		PreviewTransition.setBounds(35, 166, 45, 23);
-		EditPanel.add(PreviewTransition);
+		PreviewTransition.setBounds(35, 166, 45, 23);					//Set the bounds for > button		
+		EditPanel.add(PreviewTransition);								//Add to Edit Panel
 
-		rdbtnNoTrans = new JRadioButton("None");
+		rdbtnNoTrans = new JRadioButton("None");								//Create NONE radio button
 		rdbtnNoTrans.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if(currentSlide != null){
-					currentSlide.setTransitionType(SlideState.Transition.NONE);
+					currentSlide.setTransitionType(SlideState.Transition.NONE);	//Set transition type to NONE
 				}
 
 			}
 		});
-		rdbtnNoTrans.setHorizontalAlignment(SwingConstants.LEFT);
-		rdbtnNoTrans.setBounds(10, 9, 105, 23);
-		rdbtnNoTrans.setSelected(true);
-		EditPanel.add(rdbtnNoTrans);
+		rdbtnNoTrans.setHorizontalAlignment(SwingConstants.LEFT);				//Set alignment
+		rdbtnNoTrans.setBounds(10, 9, 105, 23);									//Set the bounds for radio button
+		rdbtnNoTrans.setSelected(true);											//Initialize to true 
+		EditPanel.add(rdbtnNoTrans);											//Add to Edit Panel
 
-		rdbtnSwipeUp = new JRadioButton("Swipe Up");
+		rdbtnSwipeUp = new JRadioButton("Swipe Up");							//Create UP radio button
 		rdbtnSwipeUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(currentSlide != null){
-					currentSlide.setTransitionType(SlideState.Transition.UP);
+					currentSlide.setTransitionType(SlideState.Transition.UP);	//Set transition type to UP
 				}
 			}
 		});
-		rdbtnSwipeUp.setHorizontalAlignment(SwingConstants.LEFT);
-		rdbtnSwipeUp.setBounds(10, 35, 105, 23);
-		EditPanel.add(rdbtnSwipeUp);
+		rdbtnSwipeUp.setHorizontalAlignment(SwingConstants.LEFT);				//Set alignment
+		rdbtnSwipeUp.setBounds(10, 35, 105, 23);								//Set the bounds for radio button
+		EditPanel.add(rdbtnSwipeUp);											//Add to Edit Panel
 
-		rdbtnSwipeDown = new JRadioButton("Swipe Down");
+		rdbtnSwipeDown = new JRadioButton("Swipe Down");						//Create DOWN radio button
 		rdbtnSwipeDown.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(currentSlide != null){
-					currentSlide.setTransitionType(SlideState.Transition.DOWN);
+					currentSlide.setTransitionType(SlideState.Transition.DOWN);	//Set transition type to DOWN
 				}
 			}
 		});
-		rdbtnSwipeDown.setHorizontalAlignment(SwingConstants.LEFT);
-		rdbtnSwipeDown.setBounds(10, 61, 105, 23);
-		EditPanel.add(rdbtnSwipeDown);
+		rdbtnSwipeDown.setHorizontalAlignment(SwingConstants.LEFT);				//Set alignment
+		rdbtnSwipeDown.setBounds(10, 61, 105, 23);								//Set the bounds for radio button
+		EditPanel.add(rdbtnSwipeDown);											//Add to Edit Panel
 
-		rdbtnSwipeLeft = new JRadioButton("Swipe Left");
+		rdbtnSwipeLeft = new JRadioButton("Swipe Left");						//Create LEFT radio button
 		rdbtnSwipeLeft.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(currentSlide != null){
-					currentSlide.setTransitionType(SlideState.Transition.LEFT);
+					currentSlide.setTransitionType(SlideState.Transition.LEFT);	//Set transition type to LEFT
 				}
 			}
 		});
-		rdbtnSwipeLeft.setHorizontalAlignment(SwingConstants.LEFT);
-		rdbtnSwipeLeft.setBounds(10, 87, 105, 23);
-		EditPanel.add(rdbtnSwipeLeft);
+		rdbtnSwipeLeft.setHorizontalAlignment(SwingConstants.LEFT);				//Set alignment
+		rdbtnSwipeLeft.setBounds(10, 87, 105, 23);								//Set the bounds for radio button
+		EditPanel.add(rdbtnSwipeLeft);											//Add to Edit Panel
 
-		rdbtnSwipeRight = new JRadioButton("Swipe Right");
+		rdbtnSwipeRight = new JRadioButton("Swipe Right");						//Create RIGHT radio button
 		rdbtnSwipeRight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(currentSlide != null){
-					currentSlide.setTransitionType(SlideState.Transition.RIGHT);
+					currentSlide.setTransitionType(SlideState.Transition.RIGHT);//Set transition type to RIGHT
 				}
 			}
 		});
-		rdbtnSwipeRight.setHorizontalAlignment(SwingConstants.LEFT);
-		rdbtnSwipeRight.setBounds(10, 113, 105, 23);
-		EditPanel.add(rdbtnSwipeRight);
+		rdbtnSwipeRight.setHorizontalAlignment(SwingConstants.LEFT);			//Set alignment
+		rdbtnSwipeRight.setBounds(10, 113, 105, 23);							//Set the bounds for radio buttons
+		EditPanel.add(rdbtnSwipeRight);											//Add to Edit Panel
 
-		rdbtnCrossfade = new JRadioButton("Crossfade");
+		rdbtnCrossfade = new JRadioButton("Crossfade");							//Create CROSSFADE radio button
 		rdbtnCrossfade.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(currentSlide != null){
-					currentSlide.setTransitionType(SlideState.Transition.CROSSFADE);
+					currentSlide.setTransitionType(SlideState.Transition.CROSSFADE);//Set transition type to CROSSFADE
 				}
 			}
 		});
-		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);
-		rdbtnCrossfade.setBounds(10, 136, 105, 23);
-		EditPanel.add(rdbtnCrossfade);
+		rdbtnCrossfade.setHorizontalAlignment(SwingConstants.LEFT);				//Set alignment
+		rdbtnCrossfade.setBounds(10, 136, 105, 23);								//Set the bounds for radio buttons
+		EditPanel.add(rdbtnCrossfade);											//Add to Edit Panel
 
 		//transGroup the radio buttons
 		ButtonGroup transGroup = new ButtonGroup();
@@ -494,20 +497,20 @@ public class SlideshowMaker extends JFrame {
 		creator = this;
 	}
 
-	private void resizePanels(){
+	private void resizePanels(){						//Function to resize all panels within Main Panel
 		resizeMainPanel();
 		resizeLayoutPanel();
 		resizeAudioPanel();
 		resizeTransitionPanel();
 	}
 
-	private void resizeMainPanel(){
+	private void resizeMainPanel(){						//Function to resize Main Panel
 		int panelWidth = this.getWidth()-35;
 		int panelHeight = this.getHeight()-35;
 		MainPanel.setBounds(5, 5, panelWidth, panelHeight);
 	}
 
-	private void resizeLayoutPanel(){
+	private void resizeLayoutPanel(){					//Function to resize Layout Panel
 		int mainPanelWidth = MainPanel.getWidth();
 		int panelWidth = LayoutPanel.getWidth();
 		int panelHeight = LayoutPanel.getHeight();
@@ -554,7 +557,7 @@ public class SlideshowMaker extends JFrame {
 		updateLayout();
 	}
 
-	private void resizeTransitionPanel(){
+	private void resizeTransitionPanel(){				//Function to resize Transition Panel
 		int mainPanelWidth = MainPanel.getWidth();
 		int oldHeight = TransitionPanel.getHeight();
 		int panelY = LayoutPanel.getY() + LayoutPanel.getHeight() + 11;
@@ -569,17 +572,14 @@ public class SlideshowMaker extends JFrame {
 		EditPanel.setBounds(PreviewImagePanel.getX() + PreviewImagePanel.getWidth() + 10, PreviewImagePanel.getY() + PreviewImagePanel.getHeight() - 200, 118, 200);
 	}
 
-	private void resizeAudioPanel(){
+	private void resizeAudioPanel(){					//Function to resize Audio Panel
 		int mainPanelWidth = MainPanel.getWidth();
 		int panelWidth = mainPanelWidth - 10;
 		AudioPanel.setBounds(10, MainPanel.getHeight()-129, panelWidth, 119);
 		soundTrack.setBounds(0, 0, panelWidth, 110);
 	}
 
-	private void updateLayout(){
-
-
-
+	private void updateLayout(){						//Function to updateLayout, for Previous, Primary, Next, and Preview images
 		resizeImageIcon(lblSlidesLeft, iconLeft);
 		resizeImageIcon(lblSlidesRight, iconRight);
 
@@ -647,7 +647,7 @@ public class SlideshowMaker extends JFrame {
 	}
 
 
-	private void resizeImageIcon(JLabel label, ImageIcon icon){
+	private void resizeImageIcon(JLabel label, ImageIcon icon){	//Function resize Image Icons
 		if(slideStateMachine.getSlideShowSize() > 0) {
 			BufferedImage bufferedImg = new BufferedImage(
 					icon.getIconWidth(),
@@ -674,7 +674,7 @@ public class SlideshowMaker extends JFrame {
 		}
 	}
 
-	private void resizePreviewImage(){
+	private void resizePreviewImage(){					//Function to resize Preview Image
 		if(previewIcon != null) {
 			PreviewImagePanel.initializeBlankImage();
 			PreviewImagePanel.setImage(previewIcon.getImage());

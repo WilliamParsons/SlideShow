@@ -1,9 +1,12 @@
 /bin/
-/Slides/
 /#SoundTrack.java#
+/.gitignore
+/.project
+/Animation/
+/FileManager/
+/ImageFiles/
+/Slides/
+/SoundFiles/
 /Transitions/
 /pkgImageTransitions/
 /radioBtnListener/
-/SoundFiles/
-/Animator/
-/Animation/
