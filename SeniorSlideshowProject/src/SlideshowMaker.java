@@ -604,14 +604,22 @@ public class SlideshowMaker extends JFrame implements Observer{
 			//add sound square to layoutTracker
 			layoutTracker.removeAll();
 			int height = layoutTracker.getHeight();
+			int x = (int)layoutTracker.getLocation().getX();
+			int y = (int)layoutTracker.getLocation().getY();
 			for(int i=0;i<slideStateMachine.getAudioListSize();i++){
-				JButton square = new JButton();
-				square.setText(String.valueOf(i));
+				
+//				JButton square = new JButton();
+//				square.setText(String.valueOf(i));
 //				square.setPreferredSize(new Dimension(layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime()), layoutTracker.getHeight()));
 				int width = layoutTracker.getWidth()*(int)(slideStateMachine.getAudioAtIndex(i).getAudioTime()/slideStateMachine.getTotalTime());
 //				new Rectangle(layoutTracker.getLocation(), new Dimension(width, height));
-				square.setSize(width, height);
-				layoutTracker.add(square);
+//				SoundIndicator indicator = new SoundIndicator(String.valueOf(i),0,0,width,height);
+//				square.setSize(width, height);
+				JLabel indicator = new JLabel(slideStateMachine.getAudioAtIndex(i).getFileName());
+				indicator.setBackground(Color.white);
+				indicator.setBounds(x, y, width, height);
+				
+				layoutTracker.add(indicator);
 			}
 		}
 //		resizePanels();
