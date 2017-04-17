@@ -94,85 +94,84 @@ public class SlideshowMaker extends JFrame {
 	 * Create the frame.
 	 */
 	public SlideshowMaker() {
-		setTitle("Slideshow Maker");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 800, 600);
+		setTitle("Slideshow Maker");									//Det the title of the Creator window
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);					//Pressing X on the window will close it
+		setBounds(100, 100, 800, 600);									//Set the bounds of the window
 
+		JMenuBar menuBar = new JMenuBar();								//Create menu bar
+		setJMenuBar(menuBar);											//Set the bounds of the menu bar to the window
 
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
+		mnFile = new JMenu("File");										//Create File Menu
+		menuBar.add(mnFile);											//Add to menu bar
 
-		mnFile = new JMenu("File");
-		menuBar.add(mnFile);
+		slideStateMachine = SlideShowStateMachine.getInstance();		//Get an instance of the SlideShowStateMachine
+		fMgr = new FileManager();										//Get an instance of the FileManager
 
-		slideStateMachine = SlideShowStateMachine.getInstance();
-		fMgr = new FileManager();
-
-		mntmNew = new JMenuItem("New");
-		mntmNew.addActionListener(new ActionListener() {
+		mntmNew = new JMenuItem("New");									//Create New option
+		mntmNew.addActionListener(new ActionListener() {	
 			public void actionPerformed(ActionEvent e) {
-				SlideShowStateMachine state = SlideShowStateMachine.getInstance();
-				state.clearSlideShow();
-				layoutSlider.setEnabled(false);
-				slideSize = 0;
-				layoutSlider.setValue(0);
-				updateLayout();
+				SlideShowStateMachine state = SlideShowStateMachine.getInstance();				//Get an instance of SlideShowStateMachine
+				state.clearSlideShow();															//Clear to a blank slide show
+				layoutSlider.setEnabled(false);													//Disable the layout slider
+				slideSize = 0;																	//Set slide show to 0
+				layoutSlider.setValue(0);														//Initialize layout slider to value 0
+				updateLayout();																	//Call updateLayout()
 			}
 		});
-		mnFile.add(mntmNew);
+		mnFile.add(mntmNew);											//Add to File Menu
 
-		mntmOpen = new JMenuItem("Open");
+		mntmOpen = new JMenuItem("Open");								//Create Open option
 		mntmOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int result = fc.showOpenDialog(null);
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);
-					slideStateMachine.clearSlideShow();
-					SlideState slide = tempState.getFirstSlide();
-					while(slide != null){
-						slideStateMachine.addSlide(slide);
-						slide = tempState.getNextSlide();
+				JFileChooser fc = new JFileChooser();											//Get an instance of JFileChooser
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));	//Filter out only ".ssp" files
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);								//Select only those files
+				int result = fc.showOpenDialog(null);											//No open dialog
+				if (result == JFileChooser.APPROVE_OPTION){										//If file is approved, do...
+					String selectedFilePath = fc.getSelectedFile().getPath();					//Get the path of the selected file
+					SlideShowStateMachine tempState = fMgr.readFile(selectedFilePath);			//Set tempState to read the file
+					slideStateMachine.clearSlideShow();											//Clear the current slide show in the window
+					SlideState slide = tempState.getFirstSlide();								//Get the first slide of the tempState
+					while(slide != null){														//While the slide is not null, do...
+						slideStateMachine.addSlide(slide);										//Add slide to the array
+						slide = tempState.getNextSlide();										//Go to next slide
 					}
-					AudioState audio = tempState.getFirstAudio();
-					while(audio != null){
-						slideStateMachine.addAudio(audio);
-						audio = tempState.getNextAudio();
+					AudioState audio = tempState.getFirstAudio();								//Get the first audio for tempState
+					while(audio != null){														//While audio is not null, do...
+						slideStateMachine.addAudio(audio);										//Add the audio to the array
+						audio = tempState.getNextAudio();										//Get the next audio
 					}
-					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
-					soundTrack.jukeTable.tableChanged();
-					layoutSlider.setValue(0);
-					updateLayout();
+					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);	//Enable the start function for audio
+					soundTrack.jukeTable.tableChanged();										//Update the table
+					layoutSlider.setValue(0);													//Set the layout slider to 0
+					updateLayout();																//Call updateLayout()
 				}
 			}
 		});
-		mnFile.add(mntmOpen);
+		mnFile.add(mntmOpen);											//Add to File Menu
 
-		mntmSave = new JMenuItem("Save");
+		mntmSave = new JMenuItem("Save");								//Create Save option
 		mntmSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int result = fc.showSaveDialog(null);
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					if(selectedFilePath.endsWith(".ssp")) {
+				JFileChooser fc = new JFileChooser();											//Get an instance of JFileChooser
+				fc.setFileFilter(new FileTypeFilter(".ssp", "Slideshow Presentation File"));	//Filter out only ".ssp"files
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);								//Select only those files
+				int result = fc.showSaveDialog(null);											//No open dialog
+				if (result == JFileChooser.APPROVE_OPTION){										//If file is approved, do...
+					String selectedFilePath = fc.getSelectedFile().getPath();					//Get the path of the selected file
+					if(selectedFilePath.endsWith(".ssp")) {										//If selected path ends with ".ssp", do...
 
 					} else {
-						selectedFilePath += ".ssp";
+						selectedFilePath += ".ssp";												//Create a file with the suffix ".ssp"
 					}
-					fMgr.writeFile(slideStateMachine, selectedFilePath);
+					fMgr.writeFile(slideStateMachine, selectedFilePath);						//Write information to the file path
 				}
 			}
 		});
-		mnFile.add(mntmSave);
+		mnFile.add(mntmSave);											//Add to File Menu
 
-		mnPresentation = new JMenu("Presentation Mode");
-		menuBar.add(mnPresentation);
+		mnPresentation = new JMenu("Presentation Mode");				//Create Presentation Menu
+		menuBar.add(mnPresentation);									//Add to menu bar
 
 		mntmPresent = new JMenuItem("Switch to Presentation Mode");
 		mnPresentation.add(mntmPresent);
