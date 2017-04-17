@@ -519,12 +519,12 @@ public class SlideshowMaker extends JFrame {
 		LayoutPanel.setBounds(10, 26, panelWidth, panelHeight);
 		removeImageBtn.setBounds(panelWidth-60, panelHeight-30, 45, 20);
 		addImageBtn.setBounds(panelWidth-110, panelHeight-30, 45, 20);
-		layoutSlider.setBounds(15, panelHeight-30, panelWidth-160, 20);
+		layoutSlider.setBounds(15, panelHeight-23, panelWidth-160, 20);
 		
 		int primWidth = (int)(lblPrimaryImage.getWidth()*widthRatio);
 		int primHeight = (int)(primWidth*0.75);
 		int primX = panelWidth/2 - primWidth/2;
-		int primY = 15;	
+		int primY = 3;	
 		lblPrimaryImage.setBounds(primX, primY, primWidth, primHeight);
 
 		int nextWidth = (int)(lblNextImage.getWidth()*widthRatio);
