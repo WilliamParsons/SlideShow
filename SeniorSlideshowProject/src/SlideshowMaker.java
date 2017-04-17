@@ -173,89 +173,89 @@ public class SlideshowMaker extends JFrame {
 		mnPresentation = new JMenu("Presentation Mode");				//Create Presentation Menu
 		menuBar.add(mnPresentation);									//Add to menu bar
 
-		mntmPresent = new JMenuItem("Switch to Presentation Mode");
-		mnPresentation.add(mntmPresent);
+		mntmPresent = new JMenuItem("Switch to Presentation Mode");		//Create Switch to Presentation Mode option
+		mnPresentation.add(mntmPresent);								//Add to Presentation Menu
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				if (presenter == null) {
-				presenter = new SlideshowPresenter(creator);
+				if (presenter == null) {								//If the presenter is null, do...
+				presenter = new SlideshowPresenter(creator);			//Presenter is equal to the creator instance
 				}
-				presenter.setVisible(true);
-				setVisible(false);
+				presenter.setVisible(true);								//Open presenter window
+				setVisible(false);										//Hide creator window
 			}
 		});
 
 
-		MainPanel = new JPanel();
+		MainPanel = new JPanel();										//Create Main Panel
 		MainPanel.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
-				resizePanels();
+				resizePanels();											//Call resizePanels() for enlarging or shirking the window
 			}
 		});
-		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		MainPanel.setBounds(5, 5, 790, 590);
-		setContentPane(MainPanel);
+		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));				//Set the border for Main Panel
+		MainPanel.setBounds(5, 5, 790, 590);							//Set the bounds for Main Panel
+		setContentPane(MainPanel);										//Set components into the Main Panel
 
-		LayoutPanel = new JPanel();
-		LayoutPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		LayoutPanel.setBounds(10, 11, 764, 140);
+		LayoutPanel = new JPanel();																	//Create Layout Panel
+		LayoutPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));		//Set the border for Layout Panel
+		LayoutPanel.setBounds(10, 11, 764, 140);													//Set the bounds for Layout Panel
 
-		TransitionPanel = new JPanel();
-		TransitionPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		TransitionPanel.setBounds(10, 162, 764, 238);
+		TransitionPanel = new JPanel();																//Create Transition Panel
+		TransitionPanel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));	//Set the border for Transition Panel
+		TransitionPanel.setBounds(10, 162, 764, 238);												//Set the bounds for Transition Panel
 
-		MainPanel.setLayout(null);
-		MainPanel.add(LayoutPanel);
-		LayoutPanel.setLayout(null);
+		MainPanel.setLayout(null);										//Set the Main Panel layout to null
+		MainPanel.add(LayoutPanel);										//Add to Main Panel
+		LayoutPanel.setLayout(null);									//Set the Layout Panel layout to null
 
-		addImageBtn = new JButton("+");
+		addImageBtn = new JButton("+");									//Create + button
 		addImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(new FileTypeFilter(".jpg", "image file"));
-				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				int result = fc.showDialog(null, "Add Image");
-				if (result == JFileChooser.APPROVE_OPTION){
-					String selectedFilePath = fc.getSelectedFile().getPath();
-					if (selectedFilePath.contains(".jpg")){
-						ImageIcon icon = new ImageIcon(selectedFilePath);
-						SlideState mySlide = new SlideState(icon);
-						slideStateMachine.addSlide(mySlide);
+				JFileChooser fc = new JFileChooser();															//Get an instance of JFileChooser
+				fc.setFileFilter(new FileTypeFilter(".jpg", "image file"));										//Filter out only ".jpg" and "image file" files
+				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);									//Select only those files
+				int result = fc.showDialog(null, "Add Image");													//Show dialog that the image is added
+				if (result == JFileChooser.APPROVE_OPTION){														//If file is approved, do...
+					String selectedFilePath = fc.getSelectedFile().getPath();									//Get the path of the file
+					if (selectedFilePath.contains(".jpg")){														//If the file path has ".jpg" in it, do...
+						ImageIcon icon = new ImageIcon(selectedFilePath);										//Set the image of the file to variable icon
+						SlideState mySlide = new SlideState(icon);												//Set the variable mySlide to icon
+						slideStateMachine.addSlide(mySlide);													//Add to slideStateMachine
 					}
 					else{
-						makeListOfImages imageVector = new makeListOfImages();
-						Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath);
-						for (int i = 0; i < imageFileVector.size(); i++){
-							String filePath = (String) imageFileVector.elementAt(i);
-							ImageIcon icon = new ImageIcon(filePath);
-							SlideState mySlide = new SlideState(icon);
-							slideStateMachine.addSlide(mySlide);
+						makeListOfImages imageVector = new makeListOfImages();									//Create a list of vectors
+						Vector imageFileVector = imageVector.listFilesAndFilesSubDirectories(selectedFilePath); //Add all images in the file path to the vector
+						for (int i = 0; i < imageFileVector.size(); i++){										
+							String filePath = (String) imageFileVector.elementAt(i);							//File path of image at index i
+							ImageIcon icon = new ImageIcon(filePath);											//Set the icon to image of the file path
+							SlideState mySlide = new SlideState(icon);											//Set the variable mySide to icon
+							slideStateMachine.addSlide(mySlide);												//Add to slideStateMachine
 						}
 					}
 				}
-				updateLayout();
+				updateLayout();																					//Call updateLayout()
 			}
 		});
-		addImageBtn.setBounds(659, 110, 45, 20);
-		LayoutPanel.add(addImageBtn);
+		addImageBtn.setBounds(659, 110, 45, 20);						//Set the bounds for the button										
+		LayoutPanel.add(addImageBtn);									//Add to Layout Panel
 
-		removeImageBtn = new JButton("-");
+		removeImageBtn = new JButton("-");								//Create - button
 		removeImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int currentIndex = layoutSlider.getValue();
-				slideStateMachine.removeSlideAtIndex(currentIndex);
-				updateLayout();
+				int currentIndex = layoutSlider.getValue();				//Set currentIndex to the value of the layout slider
+				slideStateMachine.removeSlideAtIndex(currentIndex);		//Remove the image at that index
+				updateLayout();											//Call updateLayout()
 
 			}
 		});
-		removeImageBtn.setBounds(704, 110, 45, 20);
-		LayoutPanel.add(removeImageBtn);
+		removeImageBtn.setBounds(704, 110, 45, 20);						//Set the bounds for the button
+		LayoutPanel.add(removeImageBtn);								//Add to Layout Panel
 
-		lblSlidesRight = new JLabel("");
-		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSlidesRight.setBounds(487, 37, 40, 30);
-		iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));
+		lblSlidesRight = new JLabel("");								//Create a JLabel
+		lblSlidesRight.setHorizontalAlignment(SwingConstants.CENTER);	//Set alignment
+		lblSlidesRight.setBounds(487, 37, 40, 30);						//Set the bounds for the label
+		iconRight = new ImageIcon(SlideshowMaker.class.getResource("/ImageFiles/SlidesRight.jpg"));												
 		Image slidesRight = iconRight.getImage().getScaledInstance(lblSlidesRight.getWidth(), lblSlidesRight.getHeight(), Image.SCALE_SMOOTH);
 		lblSlidesRight.setIcon(new ImageIcon(slidesRight, iconRight.getDescription()));
 		LayoutPanel.add(lblSlidesRight);
