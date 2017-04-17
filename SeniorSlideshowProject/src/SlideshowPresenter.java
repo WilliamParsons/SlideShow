@@ -97,7 +97,7 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.setLayout(null);
 		
 		slideStateMachine = SlideShowStateMachine.getInstance();
-		soundTrack = new SoundTrack((String) null, this.creator);
+		soundTrack = new SoundTrack((String) null);
 		fMgr = new FileManager();
 
 		btnPlayPause = new JButton("Play");
