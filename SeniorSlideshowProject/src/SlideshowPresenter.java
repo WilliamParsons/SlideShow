@@ -132,19 +132,19 @@ public class SlideshowPresenter extends JFrame {
 					slideStateMachine.setPausedState(false);
 					if(clickedPlay == true)
 					{
-						soundTrack.pauseB.doClick(); // restore a paused soundtrack
-						clickedPlay = false;
-						slidePlaying = true;
-						if (slideStateMachine.getNeedsReset()){
-							slideStateMachine.getNextSlide();
-							slideStateMachine.setNeedsReset(false);
+						soundTrack.pauseB.doClick(); 						// restore a paused soundtrack
+						clickedPlay = false;								//Set clickedPay to false
+						slidePlaying = true;								//Set slidePlaying to true
+						if (slideStateMachine.getNeedsReset()){				//If slideStateMachine calls getNeedsReset(), do...
+							slideStateMachine.getNextSlide();				//call getNextSlide()
+							slideStateMachine.setNeedsReset(false);			//Set setNeedsReset to false
 						}
 					}else{
-						soundTrack.startB.doClick(); // start soundtrack
-						slidePlaying = true;
-						if (slideStateMachine.getNeedsReset()){
-							slideStateMachine.getNextSlide();
-							slideStateMachine.setNeedsReset(false);
+						soundTrack.startB.doClick(); 						// start soundtrack
+						slidePlaying = true;								//Set slidePlaying to true
+						if (slideStateMachine.getNeedsReset()){				//If slideStateMachine calls getNeedsReset(), do...
+							slideStateMachine.getNextSlide();				//Call getNextSlide()
+							slideStateMachine.setNeedsReset(false);			//Set setNeedsReset to false
 						}
 					}
 					if(automatic) {											//If "automatic", do...
