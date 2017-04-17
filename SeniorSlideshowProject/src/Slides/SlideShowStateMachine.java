@@ -22,39 +22,39 @@ public class SlideShowStateMachine implements Serializable {
 	private boolean needsReset;
 	private boolean showEnded;
 
-	private SlideShowStateMachine()
+	private SlideShowStateMachine()													//Constructor for SlideShowStateMachine
 	{
-		audioList = new ArrayList<AudioState>();
-		slideList = new ArrayList<SlideState>();
-		audioIndex = 0;
-		slideIndex = 0;
-		showTime = 0;
-		audioLoopFlag = false;
-		needsReset = false;
-		isPaused = false;
-		showEnded = false;
+		audioList = new ArrayList<AudioState>();									//New array for audio
+		slideList = new ArrayList<SlideState>();									//New array for slides
+		audioIndex = 0;																//Set audio index to 0
+		slideIndex = 0;																//Set slide index to 0
+		showTime = 0;																//Set show time to 0
+		audioLoopFlag = false;														//Set loop flag to false
+		needsReset = false;															//Set needs reset to false
+		isPaused = false;															//Set is paused to false
+		showEnded = false;															//Set show ended to false
 	}
 
-	public static SlideShowStateMachine getInstance()
+	public static SlideShowStateMachine getInstance()								//Function to get a singleton of SlideShowStateMachine
 	{
 		return singleton;
 	}
 
-	private void setSlideTransitionTimes()
+	private void setSlideTransitionTimes()											//Function to set the slide transition times
 	{
-		double slideTime = showTime/slideList.size();
-		for (SlideState x : slideList)
+		double slideTime = showTime/slideList.size();								//Slide time is equal to showtime divided by slideList size
+		for (SlideState x : slideList)												//For each slide in the slide list
 		{
-			x.setTransitionTime(slideTime);
+			x.setTransitionTime(slideTime);											//Set the transition time for the slide state
 		}
 	}
 	
-	public void setPausedState(boolean state){
+	public void setPausedState(boolean state){										//Function to set paused state
 		
-		isPaused = state;
+		isPaused = state;															//Set to is paused to passed-in state
 	}
 
-	public void addSlide(SlideState slide)
+	public void addSlide(SlideState slide)											//
 	{
 		slideList.add(slide);
 		setSlideTransitionTimes();

@@ -297,22 +297,22 @@ public class SlideshowPresenter extends JFrame {
 		PresentationImagePanel.repaint();
 }
 	
-	public SlideshowPresenter(SlideshowMaker creator) {
+	public SlideshowPresenter(SlideshowMaker creator) {						//Function to sync Presenter with slide show in Creator
 		this();
 		this.creator = creator;		
 	}
 	
-	private void resizeAllPanels(){
-		resizeMainPanel();
+	private void resizeAllPanels(){											//Function to resize all panels in the window
+		resizeMainPanel();													
 		resizePresentationPanel();
 	}
 
-	private void resizePresentationPanel() {
+	private void resizePresentationPanel() {								//Function to resize Presentation Panel
 		PresentationImagePanel.setBounds(0, 10, MainPanel.getWidth(), MainPanel.getHeight() -  (2 * menuBar.getHeight()) - btnPrevious.getHeight() );
 		
 	}
 
-	private void resizeMainPanel() {
+	private void resizeMainPanel() {										//Function to resize Main Panel
 		int panelWidth = this.getWidth() - 35;
 		int panelHeight = this.getHeight() - 35;
 		MainPanel.setBounds(5, 5, panelWidth, panelHeight);
@@ -324,7 +324,7 @@ public class SlideshowPresenter extends JFrame {
 		rdbtnManual.setBounds((panelWidth / 2) + 225, panelHeight - 40, 131, 33);
 	}
 	
-	private void updateShow() {
+	private void updateShow() {												//Function to update image in viewing for Manual Mode
 		if (!slidePlaying){
 			currentSlide = slideStateMachine.getCurrentSlide();
 			if(currentSlide != null)
@@ -341,7 +341,7 @@ public class SlideshowPresenter extends JFrame {
 		imagePanelGraphics.drawImage(currentSlide.getIcon().getImage(), 0, 10, PresentationImagePanel.getWidth(), PresentationImagePanel.getHeight(), null);
 	}
 
-	private void startAutomaticSlideShow() {
+	private void startAutomaticSlideShow() {								//Function to Play and Pause for Automatic Mode
 		if (!slideStateMachine.getPausedState()){
 			currentSlide = slideStateMachine.getCurrentSlide();
 			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
