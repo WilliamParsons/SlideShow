@@ -116,8 +116,8 @@ public class SlideshowPresenter extends JFrame {
 					slidePlaying = false;									//Set the state "slidePlaying" to false
 				if(slidePlaying == true)
 				{
-					btnPlayPause.setText("Play"); // change Pause to Play when pause
-					soundTrack.pauseB.doClick(); // Pause soundtrack
+					btnPlayPause.setText("Play"); 							// change Pause to Play when pause
+					soundTrack.pauseB.doClick(); 							// Pause soundtrack
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
@@ -127,7 +127,7 @@ public class SlideshowPresenter extends JFrame {
 				{	
 					btnPlayPause.setText("Pause"); 							//Change Play to Pause when start
 					if(clickedPlay == true)									//If "clickedPlay" is true, do...
-					btnPlayPause.setText("Pause"); //change Play to Pause when start
+					btnPlayPause.setText("Pause"); 							//change Play to Pause when start
 					slideStateMachine.setPausedState(false);
 					if(clickedPlay == true)
 					{
