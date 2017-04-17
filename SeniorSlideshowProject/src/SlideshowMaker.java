@@ -497,20 +497,20 @@ public class SlideshowMaker extends JFrame {
 		creator = this;
 	}
 
-	private void resizePanels(){
+	private void resizePanels(){						//Function to resize all panels within Main Panel
 		resizeMainPanel();
 		resizeLayoutPanel();
 		resizeAudioPanel();
 		resizeTransitionPanel();
 	}
 
-	private void resizeMainPanel(){
+	private void resizeMainPanel(){						//Function to resize Main Panel
 		int panelWidth = this.getWidth()-35;
 		int panelHeight = this.getHeight()-35;
 		MainPanel.setBounds(5, 5, panelWidth, panelHeight);
 	}
 
-	private void resizeLayoutPanel(){
+	private void resizeLayoutPanel(){					//Function to resize Layout Panel
 		int mainPanelWidth = MainPanel.getWidth();
 		int panelWidth = LayoutPanel.getWidth();
 		int panelHeight = LayoutPanel.getHeight();
@@ -557,7 +557,7 @@ public class SlideshowMaker extends JFrame {
 		updateLayout();
 	}
 
-	private void resizeTransitionPanel(){
+	private void resizeTransitionPanel(){				//Function to resize Transition Panel
 		int mainPanelWidth = MainPanel.getWidth();
 		int oldHeight = TransitionPanel.getHeight();
 		int panelY = LayoutPanel.getY() + LayoutPanel.getHeight() + 11;
@@ -572,17 +572,14 @@ public class SlideshowMaker extends JFrame {
 		EditPanel.setBounds(PreviewImagePanel.getX() + PreviewImagePanel.getWidth() + 10, PreviewImagePanel.getY() + PreviewImagePanel.getHeight() - 200, 118, 200);
 	}
 
-	private void resizeAudioPanel(){
+	private void resizeAudioPanel(){					//Function to resize Audio Panel
 		int mainPanelWidth = MainPanel.getWidth();
 		int panelWidth = mainPanelWidth - 10;
 		AudioPanel.setBounds(10, MainPanel.getHeight()-129, panelWidth, 119);
 		soundTrack.setBounds(0, 0, panelWidth, 110);
 	}
 
-	private void updateLayout(){
-
-
-
+	private void updateLayout(){						//Function to updateLayout, for Previous, Primary, Next, and Preview images
 		resizeImageIcon(lblSlidesLeft, iconLeft);
 		resizeImageIcon(lblSlidesRight, iconRight);
 
@@ -650,7 +647,7 @@ public class SlideshowMaker extends JFrame {
 	}
 
 
-	private void resizeImageIcon(JLabel label, ImageIcon icon){
+	private void resizeImageIcon(JLabel label, ImageIcon icon){	//Function resize Image Icons
 		if(slideStateMachine.getSlideShowSize() > 0) {
 			BufferedImage bufferedImg = new BufferedImage(
 					icon.getIconWidth(),
@@ -677,7 +674,7 @@ public class SlideshowMaker extends JFrame {
 		}
 	}
 
-	private void resizePreviewImage(){
+	private void resizePreviewImage(){					//Function to resize Preview Image
 		if(previewIcon != null) {
 			PreviewImagePanel.initializeBlankImage();
 			PreviewImagePanel.setImage(previewIcon.getImage());

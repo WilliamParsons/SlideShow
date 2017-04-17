@@ -78,7 +78,6 @@ public class SlideshowPresenter extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	
 	public SlideshowPresenter() {
 		setTitle("Slideshow Presentation");									//Set the title of the Presentation Window
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);						//Pressing X on the window will close it
