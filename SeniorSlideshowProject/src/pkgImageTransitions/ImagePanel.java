@@ -248,7 +248,7 @@ public class ImagePanel extends JPanel
 		super.paintBorder(g);
 		if(this.theImage != null)
 		{
-			g.drawImage(m_CurrentImage, 0, 11, this.getWidth(), this.getHeight(), null);
+			g.drawImage(m_CurrentImage, 0, 0, this.getWidth(), this.getHeight(), null);
 			//g.drawImage(m_CurrentImage, 0, 0, null);
 		}
 		else

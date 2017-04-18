@@ -58,6 +58,7 @@ public class Transition
 		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
 		// Default just copy ImageB into ImageA then copy to screen
 		if (!slideState.getPausedState()){
+			slideState.incrementDisplayIndex();
 		    gA.drawImage(ImageB, 0, 0, null);
 		    gPan.drawImage(ImageA, 0, 0, imgPanel);
 		}

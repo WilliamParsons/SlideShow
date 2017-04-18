@@ -736,4 +736,8 @@ public class SlideshowMaker extends JFrame implements Observer {
 								// this function
 		System.out.print("SlideshowMaker: soundtrack table is changed\n");
 	}
+	
+	public SlideshowMaker getInstance(){
+		return creator;
+	}
 }
