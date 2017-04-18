@@ -81,7 +81,7 @@ public class SlideshowPresenter extends JFrame {
 	public SlideshowPresenter() {
 		setTitle("Slideshow Presentation");									//Set the title of the Presentation Window
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);						//Pressing X on the window will close it
-		setBounds(100, 100, 800, 600);										//Set the bounds of the widnow
+		setBounds(100, 100, 800, 600);										//Set the bounds of the window
 		automatic = true;													//Always start Presentation Mode in Automatic Mode
 		MainPanel = new JPanel();											//Create the window
 		MainPanel.addComponentListener(new ComponentAdapter() {
