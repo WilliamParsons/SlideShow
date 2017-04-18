@@ -26,11 +26,12 @@ public class Animator extends Thread {
 	}
 	@Override
 	public void run() {
+
+		SlideshowPresenter presenter = SlideshowPresenter.getInstance();
+		presenter.initializeShow();
 		
-		int indexTester = slideStateMachine.getCurrentIndex();
-		boolean isPaused = slideStateMachine.getPausedState();
 		while (nextSlide != null){
-			if(currentSlide != null && nextSlide != null && !isPaused) {
+			if(currentSlide != null && nextSlide != null) {
 
 				double animationTime;
 				double slideTime = currentSlide.getTransitionTime();
@@ -101,20 +102,24 @@ public class Animator extends Thread {
 				}	
 				if(!slideStateMachine.getPausedState()){
 					System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
+					
 					currentSlide = nextSlide;
 					nextSlide = slideStateMachine.getNextSlide();
-					//slideStateMachine.setNeedsReset(true);
 				}
 				
 			}
 			
 		}
 		slideStateMachine.setShowEnded(true);
-		slideStateMachine.setCurrentIndex(0);
-		SlideshowPresenter presenter = SlideshowPresenter.getInstance();
 		presenter.resetPlayButton();
-		
+		 
 		
 	}
+	public void reintializeSlides(){
+
+		currentSlide = slideStateMachine.getFirstSlide();
+		nextSlide = slideStateMachine.getNextSlide();
+	}
+	
 
 }
