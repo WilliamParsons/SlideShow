@@ -270,11 +270,11 @@ public class SlideShowStateMachine implements Serializable {
 
 	public int getNextAudioIndex()
 	{
-		audioIndex++;
-//		if(audioIndex + 1 < audioList.size())
-//		{
-//			audioIndex++;
-//		}
+//		audioIndex++;
+		if(audioIndex < audioList.size())
+		{
+			audioIndex++;
+		}
 //		else
 //		{
 //			if(audioLoopFlag == true)
