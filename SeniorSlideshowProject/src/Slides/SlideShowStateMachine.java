@@ -21,6 +21,7 @@ public class SlideShowStateMachine implements Serializable {
 	private boolean isPaused;
 	private boolean needsReset;
 	private boolean showEnded;
+	private int displayIndex;
 
 	private SlideShowStateMachine()
 	{
@@ -29,10 +30,11 @@ public class SlideShowStateMachine implements Serializable {
 		audioIndex = 0;
 		slideIndex = 0;
 		showTime = 0;
-		audioLoopFlag = false;
+		audioLoopFlag = true;
 		needsReset = false;
 		isPaused = false;
 		showEnded = false;
+		displayIndex = 0;
 	}
 
 	public static SlideShowStateMachine getInstance()
@@ -108,7 +110,29 @@ public class SlideShowStateMachine implements Serializable {
 	{
 		return slideIndex;
 	}
-
+	
+	public int getDisplayIndex(){
+		return displayIndex;
+	}
+	
+	public void incrementDisplayIndex(){
+		if (displayIndex < (slideList.size() - 1)){
+			displayIndex++;
+		}
+//		else{
+//			displayIndex = 0;
+//		}
+	}
+	
+	public void decrementDisplayIndex(){
+		if (displayIndex > 0){
+			displayIndex--;
+		}
+	}
+	
+	public void resetDisplayIndex(){
+		displayIndex = 0;
+	}
 	public SlideState getCurrentSlide()
 	{
 		if(getSlideShowSize() > 0) {
@@ -251,8 +275,7 @@ public class SlideShowStateMachine implements Serializable {
 	{
 		if(audioIndex + 1 < audioList.size())
 		{
-			return audioIndex++;
-			// return audioList.get(audioIndex);
+			audioIndex++;
 		}
 		else
 		{
@@ -260,22 +283,18 @@ public class SlideShowStateMachine implements Serializable {
 			{
 				audioIndex = 0;
 			}
-			return audioIndex;
 		}
+		return audioIndex;
 	}
 	
 	public int getPreviousAudioIndex()
 	{
 		if(audioIndex > 0)
 		{
-			return audioIndex--;
+			audioIndex--;
 			// return audioList.get(audioIndex);
 		}
-		else
-		{
-			return audioIndex;
-		}
-
+		return audioIndex;
 	}
 	
 	public AudioState getPreviousAudio()
@@ -397,4 +416,8 @@ public class SlideShowStateMachine implements Serializable {
 		audioLoopFlag = !audioLoopFlag;
 	}
 
+	public double getTotalTime() {
+		// TODO Auto-generated method stub
+		return showTime;
+	}
 }

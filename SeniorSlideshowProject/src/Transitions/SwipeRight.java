@@ -59,6 +59,7 @@ public class SwipeRight extends Transition
 		dBX2 = incX;
 
 		if (!slideState.getPausedState()){
+			slideState.incrementDisplayIndex();
 			// Draw the scaled current image if necessary
 			gPan.drawImage(ImageA, 0, 0, imgPanel);
 

@@ -57,7 +57,8 @@ public class SwipeDown extends Transition
 		dBY2 = incY;
 		sBY1 = imgHeight - incY;
 		if (!slideState.getPausedState()){
-	        // Draw the scaled current image if necessary
+			slideState.incrementDisplayIndex();
+			// Draw the scaled current image if necessary
 			gPan.drawImage(ImageA, 0, 0, imgPanel);
 
 			// Draw image A
