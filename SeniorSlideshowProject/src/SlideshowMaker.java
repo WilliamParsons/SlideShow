@@ -313,7 +313,6 @@ public class SlideshowMaker extends JFrame implements Observer{
 
 		soundTrack = new SoundTrack((String) null, this);
 		soundTrack.setBounds(0, 0, 764, 110);
-		
 		AudioPanel.add(soundTrack);
 		MainPanel.add(TransitionPanel);
 
@@ -338,13 +337,14 @@ public class SlideshowMaker extends JFrame implements Observer{
 		layoutSlider.setSnapToTicks(true);
 		slideSize = 0;
 		LayoutPanel.add(layoutSlider);	
-		
+	
 		layoutTracker = new JPanel();
 		layoutTracker.setToolTipText("");
 		layoutTracker.setBackground(Color.LIGHT_GRAY);
 		layoutTracker.setBounds(15, 95, 595, 20);
 		LayoutPanel.add(layoutTracker);
 		layoutTracker.setLayout(new BoxLayout(layoutTracker, BoxLayout.X_AXIS));
+
 
 		JButton PreviewTransition = new JButton(">");
 		PreviewTransition.addActionListener(new ActionListener() {
@@ -630,13 +630,14 @@ public class SlideshowMaker extends JFrame implements Observer{
 		validate();
 		repaint();
 	}
+
 	private void updateLayout(){
 
 
 
 		resizeImageIcon(lblSlidesLeft, iconLeft);
 		resizeImageIcon(lblSlidesRight, iconRight);
-		
+
 		if(slideStateMachine.getSlideShowSize() != slideSize) {
 			slideSize = slideStateMachine.getSlideShowSize();
 
