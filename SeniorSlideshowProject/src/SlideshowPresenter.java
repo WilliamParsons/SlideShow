@@ -86,11 +86,11 @@ public class SlideshowPresenter extends JFrame {
 		MainPanel.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
 				resizeAllPanels();
-				SlideShowStateMachine testSlide = SlideShowStateMachine.getInstance();
-				if (testSlide.getCurrentSlide() != null){
-					System.out.println("Updating layout due to resizing");
-					//updateShow();
+				if (slideStateMachine.getShowEnded()){
+					updateShow();
 				}
+				System.out.println("Updating layout due to resizing");
+
 			}
 		});
 		MainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -114,7 +114,6 @@ public class SlideshowPresenter extends JFrame {
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
-
 					updateShow();
 				}
 				else if(slidePlaying == false)
@@ -129,7 +128,6 @@ public class SlideshowPresenter extends JFrame {
 
 					}
 					else{
-						
 						soundTrack.startB.doClick(); // start soundtrack
 					}
 					if(automatic) {
@@ -195,8 +193,10 @@ public class SlideshowPresenter extends JFrame {
 		mnPresentModes.add(mntmAuto);
 		mntmAuto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				slideStateMachine.resetDisplayIndex();
 				PresentationImagePanel.initializeBlankImage();
 				PresentationImagePanel.repaint();
+				System.out.println("printing from automatic");
 				updateShow();
 				btnPrevious.setEnabled(false);
 				btnNext.setEnabled(false);
@@ -210,6 +210,7 @@ public class SlideshowPresenter extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				PresentationImagePanel.initializeBlankImage();
 				PresentationImagePanel.repaint();
+				System.out.println("Printing from manual button");
 				updateShow();
 				btnPlayPause.setEnabled(false);
 				btnPrevious.setEnabled(true);
@@ -237,11 +238,14 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				slideStateMachine.decrementDisplayIndex();
+				System.out.println("printing from previous button");
 				updateShow();
 				if(currentSlide != null)
 				{
 					btnPrevious.setEnabled(true);
 				}
+				animator.reintializeSlides();
+				slideStateMachine.getFirstAudio();
 			}
 		});
 		btnPrevious.setBounds(50, -30, 89, 23);
@@ -252,11 +256,14 @@ public class SlideshowPresenter extends JFrame {
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				slideStateMachine.incrementDisplayIndex();
+				System.out.println("printing from the next button");
 				updateShow();
 				if(currentSlide != null)
 				{
 					btnNext.setEnabled(true);
 				}
+				animator.reintializeSlides();
+				slideStateMachine.getFirstAudio();
 			}
 		});
 		btnNext.setBounds(445, 530, 89, 23);
@@ -314,17 +321,18 @@ public class SlideshowPresenter extends JFrame {
 
 	private void startAutomaticSlideShow() {
 		if (!slideStateMachine.getPausedState()){
-			currentSlide = slideStateMachine.getCurrentSlide();
-			PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(slideStateMachine.getDisplayIndex()).getIcon().getImage());
+			if (!slideStateMachine.getShowEnded()){
+				PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(slideStateMachine.getDisplayIndex()).getIcon().getImage());
+			}
 			if (animator == null || slideStateMachine.getShowEnded()){
 				slideStateMachine.setShowEnded(false);
 				if (slideStateMachine.getDisplayIndex() == (slideStateMachine.getSlideShowSize() - 1)){
 					slideStateMachine.resetDisplayIndex();
-					updateShow();
+					initializeShow();
 				}
 				animator = new Animator(PresentationImagePanel);
-				animator.start();
-			}
+				animator.start();			
+				}
 		}
 
 	}
@@ -334,9 +342,17 @@ public class SlideshowPresenter extends JFrame {
 	
 	public void resetPlayButton(){
 		btnPlayPause.setText("Play");
-		soundTrack.startB.doClick(); // Pause soundtrack
+
+		soundTrack.pauseB.doClick(); // Pause soundtrack
 		clickedPlay = false;
 		slidePlaying = false;
 		slideStateMachine.getFirstAudio();
+		PresentationImagePanel.initializeBlankImage();
+		PresentationImagePanel.repaint();
+		updateShow();
+		slideStateMachine.resetDisplayIndex();
+	}
+	public void initializeShow(){
+		PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(0).getIcon().getImage());
 	}
 }
