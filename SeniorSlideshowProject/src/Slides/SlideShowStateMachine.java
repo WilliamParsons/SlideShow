@@ -54,119 +54,119 @@ public class SlideShowStateMachine implements Serializable {
 		isPaused = state;															//Set to is paused to passed-in state
 	}
 
-	public void addSlide(SlideState slide)											//
+	public void addSlide(SlideState slide)											//Function to add a slide to the slide list
 	{
-		slideList.add(slide);
-		setSlideTransitionTimes();
+		slideList.add(slide);														//Add passed-in slide to the slide list
+		setSlideTransitionTimes();													//Call setSlideTransitionTimes();
 	}
 	
-	public void setCurrentIndex (int newIndex)
+	public void setCurrentIndex (int newIndex)										//Function to set the current slide show index
 	{
-		slideIndex = newIndex;
+		slideIndex = newIndex;														//Set slide index to passed-in index
 	}
 
-	public void decrementIndex()
+	public void decrementIndex()													//Function to decrease the slide index
 	{
 		
-		slideIndex--;
+		slideIndex--;																//Decrement the value of the slide index
 		
 	}
 	
-	public void incrementIndex()
+	public void incrementIndex()													//Function to increase the slide index
 	{
 		
-		slideIndex++;
+		slideIndex++;																//Increment the value of the slide index
 		
 	}
-	public void setNeedsReset(boolean reset){
-		needsReset = reset;
+	public void setNeedsReset(boolean reset){										//Function to set the needs reset value
+		needsReset = reset;															//Set the needsreset value to passed-in boolean value
 	}
 	
-	public void setShowEnded(boolean showState){
-		showEnded = showState;
+	public void setShowEnded(boolean showState){									//Function to set the show ended value
+		showEnded = showState;														//Set the showEnded value to passed-in boolean value
 	}
 	
-	public boolean getShowEnded(){
-		return showEnded;
+	public boolean getShowEnded(){													//Function to return show ended value
+		return showEnded;															//Return showEnded value
 	}
 	
-	public boolean getNeedsReset(){
-		return needsReset;
+	public boolean getNeedsReset(){													//Function to return needs reset value
+		return needsReset;															//Return needsReset value
 	}
 	
-	public SlideState getFirstSlide()
+	public SlideState getFirstSlide()												//Function to get the first slide of the array
 	{
-		slideIndex = 0;
+		slideIndex = 0;																//Set slideIndex to 0
 		try {
-			return slideList.get(slideIndex);
-		} catch (IndexOutOfBoundsException e) {
-			return null;
+			return slideList.get(slideIndex);										//Return the slideIndex of the slide list
+		} catch (IndexOutOfBoundsException e) {										
+			return null;															//Return null if out of bounds
 		}
 
 	}
-	public int getCurrentIndex()
-	{
-		return slideIndex;
+	public int getCurrentIndex()													//Function to return the current slide index
+	{		
+		return slideIndex;															//Return the value of slideIndex
 	}
 
-	public SlideState getCurrentSlide()
+	public SlideState getCurrentSlide()												//Function to get the current slide of the slide list
 	{
-		if(getSlideShowSize() > 0) {
-			return slideList.get(slideIndex);
+		if(getSlideShowSize() > 0) {												//If the slide show size is greater than 0, do...
+			return slideList.get(slideIndex);										//Return the current slideIndex of the slide list
 		} else {
-			return null;
+			return null;															//Return
 		}
 	}
 
-	public SlideState getNextSlide()
+	public SlideState getNextSlide()												//Function to get the next slide of the slide list
 	{
-		if(slideIndex + 1 < slideList.size())
+		if(slideIndex + 1 < slideList.size())										//If the slideIndex+1 is less than the slide list size
 		{
-			slideIndex++;
-			System.out.println(slideIndex);
-			return slideList.get(slideIndex);
+			slideIndex++;															//Increment the slideIndex
+			System.out.println(slideIndex);											
+			return slideList.get(slideIndex);										//Return the current index of the slide list
 		}
 		else
 		{
-			return null;
+			return null;															//Return null
 		}
 	}
 
-	public SlideState getSlideAtIndex(int i) {
-		if (i >= 0 && i < slideList.size())
+	public SlideState getSlideAtIndex(int i) {										//Function to return slide at certain index
+		if (i >= 0 && i < slideList.size())											//If index is greater than or equal to 0 AND is less than slide list size, do...
 		{
-			return slideList.get(i);
+			return slideList.get(i);												//Return index
 		}
 		else
 		{
-			return null;
+			return null;															//Return null
 		}
 	}
 
-	public SlideState getPreviousSlide()
+	public SlideState getPreviousSlide()											//Function to get the previous slide of the slide list
 	{
-		if(slideIndex > 0)
+		if(slideIndex > 0)															//If slideIndex is greater than 0, do...
 		{
-			slideIndex--;
-			return slideList.get(slideIndex);
+			slideIndex--;															//Decrement slideIndex
+			return slideList.get(slideIndex);										//Return the current index of the slide list
 		}
 		else
 		{
-			return null;
+			return null;															//Return null
 		}
 
 	}
 	
-	public boolean getPausedState()
+	public boolean getPausedState()													//Function to return getPausedState state
 	{
-		return isPaused;
+		return isPaused;															//Return isPaused
 	}
 
-	public void removeSlideAtIndex(int i)
+	public void removeSlideAtIndex(int i)											//Function to remove slide at index
 	{
 		try
 		{
-			slideList.remove(i);
+			slideList.remove(i);													//Remove at index
 
 			if(slideIndex - 1 >= 0)
 			{
