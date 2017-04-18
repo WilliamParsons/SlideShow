@@ -737,4 +737,9 @@ public class SlideshowMaker extends JFrame implements Observer {
 								// this function
 		System.out.print("SlideshowMaker: soundtrack table is changed\n");
 	}
+
+	public SoundTrack getSoundTrack() {
+		// TODO Auto-generated method stub
+		return this.soundTrack;
+	}
 }
