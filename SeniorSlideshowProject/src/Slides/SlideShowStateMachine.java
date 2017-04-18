@@ -1,5 +1,6 @@
 package Slides;
 import java.util.*;
+
 import java.io.Serializable;
 
 public class SlideShowStateMachine implements Serializable {
@@ -30,7 +31,7 @@ public class SlideShowStateMachine implements Serializable {
 		audioIndex = 0;
 		slideIndex = 0;
 		showTime = 0;
-		audioLoopFlag = true;
+		audioLoopFlag = false;
 		needsReset = false;
 		isPaused = false;
 		showEnded = false;
@@ -269,17 +270,18 @@ public class SlideShowStateMachine implements Serializable {
 
 	public int getNextAudioIndex()
 	{
-		if(audioIndex + 1 < audioList.size())
+//		audioIndex++;
+		if(audioIndex < audioList.size())
 		{
 			audioIndex++;
 		}
-		else
-		{
-			if(audioLoopFlag == true)
-			{
-				audioIndex = 0;
-			}
-		}
+//		else
+//		{
+//			if(audioLoopFlag == true)
+//			{
+//				audioIndex = 0;
+//			}
+//		}
 		return audioIndex;
 	}
 	
@@ -397,8 +399,11 @@ public class SlideShowStateMachine implements Serializable {
 		slideList.clear();
 	}
 
-	public void removeSelectedAudios(Vector tmp) {
+	public void removeSelectedAudios(Vector <AudioState> tmp) {
 		// TODO Auto-generated method stub
+		for(int i = 0;i<tmp.size(); i++) {
+			showTime -= tmp.get(i).getAudioTime();
+		}
 		audioList.removeAll(tmp);
 	}
 
@@ -407,9 +412,10 @@ public class SlideShowStateMachine implements Serializable {
 		audioList.clear();
 	}
 
-	public void setAudioLoopFlag() {
+	public boolean AudioLoopSwitch() {
 		// TODO Auto-generated method stub
 		audioLoopFlag = !audioLoopFlag;
+		return audioLoopFlag;
 	}
 
 	public double getTotalTime() {
