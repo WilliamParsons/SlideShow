@@ -15,7 +15,6 @@ import javax.swing.Timer;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
-import Animation.Animator;
 import FileManager.FileManager;
 import Slides.AudioState;
 import Slides.SlideShowStateMachine;
@@ -54,6 +53,7 @@ public class SlideshowPresenter extends JFrame {
 	private boolean automatic;
 	private SlideshowMaker creator;
 	private Animator animator;
+	private static SlideshowPresenter presenter;
 
 
 	/**
@@ -63,9 +63,9 @@ public class SlideshowPresenter extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SlideshowPresenter frame = new SlideshowPresenter();
-					frame.setMinimumSize(new Dimension(800, 600));
-					frame.setVisible(true);
+					presenter = new SlideshowPresenter();
+					presenter.setMinimumSize(new Dimension(800, 600));
+					presenter.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -122,21 +122,16 @@ public class SlideshowPresenter extends JFrame {
 				{	
 					btnPlayPause.setText("Pause"); //change Play to Pause when start
 					slideStateMachine.setPausedState(false);
-					soundTrack.pauseB.doClick(); // restore a paused soundtrack
 					slidePlaying = true;
 					if(clickedPlay == true)
 					{
+						soundTrack.pauseB.doClick(); // restore a paused soundtrack
 						clickedPlay = false;
 
 					}
-//					else{
-//						soundTrack.startB.doClick(); // start soundtrack
-//						slidePlaying = true;
-//						if (slideStateMachine.getNeedsReset()){
-//							slideStateMachine.getNextSlide();
-//							slideStateMachine.setNeedsReset(false);;
-//						}
-//					}
+					else{
+						soundTrack.startB.doClick(); // start soundtrack
+					}
 					if(automatic) {
 						startAutomaticSlideShow();
 					}
@@ -234,7 +229,7 @@ public class SlideshowPresenter extends JFrame {
 		btnPrevious = new JButton("<<<<");
 		btnPrevious.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				currentSlide = slideStateMachine.getPreviousSlide();
+				slideStateMachine.decrementDisplayIndex();
 				updateShow();
 				if(currentSlide != null)
 				{
@@ -249,7 +244,7 @@ public class SlideshowPresenter extends JFrame {
 		btnNext = new JButton(">>>>");
 		btnNext.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				currentSlide = slideStateMachine.getNextSlide();
+				slideStateMachine.incrementDisplayIndex();
 				updateShow();
 				if(currentSlide != null)
 				{
@@ -314,10 +309,24 @@ public class SlideshowPresenter extends JFrame {
 			PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(slideStateMachine.getDisplayIndex()).getIcon().getImage());
 			if (animator == null || slideStateMachine.getShowEnded()){
 				slideStateMachine.setShowEnded(false);
+				if (slideStateMachine.getDisplayIndex() == (slideStateMachine.getSlideShowSize() - 1)){
+
+					slideStateMachine.resetDisplayIndex();
+				}
 				animator = new Animator(PresentationImagePanel);
 				animator.start();
 			}
 		}
 
+	}
+	public static SlideshowPresenter getInstance(){
+		return presenter;
+	}
+	
+	public void resetPlayButton(){
+		btnPlayPause.setText("Play");
+		soundTrack.pauseB.doClick(); // Pause soundtrack
+		clickedPlay = true;
+		slidePlaying = false;
 	}
 }

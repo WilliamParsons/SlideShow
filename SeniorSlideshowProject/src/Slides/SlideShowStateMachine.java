@@ -118,16 +118,16 @@ public class SlideShowStateMachine implements Serializable {
 	public void incrementDisplayIndex(){
 		if (displayIndex < (slideList.size() - 1)){
 			displayIndex++;
-			System.out.println("Our display index is "+ displayIndex + "\n");
 		}
-		else{
-			displayIndex = 0;
-			System.out.println("resetting index ");
-		}
+//		else{
+//			displayIndex = 0;
+//		}
 	}
 	
 	public void decrementDisplayIndex(){
-		displayIndex--;
+		if (displayIndex > 0){
+			displayIndex--;
+		}
 	}
 	
 	public void resetDisplayIndex(){
