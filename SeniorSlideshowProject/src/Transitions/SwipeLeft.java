@@ -65,6 +65,7 @@ public class SwipeLeft extends Transition
 //		dBX2 = imgHeight;
 
 		if (!slideState.getPausedState()){
+			slideState.incrementDisplayIndex();
 			// Draw the scaled current image if necessary
 			gPan.drawImage(ImageA, 0, 0, imgPanel);
 

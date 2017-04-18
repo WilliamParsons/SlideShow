@@ -1,5 +1,3 @@
-package Animation;
-
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -18,7 +16,8 @@ public class Animator extends Thread {
 	private ImagePanel imgPan;
 	private SlideShowStateMachine slideStateMachine;
 	private SlideState currentSlide, nextSlide;
-
+	//private SlideshowMaker creator;
+	
 	public Animator (ImagePanel imgPan) {
 		this.imgPan = imgPan;
 		slideStateMachine = SlideShowStateMachine.getInstance();
@@ -104,12 +103,17 @@ public class Animator extends Thread {
 					System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
 					currentSlide = nextSlide;
 					nextSlide = slideStateMachine.getNextSlide();
-					slideStateMachine.setNeedsReset(true);
+					//slideStateMachine.setNeedsReset(true);
 				}
 				
 			}
+			
 		}
 		slideStateMachine.setShowEnded(true);
+		slideStateMachine.setCurrentIndex(0);
+		SlideshowPresenter presenter = SlideshowPresenter.getInstance();
+		presenter.resetPlayButton();
+		
 		
 	}
 

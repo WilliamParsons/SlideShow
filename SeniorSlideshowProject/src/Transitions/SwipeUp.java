@@ -58,6 +58,7 @@ public class SwipeUp extends Transition
 		sBY2 = incY;
 //		dBY1 
 		if (!slideState.getPausedState()){
+			slideState.incrementDisplayIndex();
 	        // Draw the scaled current image if necessary
 			gPan.drawImage(ImageA, 0, 0, imgPanel);
 

@@ -36,6 +36,7 @@ public class CrossFade extends Transition
 		Graphics gPan = imgPanel.getGraphics();
 		Graphics2D gA = ImageA.createGraphics();
 		SlideShowStateMachine slideState = SlideShowStateMachine.getInstance();
+
 		
 		int timeInc;				// Milliseconds to pause each time
 		timeInc = (int)(time * 1000) / 40;
@@ -51,6 +52,7 @@ public class CrossFade extends Transition
 		RescaleOp rop = new RescaleOp(scales, offsets, null);
 		if (!slideState.getPausedState()){
 	        // Draw the scaled current image if necessary
+			slideState.incrementDisplayIndex();
 			gPan.drawImage(ImageA, 0, 0, imgPanel);
 
 			// Draw image A -- appears we need to do this fade longer
