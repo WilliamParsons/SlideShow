@@ -99,6 +99,7 @@ public class SlideshowPresenter extends JFrame {
 		
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		soundTrack = new SoundTrack((String) null);
+		soundTrack.startB.setEnabled(true);
 		fMgr = new FileManager();
 
 		btnPlayPause = new JButton("Play");
@@ -127,7 +128,6 @@ public class SlideshowPresenter extends JFrame {
 
 					}
 					else{
-						System.out.println("starting audio");
 						soundTrack.startB.doClick(); // start soundtrack
 					}
 					if(automatic) {
@@ -342,6 +342,7 @@ public class SlideshowPresenter extends JFrame {
 	
 	public void resetPlayButton(){
 		btnPlayPause.setText("Play");
+
 		soundTrack.pauseB.doClick(); // Pause soundtrack
 		clickedPlay = false;
 		slidePlaying = false;
@@ -353,6 +354,5 @@ public class SlideshowPresenter extends JFrame {
 	}
 	public void initializeShow(){
 		PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(0).getIcon().getImage());
-
 	}
 }
