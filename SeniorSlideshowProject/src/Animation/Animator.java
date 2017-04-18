@@ -18,7 +18,8 @@ public class Animator extends Thread {
 	private ImagePanel imgPan;
 	private SlideShowStateMachine slideStateMachine;
 	private SlideState currentSlide, nextSlide;
-
+	//private SlideshowMaker creator;
+	
 	public Animator (ImagePanel imgPan) {
 		this.imgPan = imgPan;
 		slideStateMachine = SlideShowStateMachine.getInstance();
@@ -33,6 +34,10 @@ public class Animator extends Thread {
 		while (nextSlide != null){
 			if(currentSlide != null && nextSlide != null && !isPaused) {
 
+//				if (slideStateMachine.getNeedsReset()){
+//					slideStateMachine.getNextSlide();
+//					slideStateMachine.setNeedsReset(false);;
+//				}
 				double animationTime;
 				double slideTime = currentSlide.getTransitionTime();
 				if (slideTime - 1 > 0) {
@@ -104,12 +109,16 @@ public class Animator extends Thread {
 					System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
 					currentSlide = nextSlide;
 					nextSlide = slideStateMachine.getNextSlide();
-					slideStateMachine.setNeedsReset(true);
+					//slideStateMachine.setNeedsReset(true);
 				}
 				
 			}
+			
 		}
 		slideStateMachine.setShowEnded(true);
+		slideStateMachine.incrementDisplayIndex();
+		slideStateMachine.setCurrentIndex(0);
+		
 		
 	}
 

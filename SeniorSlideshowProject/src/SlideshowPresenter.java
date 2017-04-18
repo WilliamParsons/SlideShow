@@ -88,7 +88,8 @@ public class SlideshowPresenter extends JFrame {
 				resizeAllPanels();
 				SlideShowStateMachine testSlide = SlideShowStateMachine.getInstance();
 				if (testSlide.getCurrentSlide() != null){
-					updateShow();
+					System.out.println("Updating layout due to resizing");
+					//updateShow();
 				}
 			}
 		});
@@ -112,31 +113,30 @@ public class SlideshowPresenter extends JFrame {
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
-					if (slideStateMachine.getNeedsReset()){
-						slideStateMachine.getPreviousSlide();
-					}
+//					if (slideStateMachine.getNeedsReset()){
+//						slideStateMachine.getPreviousSlide();
+//					}
+					updateShow();
 				}
 				else if(slidePlaying == false)
 				{	
 					btnPlayPause.setText("Pause"); //change Play to Pause when start
 					slideStateMachine.setPausedState(false);
+					soundTrack.pauseB.doClick(); // restore a paused soundtrack
+					slidePlaying = true;
 					if(clickedPlay == true)
 					{
-						soundTrack.pauseB.doClick(); // restore a paused soundtrack
 						clickedPlay = false;
-						slidePlaying = true;
-						if (slideStateMachine.getNeedsReset()){
-							slideStateMachine.getNextSlide();
-							slideStateMachine.setNeedsReset(false);;
-						}
-					}else{
-						soundTrack.startB.doClick(); // start soundtrack
-						slidePlaying = true;
-						if (slideStateMachine.getNeedsReset()){
-							slideStateMachine.getNextSlide();
-							slideStateMachine.setNeedsReset(false);;
-						}
+
 					}
+//					else{
+//						soundTrack.startB.doClick(); // start soundtrack
+//						slidePlaying = true;
+//						if (slideStateMachine.getNeedsReset()){
+//							slideStateMachine.getNextSlide();
+//							slideStateMachine.setNeedsReset(false);;
+//						}
+//					}
 					if(automatic) {
 						startAutomaticSlideShow();
 					}
@@ -180,7 +180,7 @@ public class SlideshowPresenter extends JFrame {
 					currentSlide = slideStateMachine.getFirstSlide();
 					if (currentSlide != null) {
 
-						PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+						PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(slideStateMachine.getDisplayIndex()).getIcon().getImage());
 					}
 					soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
 					soundTrack.jukeTable.tableChanged();
@@ -302,7 +302,7 @@ public class SlideshowPresenter extends JFrame {
 			currentSlide = slideStateMachine.getCurrentSlide();
 			if(currentSlide != null)
 			{
-				PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+				PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(slideStateMachine.getDisplayIndex()).getIcon().getImage());
 			}
 		}
 
@@ -311,7 +311,7 @@ public class SlideshowPresenter extends JFrame {
 	private void startAutomaticSlideShow() {
 		if (!slideStateMachine.getPausedState()){
 			currentSlide = slideStateMachine.getCurrentSlide();
-			PresentationImagePanel.setImage(currentSlide.getIcon().getImage());
+			PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(slideStateMachine.getDisplayIndex()).getIcon().getImage());
 			if (animator == null || slideStateMachine.getShowEnded()){
 				slideStateMachine.setShowEnded(false);
 				animator = new Animator(PresentationImagePanel);
