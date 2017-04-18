@@ -1,5 +1,3 @@
-package Animation;
-
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -116,8 +114,9 @@ public class Animator extends Thread {
 			
 		}
 		slideStateMachine.setShowEnded(true);
-		slideStateMachine.incrementDisplayIndex();
 		slideStateMachine.setCurrentIndex(0);
+		SlideshowPresenter presenter = SlideshowPresenter.getInstance();
+		presenter.resetPlayButton();
 		
 		
 	}
