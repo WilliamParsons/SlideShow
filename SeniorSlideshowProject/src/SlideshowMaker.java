@@ -224,6 +224,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		LayoutPanel.setLayout(null);
 
 		addImageBtn = new JButton("+");
+		addImageBtn.setToolTipText("Add a single JPEG or directory of JPEG images to slideshow.");
 		addImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
@@ -254,6 +255,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		LayoutPanel.add(addImageBtn);
 
 		removeImageBtn = new JButton("-");
+		removeImageBtn.setToolTipText("Remove currently selected image.");
 		removeImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int currentIndex = layoutSlider.getValue();
@@ -347,6 +349,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		layoutTracker.setLayout(null);
 
 		JButton PreviewTransition = new JButton(">");
+		PreviewTransition.setToolTipText("Preview the transition.");
 		PreviewTransition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (currentSlide != null) {
