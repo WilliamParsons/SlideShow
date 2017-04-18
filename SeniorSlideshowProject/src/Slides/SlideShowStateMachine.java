@@ -78,13 +78,6 @@ public class SlideShowStateMachine implements Serializable {
 		slideIndex++;
 		
 	}
-	public void setNeedsReset(boolean reset){
-		needsReset = reset;
-	}
-	
-	public void setShowEnded(boolean showState){
-		showEnded = showState;
-	}
 	
 	public boolean getShowEnded(){
 		return showEnded;
@@ -395,6 +388,14 @@ public class SlideShowStateMachine implements Serializable {
 	public void setAudioLoopFlag() {
 		// TODO Auto-generated method stub
 		audioLoopFlag = !audioLoopFlag;
+	}
+
+	public void setNeedsReset(boolean reset){
+		needsReset = reset;
+	}
+	
+	public void setShowEnded(boolean showState){
+		showEnded = showState;
 	}
 
 }
