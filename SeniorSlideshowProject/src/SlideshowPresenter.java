@@ -113,9 +113,7 @@ public class SlideshowPresenter extends JFrame {
 					clickedPlay = true;
 					slidePlaying = false;
 					slideStateMachine.setPausedState(true);
-//					if (slideStateMachine.getNeedsReset()){
-//						slideStateMachine.getPreviousSlide();
-//					}
+
 					updateShow();
 				}
 				else if(slidePlaying == false)
@@ -319,8 +317,8 @@ public class SlideshowPresenter extends JFrame {
 			if (animator == null || slideStateMachine.getShowEnded()){
 				slideStateMachine.setShowEnded(false);
 				if (slideStateMachine.getDisplayIndex() == (slideStateMachine.getSlideShowSize() - 1)){
-
 					slideStateMachine.resetDisplayIndex();
+					updateShow();
 				}
 				animator = new Animator(PresentationImagePanel);
 				animator.start();
