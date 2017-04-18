@@ -110,7 +110,6 @@ public class SlideShowStateMachine implements Serializable {
 	{
 		return slideIndex;
 	}
-	
 	public int getDisplayIndex(){
 		return displayIndex;
 	}
@@ -119,9 +118,6 @@ public class SlideShowStateMachine implements Serializable {
 		if (displayIndex < (slideList.size() - 1)){
 			displayIndex++;
 		}
-//		else{
-//			displayIndex = 0;
-//		}
 	}
 	
 	public void decrementDisplayIndex(){
@@ -420,4 +416,5 @@ public class SlideShowStateMachine implements Serializable {
 		// TODO Auto-generated method stub
 		return showTime;
 	}
+
 }

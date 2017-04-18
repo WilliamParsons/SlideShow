@@ -53,7 +53,7 @@ public class SlideshowPresenter extends JFrame {
 	private boolean automatic;
 	private SlideshowMaker creator;
 	private Animator animator;
-	private static SlideshowPresenter presenter;
+	private static SlideshowPresenter presenter = new SlideshowPresenter();
 
 
 	/**
@@ -77,7 +77,7 @@ public class SlideshowPresenter extends JFrame {
 	 * Create the frame.
 	 */
 	
-	public SlideshowPresenter() {
+	private SlideshowPresenter() {
 		setTitle("Slideshow Presentation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
