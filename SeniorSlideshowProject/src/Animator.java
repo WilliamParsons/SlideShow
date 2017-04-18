@@ -32,10 +32,6 @@ public class Animator extends Thread {
 		while (nextSlide != null){
 			if(currentSlide != null && nextSlide != null && !isPaused) {
 
-//				if (slideStateMachine.getNeedsReset()){
-//					slideStateMachine.getNextSlide();
-//					slideStateMachine.setNeedsReset(false);;
-//				}
 				double animationTime;
 				double slideTime = currentSlide.getTransitionTime();
 				if (slideTime - 1 > 0) {
