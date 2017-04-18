@@ -84,7 +84,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 	private JMenuItem mntmNewMenuItem;
 	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
-	private SlideshowPresenter presenter = null;
+	private SlideshowPresenter presenter = SlideshowPresenter.getInstance();
 	private SlideshowMaker creator;
 	private Color[] rainbowColor;
 
@@ -193,7 +193,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (presenter == null) {
-					presenter = new SlideshowPresenter(creator);
+					presenter = SlideshowPresenter.getInstance();
 				}
 				presenter.setVisible(true);
 				setVisible(false);
@@ -728,6 +728,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 			PreviewImagePanel.setImage(previewIcon.getImage());
 		}
 	}
+	
 
 	@Override
 	public void update(Observable o, Object arg) {
