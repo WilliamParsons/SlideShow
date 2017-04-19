@@ -239,6 +239,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 				if (presenter == null) {
 					presenter = SlideshowPresenter.getInstance();
 				}
+				presenter.setMaker(creator);
 				presenter.setVisible(true);
 				setVisible(false);
 			}
@@ -598,7 +599,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		MainPanel.setBounds(5, 5, panelWidth, panelHeight);
 	}
 
-	//funcion to resize the layout panel for creator mode
+	//function to resize the layout panel for creator mode
 	private void resizeLayoutPanel() {
 		//int to hold the main panel width
 		int mainPanelWidth = MainPanel.getWidth();
@@ -861,5 +862,11 @@ public class SlideshowMaker extends JFrame implements Observer {
 								// will tell the observer to update by invoking
 								// this function
 		System.out.print("SlideshowMaker: soundtrack table is changed\n");
+	}
+
+	//Function to notify sound track to update audio list
+	public void notifyAudioUpdate() {
+		soundTrack.startB.setEnabled(slideStateMachine.getAudioListSize() != 0);
+		soundTrack.jukeTable.tableChanged();		
 	}
 }
