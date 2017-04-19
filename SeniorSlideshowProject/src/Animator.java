@@ -1,5 +1,3 @@
-package Animation;
-
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -18,7 +16,8 @@ public class Animator extends Thread {
 	private ImagePanel imgPan;
 	private SlideShowStateMachine slideStateMachine;
 	private SlideState currentSlide, nextSlide;
-
+	//private SlideshowMaker creator;
+	
 	public Animator (ImagePanel imgPan) {
 		this.imgPan = imgPan;
 		slideStateMachine = SlideShowStateMachine.getInstance();
@@ -27,11 +26,12 @@ public class Animator extends Thread {
 	}
 	@Override
 	public void run() {
+
+		SlideshowPresenter presenter = SlideshowPresenter.getInstance();
+		presenter.initializeShow();
 		
-		int indexTester = slideStateMachine.getCurrentIndex();
-		boolean isPaused = slideStateMachine.getPausedState();
 		while (nextSlide != null){
-			if(currentSlide != null && nextSlide != null && !isPaused) {
+			if(currentSlide != null && nextSlide != null) {
 
 				double animationTime;
 				double slideTime = currentSlide.getTransitionTime();
@@ -102,15 +102,24 @@ public class Animator extends Thread {
 				}	
 				if(!slideStateMachine.getPausedState()){
 					System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
+					
 					currentSlide = nextSlide;
 					nextSlide = slideStateMachine.getNextSlide();
-					slideStateMachine.setNeedsReset(true);
 				}
 				
 			}
+			
 		}
 		slideStateMachine.setShowEnded(true);
+		presenter.resetPlayButton();
+		 
 		
 	}
+	public void reintializeSlides(){
+
+		currentSlide = slideStateMachine.getFirstSlide();
+		nextSlide = slideStateMachine.getNextSlide();
+	}
+	
 
 }

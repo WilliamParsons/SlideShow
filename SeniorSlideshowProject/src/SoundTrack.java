@@ -542,7 +542,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 
     public void run()
     {
-    	boolean loopStatus = true;
+    	boolean loopStatus = false;
         do
         {
             table.scrollRectToVisible(new Rectangle(0,0,1,1));
@@ -671,6 +671,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                 paused = false;
                 num = table.getSelectedRow();
                 num = 0;
+                audioStateMachine.getFirstAudio();
                 start();
                 button.setText("Stop");
                 setComponentsEnabled(true);
@@ -933,7 +934,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             JMenuBar menuBar = new JMenuBar();
             menuBar.setBorder(new BevelBorder(BevelBorder.RAISED));
             JMenu menu = (JMenu) menuBar.add(new JMenu("+"));
-            String items[] = { "File or Directory of Files"};
+            String items[] = { "Add File or Directory of Audio Files"};
             for (int i = 0; i < items.length; i++) {
                 JMenuItem item = menu.add(new JMenuItem(items[i]));
                 item.addActionListener(this);
@@ -943,9 +944,9 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             menuBar = new JMenuBar();
             menuBar.setBorder(new BevelBorder(BevelBorder.RAISED));
             menu = (JMenu) menuBar.add(new JMenu("-"));
-            JMenuItem item = menu.add(new JMenuItem("Selected"));
+            JMenuItem item = menu.add(new JMenuItem("Remove Selected Audio"));
             item.addActionListener(this);
-            item = menu.add(new JMenuItem("All"));
+            item = menu.add(new JMenuItem("Remove All Audio"));
             item.addActionListener(this);
             p1.add(menuBar);
 
@@ -998,7 +999,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             } else
             if (object instanceof JMenuItem) {
                 JMenuItem mi = (JMenuItem) object;
-                if (mi.getText().startsWith("File")) {
+                if (mi.getText().startsWith("Add")) {
 //                    doFrame("Add File or Directory");
                     JPanel panel = new JPanel(new BorderLayout());
                     JFileChooser fc = new JFileChooser();
@@ -1024,7 +1025,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
             		}
                 } else if (mi.getText().equals("URL")) {
                     doFrame("Add URL");
-                } else if (mi.getText().equals("Selected")) {
+                } else if (mi.getText().equals("Remove Selected Audio")) {
                     int rows[] = table.getSelectedRows();
                     Vector tmp = new Vector();
                     for (int i = 0; i < rows.length;i++) {
@@ -1032,7 +1033,7 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
                     }
                     audioStateMachine.removeSelectedAudios(tmp);
                     tableChanged();
-                } else if (mi.getText().equals("All")) {
+                } else if (mi.getText().equals("Remove All Audio")) {
                 	audioStateMachine.removeAllAudios();
                     tableChanged();
                 }
@@ -1058,7 +1059,8 @@ public class SoundTrack extends JPanel implements Runnable//, LineListener, Meta
 //                    loopB.setSelected(!loopB.isSelected());
 //                    loopB.setBackground(loopB.isSelected() ? Color.gray : Color.lightGray);
 //                }
-                startB.setEnabled(sounds.size() != 0);
+//                startB.setEnabled(sounds.size() != 0);
+                startB.setEnabled(audioStateMachine.getAudioListSize() != 0);
             }
         }
 

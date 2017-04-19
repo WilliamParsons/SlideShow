@@ -84,7 +84,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 	private JMenuItem mntmNewMenuItem;
 	private ImageIcon previewIcon, iconRight, iconLeft;
 	private int slideSize;
-	private SlideshowPresenter presenter = null;
+	private SlideshowPresenter presenter = SlideshowPresenter.getInstance();
 	private SlideshowMaker creator;
 	private Color[] rainbowColor;
 
@@ -193,7 +193,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		mntmPresent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (presenter == null) {
-					presenter = new SlideshowPresenter(creator);
+					presenter = SlideshowPresenter.getInstance();
 				}
 				presenter.setVisible(true);
 				setVisible(false);
@@ -224,6 +224,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		LayoutPanel.setLayout(null);
 
 		addImageBtn = new JButton("+");
+		addImageBtn.setToolTipText("Add a single JPEG or directory of JPEG images to slideshow.");
 		addImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser();
@@ -254,6 +255,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		LayoutPanel.add(addImageBtn);
 
 		removeImageBtn = new JButton("-");
+		removeImageBtn.setToolTipText("Remove currently selected image.");
 		removeImageBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int currentIndex = layoutSlider.getValue();
@@ -347,6 +349,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 		layoutTracker.setLayout(null);
 
 		JButton PreviewTransition = new JButton(">");
+		PreviewTransition.setToolTipText("Preview the transition.");
 		PreviewTransition.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (currentSlide != null) {
@@ -728,6 +731,7 @@ public class SlideshowMaker extends JFrame implements Observer {
 			PreviewImagePanel.setImage(previewIcon.getImage());
 		}
 	}
+	
 
 	@Override
 	public void update(Observable o, Object arg) {
