@@ -342,8 +342,9 @@ public class SlideshowPresenter extends JFrame {
 	
 	public void resetPlayButton(){
 		btnPlayPause.setText("Play");
-
-		soundTrack.pauseB.doClick(); // Pause soundtrack
+		if(soundTrack.startB.getText() == "Stop") {
+			soundTrack.startB.doClick();
+		}
 		clickedPlay = false;
 		slidePlaying = false;
 		slideStateMachine.getFirstAudio();

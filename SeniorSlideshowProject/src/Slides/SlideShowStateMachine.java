@@ -395,6 +395,7 @@ public class SlideShowStateMachine implements Serializable {
 
 	public void clearSlideShow()
 	{
+		showTime = 0;
 		audioList.clear();
 		slideList.clear();
 	}
