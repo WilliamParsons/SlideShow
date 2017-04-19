@@ -254,14 +254,12 @@ public class SlideshowPresenter extends JFrame {
 		//add action listener for creation mode menu option that changes the program from presentation mode to creation mode
 		mntmCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				SlideShowStateMachine currentSlide = SlideShowStateMachine.getInstance();
-				//if there is data in the slideShow clear it to start fresh in creation mode
-				if(currentSlide != null){
-					currentSlide.clearSlideShow();
-				}
 				//if creation mode has not been made yet go to creation mode
 				if (creator == null) {
 					creator = new SlideshowMaker();
+				} else {
+					//Otherwise notify to reinitialize audio list
+					creator.notifyAudioUpdate();
 				}
 				creator.setVisible(true);
 				setVisible(false);
@@ -404,5 +402,9 @@ public class SlideshowPresenter extends JFrame {
 	//function to be used to initialize image of the presenter from the animator
 	public void initializeShow(){
 		PresentationImagePanel.setImage(slideStateMachine.getSlideAtIndex(0).getIcon().getImage());
+	}
+
+	public void setMaker(SlideshowMaker slideshowMaker) {
+		creator = slideshowMaker;		
 	}
 }
