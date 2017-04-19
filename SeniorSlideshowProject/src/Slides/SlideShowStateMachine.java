@@ -410,6 +410,7 @@ public class SlideShowStateMachine implements Serializable {
 	public void removeAllAudios() {
 		// TODO Auto-generated method stub
 		audioList.clear();
+		showTime = 0;
 	}
 
 	public boolean AudioLoopSwitch() {
