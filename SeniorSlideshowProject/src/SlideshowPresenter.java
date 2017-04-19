@@ -238,12 +238,19 @@ public class SlideshowPresenter extends JFrame {
 		mntmManual.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//paint the images to the appropriate sizes
+				if(soundTrack.startB.getText() == "Stop") {
+					soundTrack.startB.doClick();
+				}
+				slidePlaying = false;
+				clickedPlay = false;
+				slideStateMachine.getFirstAudio();
 				PresentationImagePanel.initializeBlankImage();
 				PresentationImagePanel.repaint();
 				updateShow();
 				btnPlayPause.setEnabled(false);
 				btnPrevious.setEnabled(true);
-				btnNext.setEnabled(true);	
+				btnNext.setEnabled(true);
+				animator = null;
 			}
 		});
 
