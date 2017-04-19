@@ -213,14 +213,11 @@ public class SlideshowPresenter extends JFrame {
 		});
 		mnFile.add(mntmOpen);
 
-		JMenu mnModes = new JMenu("Modes\r\n");
+		JMenu mnModes = new JMenu("Presentation Modes\r\n");
 		menuBar.add(mnModes);
 
-		mnPresentModes = new JMenu("Presentation Modes");
-		mnModes.add(mnPresentModes);
-
 		mntmAuto = new JMenuItem("Automatic");
-		mnPresentModes.add(mntmAuto);
+		mnModes.add(mntmAuto);
 		//add an action listener for the automatic menu option to change the presentation mode to automatic mode
 		mntmAuto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -236,7 +233,7 @@ public class SlideshowPresenter extends JFrame {
 		});
 
 		mntmManual = new JMenuItem("Manual");
-		mnPresentModes.add(mntmManual);
+		mnModes.add(mntmManual);
 		//add an action listener for the manual menu option to change the presentation mode to manual
 		mntmManual.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -250,8 +247,10 @@ public class SlideshowPresenter extends JFrame {
 			}
 		});
 
+		JMenu mnGoCreation = new JMenu("Go to Creation Mode");
+		menuBar.add(mnGoCreation);
 		mntmCreate = new JMenuItem("Creation");
-		mnModes.add(mntmCreate);
+		mnGoCreation.add(mntmCreate);
 		//add action listener for creation mode menu option that changes the program from presentation mode to creation mode
 		mntmCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
