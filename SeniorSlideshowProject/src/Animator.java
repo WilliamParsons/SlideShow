@@ -113,6 +113,14 @@ public class Animator extends Thread {
 					
 					currentSlide = nextSlide;
 					nextSlide = slideStateMachine.getNextSlide();
+					if (nextSlide == null) {
+						try {
+							Thread.sleep((long)currentSlide.getTransitionTime()*1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 				}
 				
 			}
