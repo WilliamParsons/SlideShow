@@ -13,28 +13,35 @@ import pkgImageTransitions.ImagePanel;
 
 public class Animator extends Thread {
 
+	//panel to draw the animations into
 	private ImagePanel imgPan;
+	//instance of the slideshowstateMachien
 	private SlideShowStateMachine slideStateMachine;
+	//slideStates representing the current and next slides
 	private SlideState currentSlide, nextSlide;
 	//private SlideshowMaker creator;
 	
+	//animator constructor
 	public Animator (ImagePanel imgPan) {
 		this.imgPan = imgPan;
 		slideStateMachine = SlideShowStateMachine.getInstance();
 		currentSlide = slideStateMachine.getFirstSlide();
 		nextSlide = slideStateMachine.getNextSlide();
 	}
+	//function run when thread start is called
 	@Override
 	public void run() {
 
 		SlideshowPresenter presenter = SlideshowPresenter.getInstance();
 		presenter.initializeShow();
-		
+		//while there is another slide to transition to continue the thread
 		while (nextSlide != null){
+			//if the current slide or the next slide is null dont do anything otherwise continue the loop
 			if(currentSlide != null && nextSlide != null) {
-
+				
 				double animationTime;
 				double slideTime = currentSlide.getTransitionTime();
+				//do math to determine the needed animation time
 				if (slideTime - 1 > 0) {
 					slideTime = slideTime--;
 					animationTime = 1;
@@ -65,7 +72,8 @@ public class Animator extends Thread {
 						BufferedImage.TYPE_INT_RGB);
 				Graphics g2 = nextImg.createGraphics();
 				g2.drawImage(nextSlide.getIcon().getImage(), 0, 0, imgPan.getWidth(), imgPan.getHeight(), null);
-
+				
+				//find out what transition is set and then perform the approprate transition 
 				if (nextSlide.getTransition() == SlideState.Transition.NONE)
 				{
 					Transition transition = new SwipeDown();
@@ -100,8 +108,8 @@ public class Animator extends Thread {
 				{
 					System.out.println("error with transition type");
 				}	
+				//if the slidemachine is not paused set the index to the next in the slideshow
 				if(!slideStateMachine.getPausedState()){
-					System.out.print("current index is" + slideStateMachine.getCurrentIndex() + "\n");
 					
 					currentSlide = nextSlide;
 					nextSlide = slideStateMachine.getNextSlide();
@@ -115,6 +123,7 @@ public class Animator extends Thread {
 		 
 		
 	}
+	//function to initialize the slides if switched between manual and automatic modes
 	public void reintializeSlides(){
 
 		currentSlide = slideStateMachine.getFirstSlide();
