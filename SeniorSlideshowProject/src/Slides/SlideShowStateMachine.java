@@ -55,6 +55,25 @@ public class SlideShowStateMachine implements Serializable {
 	{
 		return singleton;
 	}
+	
+	public double getSlideTime(){
+		return slideList.get(0).getTransitionTime();
+	}
+	
+	public void printTransitionTime(){
+		for (SlideState x : slideList)
+		{
+			System.out.println(x.getTransitionTime());
+		}
+	}
+	
+	public void setSoundtracklessTransition(){
+		double slideTime = 20/slideList.size();
+		for (SlideState x : slideList)
+		{
+			x.setTransitionTime(slideTime);
+		}
+	}
 
 	//function to set the slideshow's transition times
 	private void setSlideTransitionTimes()

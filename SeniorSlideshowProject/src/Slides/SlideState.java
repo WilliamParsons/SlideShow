@@ -30,7 +30,6 @@ public class SlideState implements Serializable {
 	{
 		transitionType = type;
 	}
-	
 	public void setTransitionTime(double time)
 	{
 		transitionTime = time;

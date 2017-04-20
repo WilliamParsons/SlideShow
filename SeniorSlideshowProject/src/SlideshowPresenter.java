@@ -130,6 +130,9 @@ public class SlideshowPresenter extends JFrame {
 		btnPlayPause.addActionListener(new ActionListener () {
 			public void actionPerformed(ActionEvent e)
 			{
+				if (slideStateMachine.getSlideTime() == 0){
+					slideStateMachine.setSoundtracklessTransition();
+				}
                 // check if the slideshow is playing or not; if it is change it to the play button and pause the slideshow otherwise change it to pause and play the slideshow
 				if(slidePlaying == true)
 				{
